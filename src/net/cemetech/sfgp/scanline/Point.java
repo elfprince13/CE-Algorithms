@@ -30,6 +30,8 @@ public class Point implements Collection<Integer>{
 		components = initComponents;
 	}
 	
+	public static Point origin(){ return new Point(0,0,0); }
+	
 	public int getComponent(CoordName e){ 
 		return components[e.toNum()];
 	}

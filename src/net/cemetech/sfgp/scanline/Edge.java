@@ -48,6 +48,50 @@ public class Edge implements Collection<Point>{
 	public static Edge flipped(Edge e){
 		return new Edge(e.getEndPoint(EndPoint.END), e.getEndPoint(EndPoint.START));
 	}
+	
+	// Same as the non-static version
+	// However, here we require that the
+	// starts already be aligned.
+	public static int dot(Edge u, Edge v){
+		Point us = u.getEndPoint(EndPoint.START);
+		Point ue = u.getEndPoint(EndPoint.END);
+		Point vs = v.getEndPoint(EndPoint.START);
+		Point ve = v.getEndPoint(EndPoint.END);
+		if(!us.equals(vs)){
+			throw new IllegalArgumentException("We required the starts be aligned");
+		}
+
+		Point u0 = new Point(ue.getComponent(CoordName.X) - us.getComponent(CoordName.X),
+							ue.getComponent(CoordName.Y) - us.getComponent(CoordName.Y),
+							ue.getComponent(CoordName.Z) - us.getComponent(CoordName.Z));
+		Point v0 = new Point(ve.getComponent(CoordName.X) - vs.getComponent(CoordName.X),
+							ve.getComponent(CoordName.Y) - vs.getComponent(CoordName.Y),
+							ve.getComponent(CoordName.Z) - vs.getComponent(CoordName.Z));
+		
+		
+		return		u0.getComponent(CoordName.X) * v0.getComponent(CoordName.X)
+				+	u0.getComponent(CoordName.Y) * v0.getComponent(CoordName.Y)
+				+	u0.getComponent(CoordName.Z) * v0.getComponent(CoordName.Z);
+	}
+	
+	// Dot product of the vectors found by translating two edges 
+	// with a shared vertex to the origin.
+	public int dot(Edge e2){
+		Edge d1 = null, d2 = null;
+		for(Point p1 : this){
+			for(Point p2 : e2){
+				if(p1.equals(p2)){
+					d1 = (p1 == this.getEndPoint(EndPoint.START)) ? this : Edge.flipped(this);
+					d2 = (p2 == e2.getEndPoint(EndPoint.START)) ? e2 : Edge.flipped(e2);
+					break;
+				}
+			}
+		}
+		if(d1 == null || d2 == null){
+			throw new IllegalArgumentException("We required that at least one endpoint be shared");
+		}
+		return dot(d1, d2);
+	}
 
 	@Override
 	public Iterator<Point> iterator() {

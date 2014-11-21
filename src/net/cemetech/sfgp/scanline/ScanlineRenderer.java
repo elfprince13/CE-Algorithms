@@ -15,6 +15,7 @@ import net.cemetech.sfgp.scanline.Point.CoordName;
 
 public class ScanlineRenderer<T extends Projection> {
 	static Projection id = Projection.identity();
+	static Projection screenPlane = CoordinatePlane.onto(CoordName.Z, 0);
 	public void render(BufferedImage raster, T p, Primitive[] geometry){
 		Primitive[] projectedGeometry = new Primitive[geometry.length];
 		for(int i = 0; i < geometry.length; i++){
@@ -38,17 +39,19 @@ public class ScanlineRenderer<T extends Projection> {
 		}
 		
 		HashSet<Primitive> activePrimSet = new HashSet<Primitive>();
-		HashSet<Primitive> inFlags = new HashSet<Primitive>();
+		HashMap<Primitive,Edge> inFlags = new HashMap<Primitive,Edge>();
+		HashSet<Primitive> deFlags = new HashSet<Primitive>();
 		ActiveEdgeList ael = new ActiveEdgeList();
 		for(int line = 0; line < numLines; line++){
 			System.out.println("Scanning line: " + line);
 			if(!inFlags.isEmpty()){
 				System.out.println("\tGarbage left in inFlags:");
-				for(Primitive pp : inFlags){
+				for(Primitive pp : inFlags.keySet()){
 					System.out.println("\t\t" + pp.color.toString());
 				}
 			}
 			inFlags.clear();
+			deFlags.clear();
 			System.out.println("\tUpdating activePrimSet");
 			for(Iterator<Primitive> i = activePrimSet.iterator(); i.hasNext();){
 				Primitive prim = i.next();
@@ -69,7 +72,6 @@ public class ScanlineRenderer<T extends Projection> {
 			ael.stepEdges(activePrimSet);
 			int curPixel = 0;
 			Primitive curDraw = null;
-			Primitive oldDraw = null;
 			ActiveEdgeList.EdgeListDatum startEdge;
 			ActiveEdgeList.EdgeListDatum nextEdge;
 			Iterator<ActiveEdgeList.EdgeListDatum> i = ael.activeEdges.iterator();
@@ -89,54 +91,82 @@ public class ScanlineRenderer<T extends Projection> {
 						nextX = 0;
 					}
 										
-					if(inFlags.contains(startEdge.owner) ){
-						System.out.println("\tNot *in* old " + startEdge.owner.color.toString() + " at " + startEdge.smartXForLine(id, line));
-						inFlags.remove(startEdge.owner);
-							oldDraw = (curDraw == null) ? startEdge.owner : curDraw;
-					} else {
+					if(inFlags.containsKey(startEdge.owner) ){
+						Edge edgeHere = startEdge.edge;
+						Point s = edgeHere.getEndPoint(EndPoint.START);
+						Point e = edgeHere.getEndPoint(EndPoint.END);
+						Edge edgeIn = inFlags.get(startEdge.owner);
+						boolean sV = edgeIn.contains(s);
+						boolean eV = edgeIn.contains(e);
+						Edge vert = new Edge(new Point(startX,line,0), new Point(startX,line+1,0));
+						int dotH = vert.dot(screenPlane.projectEdge(edgeHere));
+						int dotIn = vert.dot(screenPlane.projectEdge(edgeIn));
+						if((sV || eV) && (dotH * dotIn <= 0)){
+							System.out.println("\tFound horizontal vertex. Don't delete it yet");
+						} else {
+							System.out.println("\tNot *in* old " + startEdge.owner.color.toString() + " at " + startEdge.smartXForLine(id, line));
+							deFlags.add(startEdge.owner);
+							//inFlags.remove(startEdge.owner);
+						}
+					} else if(!deFlags.contains(startEdge.owner)) {
 						System.out.println("\tNow *in* new " + startEdge.owner.color.toString() + " at " + startEdge.smartXForLine(id, line));
-						inFlags.add(startEdge.owner);
+						inFlags.put(startEdge.owner,startEdge.edge);
 					}
 					
 					if(curPixel < startX){
 						System.out.println("curPixel has fallen behind, dragging from " + curPixel + " to " + startX);
 						curPixel = startX;
 					}
-
-					if(nextEdge == null || nextX > curPixel){
+					
+					while((nextEdge == null && curPixel < lineWidth) || (curPixel < nextX)){
+						boolean zFight = false;
 						System.out.println("\tTesting depth:");
 						curDraw = null; int bestZ = 0, j = 0;
-						for(Primitive prim : inFlags){
+						for(Primitive prim : inFlags.keySet()){
 							// The +1 business here is a hack, but most of this method will require
 							// Some refactoring.
-							int testZ = prim.getZForXY(curPixel+1, line);
+							int testZ = prim.getZForXY(curPixel, line);
 							// -Z is out of the screen, so ... 
-							if(j++ == 0 || testZ < bestZ){
-								System.out.println("\t\tHit: " + testZ + " < " + bestZ + " || " + j + " == " + 1 + " for " + prim.color);
-								bestZ = testZ;
-								curDraw = prim;
+							if(++j == 1 || testZ < bestZ){
+								System.out.println("\t\tHit: " + testZ + " <= " + bestZ + " || " + j + " == " + 1 + " for " + prim.color);
+								if(testZ == bestZ && j != 1){
+									zFight = true;
+								} else {
+									zFight = false;
+									bestZ = testZ;
+									curDraw = prim;
+								}
 							}
 						}
-					} else {
-						System.out.println("\tSkipping depth test: " + nextEdge + ", " + nextX + ", " + curPixel);
-					}
-
-					if(oldDraw != null){
-						raster.setRGB(curPixel++, line, oldDraw.color.getRGB());
-						oldDraw = null;
-					}
-					if (curDraw != null) {
-						if(nextEdge == null){
-							System.out.println("Warning: we probably shouldn't have to draw if there are no edges to turn us off. Look for parity errors");
+	
+						if (curDraw != null) {
+							if(nextEdge == null){
+								System.out.println("Warning: we probably shouldn't have to draw if there are no edges to turn us off. Look for parity errors");
+								inFlags.clear();
+							} else {
+								int drawWidth = (zFight && nextEdge != null) ? 1 : (((nextEdge == null) ? lineWidth : nextX) - curPixel);
+								System.out.println("Drawing " + drawWidth + " @ " + "(" + curPixel + ", " + line + ")");
+								drawWidth = Math.min(lineWidth - curPixel, Math.max(0, drawWidth));
+								System.out.println("Drawing " + drawWidth + " @ " + "(" + curPixel + ", " + line + ")");
+								int[] rgbs = new int[drawWidth];
+								Arrays.fill(rgbs, curDraw.color.getRGB());
+								raster.setRGB(curPixel, line, drawWidth, 1, rgbs, 0, 1);
+								curPixel +=  drawWidth;
+							}
+						} else if (inFlags.size() == 0 && nextEdge != null) {
+							System.out.println("Not in any polys at the moment, fast-forwarding(1) to " + nextX);
+							curPixel = nextX;
+						} else {
+							System.out.println("Nothing to draw at end of line");
+							curPixel = lineWidth;
 						}
-						int drawWidth = ((nextEdge == null) ? lineWidth : nextX) - curPixel;
-						drawWidth = Math.min(lineWidth - curPixel, Math.max(0, drawWidth));
-						int[] rgbs = new int[drawWidth];
-						Arrays.fill(rgbs, curDraw.color.getRGB());
-						raster.setRGB(curPixel, line, drawWidth, 1, rgbs, 0, 1);
-						curPixel +=  drawWidth;
-					} else if (inFlags.size() == 0 && nextEdge != null) {
-						System.out.println("Not in any polys at the moment, fast-forwarding to " + nextX);
+						for(Primitive prim : deFlags){
+							inFlags.remove(prim);
+						}
+						deFlags.clear();
+					}
+					if (inFlags.size() == 0 && nextEdge != null) {
+						System.out.println("Not in any polys at the moment, fast-forwarding(2) to " + nextX);
 						curPixel = nextX;
 					}
 
