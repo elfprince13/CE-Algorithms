@@ -134,7 +134,7 @@ public class Edge implements Collection<Point>{
 	public boolean contains(Object o) {
 		boolean ret = false;
 		if(o instanceof Point){
-			for(int i = 0; i < coords.length; i++) ret |= ((Point)o) == coords[i];
+			for(int i = 0; i < coords.length; i++) ret |= ((Point)o).equals(coords[i]);
 		}
 		return ret;
 	}

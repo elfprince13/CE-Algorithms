@@ -39,7 +39,7 @@ public class ActiveEdgeList {
 				int mnY = Math.min(sy, ey);
 				int mxY = Math.max(sy, ey);
 				EdgeListDatum newEdge = new EdgeListDatum(e, prim);
-				if (((sy == scanLine || ey == scanLine) && (sy != ey || newEdge.isSingleton())) || (scanLine == 0 && mnY < 0 && mxY > 0)){
+				if ((mnY == scanLine && (sy != ey || newEdge.isSingleton())) || (scanLine == 0 && mnY < 0 && mxY > 0)){
 					System.out.println("Activating " + prim.color.toString() + 
 							" with y-span: " + mnY + " -> " + mxY + 
 							" with x-span: " + newEdge.getMinXForLine(Projection.identity(), scanLine) + 
@@ -48,7 +48,7 @@ public class ActiveEdgeList {
 							" -> " + e.getEndPoint(Edge.EndPoint.END).getComponent(Point.CoordName.X) + ")");
 					
 					activeEdges.add(newEdge);
-					if(activeEdges.getLast().isSingleton()){
+					if(newEdge.isSingleton()){
 						System.out.println("\t->Activating dummy end");
 						activeEdges.add(new EdgeListDatum(e, prim, true));
 					}
@@ -103,7 +103,7 @@ public class ActiveEdgeList {
 			return placeHolder ? getMaxXForLine(p, scanLine) : getMinXForLine(p, scanLine);
 		}
 		
-		public boolean isSingleton(){ return owner.getArity() == 2; }
+		public boolean isSingleton(){ return owner.getArity() == 1; }
 	}
 	
 	public static class LeftToRight implements Comparator<EdgeListDatum>{

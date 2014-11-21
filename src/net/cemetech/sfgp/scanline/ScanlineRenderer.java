@@ -1,5 +1,6 @@
 package net.cemetech.sfgp.scanline;
 
+import java.awt.Color;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -81,6 +82,39 @@ public class ScanlineRenderer<T extends Projection> {
 					startEdge = nextEdge;
 					int startX = startEdge.smartXForLine(id, line);
 					int nextX;
+					nextEdge = null; // Safety valve. We want a NullPointerException if we use it before the update.
+										
+					if(inFlags.containsKey(startEdge.owner) ){
+						Edge edgeHere = startEdge.edge;
+						Point s = edgeHere.getEndPoint(EndPoint.START);
+						Point e = edgeHere.getEndPoint(EndPoint.END);
+						Edge edgeIn = inFlags.get(startEdge.owner);
+						Edge flatHere = screenPlane.projectEdge(edgeHere);
+						Edge flatIn = screenPlane.projectEdge(edgeIn);
+						Point here = new Point(startX,line,0);
+						boolean sV = edgeIn.contains(s);
+						boolean eV = edgeIn.contains(e);
+						boolean v = (sV || eV) && flatIn.contains(here) && flatHere.contains(here) && !(startEdge.owner.getArity() == 1);
+						Edge vert = new Edge(here, new Point(startX,line+1,0));
+						int dotH = v ? vert.dot(flatHere) : 0;
+						int dotIn = v ? vert.dot(flatIn) : 0;
+						if(v && (dotH * dotIn <= 0)){
+							System.out.println("\tFound horizontal vertex " + startEdge.owner.color.toString() + " at " + startEdge.smartXForLine(id, line) + ". Don't delete it yet");
+						} else {
+							System.out.println("\tNot *in* old " + startEdge.owner.color.toString() + " at " + startEdge.smartXForLine(id, line));
+							deFlags.add(startEdge.owner);
+							//inFlags.remove(startEdge.owner);
+						}
+					} else if(!inFlags.containsKey(startEdge.owner)) {
+						System.out.println("\tNow *in* new " + startEdge.owner.color.toString() + " at " + startEdge.smartXForLine(id, line));
+						inFlags.put(startEdge.owner,startEdge.edge);
+					}
+					
+					if(curPixel < startX){
+						System.out.println("\tcurPixel has fallen behind, dragging from " + curPixel + " to " + startX);
+						curPixel = startX;
+					}
+					
 					if(i.hasNext()){
 						nextEdge = i.next();
 						nextX = nextEdge.smartXForLine(id, line);
@@ -90,51 +124,29 @@ public class ScanlineRenderer<T extends Projection> {
 						nextEdge = null;
 						nextX = 0;
 					}
-										
-					if(inFlags.containsKey(startEdge.owner) ){
-						Edge edgeHere = startEdge.edge;
-						Point s = edgeHere.getEndPoint(EndPoint.START);
-						Point e = edgeHere.getEndPoint(EndPoint.END);
-						Edge edgeIn = inFlags.get(startEdge.owner);
-						boolean sV = edgeIn.contains(s);
-						boolean eV = edgeIn.contains(e);
-						Edge vert = new Edge(new Point(startX,line,0), new Point(startX,line+1,0));
-						int dotH = vert.dot(screenPlane.projectEdge(edgeHere));
-						int dotIn = vert.dot(screenPlane.projectEdge(edgeIn));
-						if((sV || eV) && (dotH * dotIn <= 0)){
-							System.out.println("\tFound horizontal vertex. Don't delete it yet");
-						} else {
-							System.out.println("\tNot *in* old " + startEdge.owner.color.toString() + " at " + startEdge.smartXForLine(id, line));
-							deFlags.add(startEdge.owner);
-							//inFlags.remove(startEdge.owner);
-						}
-					} else if(!deFlags.contains(startEdge.owner)) {
-						System.out.println("\tNow *in* new " + startEdge.owner.color.toString() + " at " + startEdge.smartXForLine(id, line));
-						inFlags.put(startEdge.owner,startEdge.edge);
-					}
-					
-					if(curPixel < startX){
-						System.out.println("curPixel has fallen behind, dragging from " + curPixel + " to " + startX);
-						curPixel = startX;
-					}
 					
 					while((nextEdge == null && curPixel < lineWidth) || (curPixel < nextX)){
 						boolean zFight = false;
+						boolean solitary = false;
 						System.out.println("\tTesting depth:");
 						curDraw = null; int bestZ = 0, j = 0;
 						for(Primitive prim : inFlags.keySet()){
-							// The +1 business here is a hack, but most of this method will require
-							// Some refactoring.
 							int testZ = prim.getZForXY(curPixel, line);
 							// -Z is out of the screen, so ... 
-							if(++j == 1 || testZ < bestZ){
+							if(++j == 1 || testZ <= bestZ){
 								System.out.println("\t\tHit: " + testZ + " <= " + bestZ + " || " + j + " == " + 1 + " for " + prim.color);
 								if(testZ == bestZ && j != 1){
 									zFight = true;
+									// Lines at the depth should out-fight faces
+									if(prim.getArity() == 1){
+										curDraw = prim;
+										solitary = deFlags.contains(prim);
+									}
 								} else {
 									zFight = false;
 									bestZ = testZ;
 									curDraw = prim;
+									solitary = deFlags.contains(prim);
 								}
 							}
 						}
@@ -144,7 +156,7 @@ public class ScanlineRenderer<T extends Projection> {
 								System.out.println("Warning: we probably shouldn't have to draw if there are no edges to turn us off. Look for parity errors");
 								inFlags.clear();
 							} else {
-								int drawWidth = (zFight && nextEdge != null) ? 1 : (((nextEdge == null) ? lineWidth : nextX) - curPixel);
+								int drawWidth = (zFight || solitary) ? 1 : (((nextEdge == null) ? lineWidth : nextX) - curPixel);
 								System.out.println("Drawing " + drawWidth + " @ " + "(" + curPixel + ", " + line + ")");
 								drawWidth = Math.min(lineWidth - curPixel, Math.max(0, drawWidth));
 								System.out.println("Drawing " + drawWidth + " @ " + "(" + curPixel + ", " + line + ")");

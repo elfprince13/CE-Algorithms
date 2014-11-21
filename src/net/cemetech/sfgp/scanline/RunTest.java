@@ -42,7 +42,7 @@ public class RunTest {
 		};
 		for(int i = 0; i < cube.length; i++) cube[i].color = faceColors[i];
 		
-		/*
+		//*
 		Primitive[] cubeSkel = {
 				Primitive.makeLine(cubeEdges[0][0]),
 				Primitive.makeLine(cubeEdges[0][1]),
@@ -59,7 +59,7 @@ public class RunTest {
 		};
 		for(int i = 0; i < cubeSkel.length; i++) cubeSkel[i].color = Color.blue;
 		//*/
-		/*
+		//*
 		Primitive[] allPrims = new Primitive[cubeSkel.length + cube.length];
 		int i = 0;
 		for(Primitive p : cube){
@@ -137,7 +137,7 @@ public class RunTest {
 		}
 		//*/
 		
-		sr.render(bi, view, cube);
+		sr.render(bi, view, cubeSkel);
 		
 		JFrame jf = new JFrame("test");
 		jf.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);

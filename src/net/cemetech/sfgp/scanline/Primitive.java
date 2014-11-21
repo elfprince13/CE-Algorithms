@@ -2,6 +2,8 @@ package net.cemetech.sfgp.scanline;
 
 import java.awt.Color;
 import java.util.LinkedList;
+import net.cemetech.sfgp.scanline.Edge.EndPoint;
+import net.cemetech.sfgp.scanline.Point.CoordName;
 
 public class Primitive {
 	public LinkedList<Edge> boundary;
@@ -38,39 +40,62 @@ public class Primitive {
 	public int getArity(){ return boundary.size(); }
 	
 	public int getZForXY(int x, int y){
+		assert(getArity() > 0);
 		if(getArity() == 1){
-			return 0; 
+			// Alpha blend! wut wut.
+			Edge v = boundary.getFirst();
+			Point vs = v.getEndPoint(EndPoint.START);
+			Point ve = v.getEndPoint(EndPoint.END);
+			
+			int sx = vs.getComponent(CoordName.X);
+			int sy = vs.getComponent(CoordName.Y);
+			int sz = vs.getComponent(CoordName.Z);
+			
+			int dx = ve.getComponent(CoordName.X) - sx;
+			int dy = ve.getComponent(CoordName.Y) - sy;
+			int dz = ve.getComponent(CoordName.Z) - sz;
+			
+			assert((dx == 0 && dy == 0) || (dx != 0 && dy != 0));
+			
+			// Theoretically these should be the same, but
+			// we'll average for robustness
+			int xNumer = dz * (x - sx);
+			int yNumer = dz * (y - sy);
+			int xEst = (dx == 0) ? Math.min(0,  dz) : (xNumer / dx);
+			int yEst = (dy == 0) ? Math.min(0,  dz) : (yNumer / dy);
+			
+			return sz + (xEst + yEst) / 2; 
 		} else {
 			Edge e1 = boundary.getFirst();
 			Edge e2 = boundary.get(1);
 			
-			Point us = e1.getEndPoint(Edge.EndPoint.START);
-			Point ue = e1.getEndPoint(Edge.EndPoint.END);
+			Point us = e1.getEndPoint(EndPoint.START);
+			Point ue = e1.getEndPoint(EndPoint.END);
 			Point u = new Point(
-					us.getComponent(Point.CoordName.X) - ue.getComponent(Point.CoordName.X),
-					us.getComponent(Point.CoordName.Y) - ue.getComponent(Point.CoordName.Y),
-					us.getComponent(Point.CoordName.Z) - ue.getComponent(Point.CoordName.Z));
-			int ux = u.getComponent(Point.CoordName.X);
-			int uy = u.getComponent(Point.CoordName.Y);
-			int uz = u.getComponent(Point.CoordName.Z);
+					us.getComponent(CoordName.X) - ue.getComponent(CoordName.X),
+					us.getComponent(CoordName.Y) - ue.getComponent(CoordName.Y),
+					us.getComponent(CoordName.Z) - ue.getComponent(CoordName.Z));
+			int ux = u.getComponent(CoordName.X);
+			int uy = u.getComponent(CoordName.Y);
+			int uz = u.getComponent(CoordName.Z);
 			
-			Point vs = e2.getEndPoint(Edge.EndPoint.START);
-			Point ve = e2.getEndPoint(Edge.EndPoint.END);
+			Point vs = e2.getEndPoint(EndPoint.START);
+			Point ve = e2.getEndPoint(EndPoint.END);
 			Point v = new Point(
-					vs.getComponent(Point.CoordName.X) - ve.getComponent(Point.CoordName.X),
-					vs.getComponent(Point.CoordName.Y) - ve.getComponent(Point.CoordName.Y),
-					vs.getComponent(Point.CoordName.Z) - ve.getComponent(Point.CoordName.Z));
-			int vx = v.getComponent(Point.CoordName.X);
-			int vy = v.getComponent(Point.CoordName.Y);
-			int vz = v.getComponent(Point.CoordName.Z);
+					vs.getComponent(CoordName.X) - ve.getComponent(CoordName.X),
+					vs.getComponent(CoordName.Y) - ve.getComponent(CoordName.Y),
+					vs.getComponent(CoordName.Z) - ve.getComponent(CoordName.Z));
+			int vx = v.getComponent(CoordName.X);
+			int vy = v.getComponent(CoordName.Y);
+			int vz = v.getComponent(CoordName.Z);
 			
 			int nx = uy * vz - uz * vy;
 			int ny = uz * vx - ux * vz;
 			int nz = ux * vy - uy * vx;
 			
-			int d = -nx * us.getComponent(Point.CoordName.X)
-					-ny * us.getComponent(Point.CoordName.Y)
-					-nz * us.getComponent(Point.CoordName.Z);
+			int d = -nx * us.getComponent(CoordName.X)
+					-ny * us.getComponent(CoordName.Y)
+					-nz * us.getComponent(CoordName.Z);
 			
 			int numer = (-d - nx * x - ny * y);
 			
