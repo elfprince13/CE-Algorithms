@@ -30,7 +30,7 @@ public class RunTest {
 			new Edge(cubePoints[0][1][1],cubePoints[1][1][1]),
 		}};
 		
-		Color[] faceColors = { Color.RED, Color.BLUE, Color.GREEN, Color.ORANGE, Color.YELLOW, Color.PINK };
+		Color[] faceColors = { Color.RED, Color.MAGENTA, Color.GREEN, Color.ORANGE, Color.YELLOW, Color.PINK };
 		Primitive[] cube = {
 				Primitive.makeQuad(cubeEdges[0][0], cubeEdges[1][0], cubeEdges[0][1], cubeEdges[1][1]),
 				Primitive.makeQuad(cubeEdges[0][2], cubeEdges[1][3], cubeEdges[0][3], cubeEdges[1][2]),
@@ -137,7 +137,7 @@ public class RunTest {
 		}
 		//*/
 		
-		sr.render(bi, view, cubeSkel);
+		sr.render(bi, view, allPrims);
 		
 		JFrame jf = new JFrame("test");
 		jf.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);

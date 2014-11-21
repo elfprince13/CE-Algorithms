@@ -152,7 +152,7 @@ public class ScanlineRenderer<T extends Projection> {
 						}
 	
 						if (curDraw != null) {
-							if(nextEdge == null){
+							if(nextEdge == null && !solitary){
 								System.out.println("Warning: we probably shouldn't have to draw if there are no edges to turn us off. Look for parity errors");
 								inFlags.clear();
 							} else {
