@@ -12,6 +12,7 @@
 		E93B36981C56CE7600A88A02 /* Edge.c in Sources */ = {isa = PBXBuildFile; fileRef = E93B36961C56CE7600A88A02 /* Edge.c */; };
 		E93B369B1C56D27900A88A02 /* Primitive.c in Sources */ = {isa = PBXBuildFile; fileRef = E93B36991C56D27900A88A02 /* Primitive.c */; };
 		E93B369E1C56DFF200A88A02 /* Projection.c in Sources */ = {isa = PBXBuildFile; fileRef = E93B369C1C56DFF200A88A02 /* Projection.c */; };
+		E93B36A11C56E8D700A88A02 /* AEL.c in Sources */ = {isa = PBXBuildFile; fileRef = E93B369F1C56E8D700A88A02 /* AEL.c */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -37,6 +38,8 @@
 		E93B369A1C56D27900A88A02 /* Primitive.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Primitive.h; sourceTree = "<group>"; };
 		E93B369C1C56DFF200A88A02 /* Projection.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = Projection.c; sourceTree = "<group>"; };
 		E93B369D1C56DFF200A88A02 /* Projection.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Projection.h; sourceTree = "<group>"; };
+		E93B369F1C56E8D700A88A02 /* AEL.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = AEL.c; sourceTree = "<group>"; };
+		E93B36A01C56E8D700A88A02 /* AEL.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AEL.h; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -70,10 +73,12 @@
 			isa = PBXGroup;
 			children = (
 				E93B368C1C56CB1300A88A02 /* main.cpp */,
-				E93B36931C56CBFA00A88A02 /* Point.c */,
-				E93B36941C56CBFA00A88A02 /* Point.h */,
+				E93B369F1C56E8D700A88A02 /* AEL.c */,
+				E93B36A01C56E8D700A88A02 /* AEL.h */,
 				E93B36961C56CE7600A88A02 /* Edge.c */,
 				E93B36971C56CE7600A88A02 /* Edge.h */,
+				E93B36931C56CBFA00A88A02 /* Point.c */,
+				E93B36941C56CBFA00A88A02 /* Point.h */,
 				E93B36991C56D27900A88A02 /* Primitive.c */,
 				E93B369A1C56D27900A88A02 /* Primitive.h */,
 				E93B369C1C56DFF200A88A02 /* Projection.c */,
@@ -138,6 +143,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				E93B36A11C56E8D700A88A02 /* AEL.c in Sources */,
 				E93B36951C56CBFA00A88A02 /* Point.c in Sources */,
 				E93B369B1C56D27900A88A02 /* Primitive.c in Sources */,
 				E93B368D1C56CB1300A88A02 /* main.cpp in Sources */,

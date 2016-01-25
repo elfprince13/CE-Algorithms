@@ -64,3 +64,12 @@ const int16_t getZForXY(const Primitive *p, const int16_t x, const int16_t y){
 	}
 	
 }
+
+
+void projectPrimitive(Projection proj, const Primitive *p, Primitive *o, void * state){
+	for(size_t i = 0; i < p->arity; ++i){
+		for (size_t j = START; j <= END; ++j) {
+			proj(p->boundary[i].coords + j,o->boundary[i].coords + j,state);
+		}
+	}
+}

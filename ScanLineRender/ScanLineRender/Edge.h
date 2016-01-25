@@ -9,7 +9,6 @@
 #ifndef Edge_h
 #define Edge_h
 
-#include <stdio.h>
 #include "Point.h"
 
 typedef enum {START = 0, END = 1} EndPoint;

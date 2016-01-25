@@ -31,10 +31,11 @@ void composeProj(const Point *p, Point *o, const ComposeProj * composition);
 void ontoProj(const Point *p, Point *o, const OntoProj * zOff);
 void scaleProj(const Point *p, Point *o, const int16_t * scale);
 
-Projection identity = &identProj;
-Projection orthographic = (Projection)(&orthoProj);
-Projection compose = (Projection)(&composeProj);
-Projection onto = (Projection)(&ontoProj);
-Projection scale = (Projection)(&scaleProj);
+extern const Projection identity;
+extern const Projection orthographic;
+extern const Projection compose;
+extern const Projection onto;
+extern const Projection scale;
+
 
 #endif /* Projection_h */

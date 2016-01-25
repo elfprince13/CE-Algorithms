@@ -50,3 +50,9 @@ void scaleProj(const Point *p, Point *o, const int16_t * scale){
 		*scale * p->z
 	};
 }
+
+const Projection identity = &identProj;
+const Projection orthographic = (Projection)(&orthoProj);
+const Projection compose = (Projection)(&composeProj);
+const Projection onto = (Projection)(&ontoProj);
+const Projection scale = (Projection)(&scaleProj);

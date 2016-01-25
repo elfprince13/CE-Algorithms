@@ -9,8 +9,8 @@
 #ifndef Primitive_h
 #define Primitive_h
 
-#include <stdio.h>
 #include "Edge.h"
+#include "Projection.h"
 
 typedef uint16_t Color;
 
@@ -42,6 +42,7 @@ inline Primitive makeQuad(const Edge *e1, const Edge *e2, const Edge *e3, const 
 }
 
 const int16_t getZForXY(const Primitive *p, const int16_t x, const int16_t y);
+void projectPrimitive(Projection proj, const Primitive *p, Primitive *o, void * state);
 
 
 #endif /* Primitive_h */
