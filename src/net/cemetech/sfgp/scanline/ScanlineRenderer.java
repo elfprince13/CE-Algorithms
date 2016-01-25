@@ -11,8 +11,13 @@ import java.util.Iterator;
 import java.util.LinkedHashSet;
 import java.util.LinkedList;
 
-import net.cemetech.sfgp.scanline.Edge.EndPoint;
-import net.cemetech.sfgp.scanline.Point.CoordName;
+import net.cemetech.sfgp.scanline.geom.Edge;
+import net.cemetech.sfgp.scanline.geom.Point;
+import net.cemetech.sfgp.scanline.geom.Primitive;
+import net.cemetech.sfgp.scanline.geom.Edge.EndPoint;
+import net.cemetech.sfgp.scanline.geom.Point.CoordName;
+import net.cemetech.sfgp.scanline.projections.CoordinatePlane;
+import net.cemetech.sfgp.scanline.projections.Projection;
 
 public class ScanlineRenderer<T extends Projection> {
 	static Projection id = Projection.identity();

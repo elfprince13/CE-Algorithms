@@ -1,10 +1,10 @@
-package net.cemetech.sfgp.scanline;
+package net.cemetech.sfgp.scanline.geom;
 
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.NoSuchElementException;
 
-import net.cemetech.sfgp.scanline.Point.CoordName;
+import net.cemetech.sfgp.scanline.geom.Point.CoordName;
 
 public class Edge implements Collection<Point>{
 	public enum EndPoint{

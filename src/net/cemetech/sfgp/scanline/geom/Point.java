@@ -1,4 +1,4 @@
-package net.cemetech.sfgp.scanline;
+package net.cemetech.sfgp.scanline.geom;
 
 import java.util.Collection;
 import java.util.Iterator;

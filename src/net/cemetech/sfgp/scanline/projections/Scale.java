@@ -1,4 +1,7 @@
-package net.cemetech.sfgp.scanline;
+package net.cemetech.sfgp.scanline.projections;
+
+import net.cemetech.sfgp.scanline.geom.Point;
+import net.cemetech.sfgp.scanline.geom.Point.CoordName;
 
 public class Scale extends Projection {
 	int scale;

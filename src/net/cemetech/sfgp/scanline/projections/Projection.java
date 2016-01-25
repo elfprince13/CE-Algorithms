@@ -1,6 +1,10 @@
-package net.cemetech.sfgp.scanline;
+package net.cemetech.sfgp.scanline.projections;
 
 import java.util.LinkedList;
+
+import net.cemetech.sfgp.scanline.geom.Edge;
+import net.cemetech.sfgp.scanline.geom.Point;
+import net.cemetech.sfgp.scanline.geom.Primitive;
 
 public abstract class Projection {
 	public static Projection identity(){

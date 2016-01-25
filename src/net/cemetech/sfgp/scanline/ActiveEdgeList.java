@@ -6,6 +6,11 @@ import java.util.LinkedList;
 import java.util.Comparator;
 import java.util.Collections;
 
+import net.cemetech.sfgp.scanline.geom.Edge;
+import net.cemetech.sfgp.scanline.geom.Point;
+import net.cemetech.sfgp.scanline.geom.Primitive;
+import net.cemetech.sfgp.scanline.projections.Projection;
+
 public class ActiveEdgeList {
 	
 	LinkedList<EdgeListDatum> activeEdges;

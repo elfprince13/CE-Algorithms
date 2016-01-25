@@ -8,6 +8,13 @@ import javax.swing.ImageIcon;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 
+import net.cemetech.sfgp.scanline.geom.Edge;
+import net.cemetech.sfgp.scanline.geom.Point;
+import net.cemetech.sfgp.scanline.geom.Primitive;
+import net.cemetech.sfgp.scanline.projections.Compose;
+import net.cemetech.sfgp.scanline.projections.Projection;
+import net.cemetech.sfgp.scanline.projections.Scale;
+
 public class RunTest {
 
 	public static void main(String[] args){

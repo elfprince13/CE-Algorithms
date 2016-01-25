@@ -1,9 +1,10 @@
-package net.cemetech.sfgp.scanline;
+package net.cemetech.sfgp.scanline.geom;
 
 import java.awt.Color;
 import java.util.LinkedList;
-import net.cemetech.sfgp.scanline.Edge.EndPoint;
-import net.cemetech.sfgp.scanline.Point.CoordName;
+
+import net.cemetech.sfgp.scanline.geom.Edge.EndPoint;
+import net.cemetech.sfgp.scanline.geom.Point.CoordName;
 
 public class Primitive {
 	public LinkedList<Edge> boundary;
@@ -14,13 +15,13 @@ public class Primitive {
 		color = Color.black;
 	}
 	
-	static Primitive makeLine(Edge e){
+	public static Primitive makeLine(Edge e){
 		LinkedList<Edge> le = new LinkedList<Edge>();
 		le.add(e);
 		return new Primitive(le);
 	}
 	
-	static Primitive makeTri(Edge e1, Edge e2, Edge e3){
+	public static Primitive makeTri(Edge e1, Edge e2, Edge e3){
 		LinkedList<Edge> le = new LinkedList<Edge>();
 		le.add(e1);
 		le.add(e2);
@@ -28,7 +29,7 @@ public class Primitive {
 		return new Primitive(le);
 	}
 	
-	static Primitive makeQuad(Edge e1, Edge e2, Edge e3, Edge e4){
+	public static Primitive makeQuad(Edge e1, Edge e2, Edge e3, Edge e4){
 		LinkedList<Edge> le = new LinkedList<Edge>();
 		le.add(e1);
 		le.add(e2);

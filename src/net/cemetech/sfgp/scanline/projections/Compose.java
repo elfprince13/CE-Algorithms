@@ -1,4 +1,6 @@
-package net.cemetech.sfgp.scanline;
+package net.cemetech.sfgp.scanline.projections;
+
+import net.cemetech.sfgp.scanline.geom.Point;
 
 public class Compose extends Projection {
 	
