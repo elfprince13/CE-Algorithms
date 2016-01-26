@@ -9,26 +9,32 @@
 #include "Primitive.h"
 
 
-Primitive makeLine(const Edge *e){
+void makeLine(const Edge *e, Primitive *o){
+	Primitive tmp;
 	Edge * b = malloc(sizeof(Edge));
 	b[0] = *e;
-	return (Primitive){0, 1, b};
+	INIT_PRIM(tmp, 0, 1, b);
+	*o = tmp;
 }
-Primitive makeTri(const Edge *e1, const Edge *e2, const Edge *e3){
+void makeTri(const Edge *e1, const Edge *e2, const Edge *e3, Primitive *o){
+	Primitive tmp;
 	Edge * b = malloc(3*sizeof(Edge));
 	b[0] = *e1;
 	b[1] = *e2;
 	b[2] = *e3;
-	return (Primitive){0, 3, b};
+	INIT_PRIM(tmp, 0, 3, b);
+	*o = tmp;
 }
 
-Primitive makeQuad(const Edge *e1, const Edge *e2, const Edge *e3, const Edge *e4){
+void makeQuad(const Edge *e1, const Edge *e2, const Edge *e3, const Edge *e4, Primitive *o){
+	Primitive tmp;
 	Edge * b = malloc(4*sizeof(Edge));
 	b[0] = *e1;
 	b[1] = *e2;
 	b[2] = *e3;
 	b[3] = *e4;
-	return (Primitive){0, 4, b};
+	INIT_PRIM(tmp, 0, 4, b);
+	*o = tmp;
 }
 
 const int16_t getZForXY(const Primitive *p, const int16_t x, const int16_t y){
@@ -59,18 +65,19 @@ const int16_t getZForXY(const Primitive *p, const int16_t x, const int16_t y){
 		
 		const Point * us = e1->coords + START,
 		* ue = e1->coords + END,
-		u = {us->x - ue->x,
-			us->y - ue->y,
-			us->z - ue->z},
 		* vs = e2->coords + START,
-		* ve = e2->coords + END,
-		v = {vs->x - ve->x,
-			vs->y - ve->y,
-			vs->z - ve->z};
+		* ve = e2->coords + END;
 		
-		const int16_t nx = u.y * v.z - u.z * v.y,
-		ny = u.z * v.x - u.x * v.z,
-		nz = u.x * v.y - u.y * v.x;
+		const int16_t ux = us->x - ue->x,
+		uy = us->y - ue->y,
+		uz = us->z - ue->z,
+		vx = vs->x - ve->x,
+		vy = vs->y - ve->y,
+		vz = vs->z - ve->z;
+		
+		const int16_t nx = uy * vz - uz * vy,
+		ny = uz * vx - ux * vz,
+		nz = ux * vy - uy * vx;
 		
 		const int32_t d = -nx * us->x
 		-ny * us->y

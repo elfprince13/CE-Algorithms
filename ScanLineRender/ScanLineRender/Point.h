@@ -18,11 +18,14 @@
 typedef struct {
 	int16_t x; int16_t y; int16_t z;
 } Point;
+#define INIT_POINT(p, xv, yv, zv) \
+(p).x = (xv); \
+(p).y = (yv); \
+(p).z = (zv)
 
 const Point origin(void);
 
 void negate(Point *);
-
-const Point negated(const Point *p);
+void negated(const Point *p, Point *o);
 
 #endif /* Point_h */

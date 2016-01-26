@@ -9,7 +9,8 @@
 #include "Point.h"
 
 const Point origin(){
-	return (Point){0, 0, 0};
+	const Point o = {0, 0, 0};
+	return o;
 }
 
 void negate(Point *p){
@@ -18,6 +19,8 @@ void negate(Point *p){
 	p->z *= -1;
 }
 
-const Point negated(const Point *p){
-	return (Point){-p->x, -p->y, -p->z};
+void negated(const Point *p, Point *o){
+	o->x = -p->x;
+	o->y = -p->y;
+	o->z = -p->z;
 }

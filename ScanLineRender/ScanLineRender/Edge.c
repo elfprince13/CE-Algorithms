@@ -15,9 +15,9 @@ void flip(Edge * e){
 	e->coords[END] = tmp;
 }
 
-const Edge flipped(const Edge *e){
-	return (Edge){{e->coords[END], e->coords[START]}};
-	
+void flipped(const Edge *e, Edge * o){
+	o->coords[START] = e->coords[END];
+	o->coords[START] = e->coords[START];	
 }
 
 int16_t dot(const Edge *u, const Edge *v){
@@ -25,13 +25,18 @@ int16_t dot(const Edge *u, const Edge *v){
 	*us= u->coords + START,
 	*ue = u->coords + END,
 	*vs = v->coords + START,
-	*ve = v->coords + END,
-	u0 = {ue->x - us->x,
-		ue->y - us->y,
-		ue->z - us->z},
-	v0 = (Point){ve->x - vs->x,
-			ve->y - vs->y,
-			ve->z - vs->z};
+	*ve = v->coords + END;
+	Point u0, v0;
+ 
+	INIT_POINT(u0,
+			   ue->x - us->x,
+			   ue->y - us->y,
+			   ue->z - us->z);
+	
+	INIT_POINT(v0,
+			   ve->x - vs->x,
+			   ve->y - vs->y,
+			   ve->z - vs->z);
 	
 	return (u0.x * v0.x) +
 	(u0.y * v0.y) +

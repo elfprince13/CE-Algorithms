@@ -21,9 +21,12 @@ void orthoProj(const Point *p, Point *o, const Edge * viewportSpan){
 	int16_t t = max->y;
 	int16_t n = min->z;
 	int16_t f = max->z;
-	*o = (Point){(2*p->x - (l + r))/(r-l),
-		(2*p->y - (t + b))/(t-b),
-		(-2*p->z + (f + n))/(f-n)};
+	Point tmp;
+	INIT_POINT(tmp,
+			   (2*p->x - (l + r))/(r-l),
+			   (2*p->y - (t + b))/(t-b),
+			   (-2*p->z + (f + n))/(f-n));
+	*o = tmp;
 }
 
 
@@ -35,20 +38,22 @@ void composeProj(const Point *p, Point *o, const ComposeProj * composition){
 
 
 void ontoProj(const Point *p, Point *o, const OntoProj * state){
-	*o = (Point){
+	Point tmp;
+	INIT_POINT(tmp,
 		state->zeroCoord == offsetof(Point, x) ? state->planeValue : p->x,
 		state->zeroCoord == offsetof(Point, y) ? state->planeValue : p->y,
-		state->zeroCoord == offsetof(Point, z) ? state->planeValue : p->z
-	};
+		state->zeroCoord == offsetof(Point, z) ? state->planeValue : p->z);
+	*o = tmp;
 }
 
 
 void scaleProj(const Point *p, Point *o, const int16_t * scale){
-	*o = (Point){
-		*scale * p->x,
-		*scale * p->y,
-		*scale * p->z
-	};
+	Point tmp;
+	INIT_POINT(tmp,
+			   *scale * p->x,
+			   *scale * p->y,
+			   *scale * p->z);
+	*o = tmp;
 }
 
 const Projection identity = &identProj;
