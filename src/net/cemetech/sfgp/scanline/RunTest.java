@@ -12,6 +12,7 @@ import net.cemetech.sfgp.scanline.geom.Edge;
 import net.cemetech.sfgp.scanline.geom.Point;
 import net.cemetech.sfgp.scanline.geom.Primitive;
 import net.cemetech.sfgp.scanline.projections.Compose;
+import net.cemetech.sfgp.scanline.projections.Orthographic;
 import net.cemetech.sfgp.scanline.projections.Projection;
 import net.cemetech.sfgp.scanline.projections.Scale;
 
@@ -97,8 +98,9 @@ public class RunTest {
 				return new Point((int)(100 + x + 0.7*z), (int)(40 + y + 0.7*z), z);
 			}
 		
-		},new Scale(100));//new Compose(new Orthographic(new Point(-h/2,-w/2,-depth),new Point(h/2,w/2,depth)), new Scale(25000));
-		//*
+		},new Scale(100));
+		view = new Compose(new Orthographic(new Point(-h/2,-w/2,-depth),new Point(h/2,w/2,depth)), new Scale(25000));
+		/*
 		int k = 0;
 		for(Primitive p: cube){
 			for(Edge e : p.boundary){

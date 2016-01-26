@@ -52,7 +52,9 @@ const int16_t getZForXY(const Primitive *p, const int16_t x, const int16_t y){
 		dz = ve->z - sz;
 		
 		/* Theoretically these should be the same, but
-		// we'll average for robustness */
+		 // we'll average for robustness */
+		/* Potentially some fixed-point accuracy issues here.
+		 * We may need dedicated routines if the compiler does the stupid thing */
 		const int32_t xNumer = dz * (x - sx),
 		yNumer = dz * (y - sy);
 		const int16_t xEst = (dx == 0) ? min(0,  dz) : (xNumer / dx),
@@ -79,6 +81,8 @@ const int16_t getZForXY(const Primitive *p, const int16_t x, const int16_t y){
 		ny = uz * vx - ux * vz,
 		nz = ux * vy - uy * vx;
 		
+		/* Potentially some fixed-point accuracy issues here.
+		 * We may need dedicated routines if the compiler does the stupid thing */
 		const int32_t d = -nx * us->x
 		-ny * us->y
 		-nz * us->z,
@@ -90,11 +94,9 @@ const int16_t getZForXY(const Primitive *p, const int16_t x, const int16_t y){
 }
 
 
-void projectPrimitive(Projection proj, const Primitive *p, Primitive *o, void * state){
-	size_t i, j;
+void projectPrimitive(const Projection * proj, const Primitive *p, Primitive *o){
+	size_t i;
 	for(i = 0; i < p->arity; ++i){
-		for (j = START; j <= END; ++j) {
-			proj(p->boundary[i].coords + j,o->boundary[i].coords + j,state);
-		}
+		projectEdge(proj, p->boundary + i, o->boundary + i);
 	}
 }

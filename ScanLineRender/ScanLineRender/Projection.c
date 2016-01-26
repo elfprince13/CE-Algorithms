@@ -32,8 +32,8 @@ void orthoProj(const Point *p, Point *o, const Edge * viewportSpan){
 
 void composeProj(const Point *p, Point *o, const ComposeProj * composition){
 	Point tmp;
-	composition->r(p, &tmp, composition->rS);
-	composition->l(&tmp, o, composition->lS);
+	composition->r.f(p, &tmp, composition->r.state);
+	composition->l.f(&tmp, o, composition->l.state);
 }
 
 
@@ -56,8 +56,8 @@ void scaleProj(const Point *p, Point *o, const int16_t * scale){
 	*o = tmp;
 }
 
-const Projection identity = &identProj;
-const Projection orthographic = (Projection)(&orthoProj);
-const Projection compose = (Projection)(&composeProj);
-const Projection onto = (Projection)(&ontoProj);
-const Projection scale = (Projection)(&scaleProj);
+const ProjectionF identity = &identProj;
+const ProjectionF orthographic = (ProjectionF)(&orthoProj);
+const ProjectionF compose = (ProjectionF)(&composeProj);
+const ProjectionF onto = (ProjectionF)(&ontoProj);
+const ProjectionF scale = (ProjectionF)(&scaleProj);

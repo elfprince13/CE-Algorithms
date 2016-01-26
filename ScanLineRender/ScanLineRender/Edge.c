@@ -7,6 +7,7 @@
 */
 
 #include "Edge.h"
+#include "Projection.h"
 
 
 void flip(Edge * e){
@@ -41,4 +42,11 @@ int16_t dot(const Edge *u, const Edge *v){
 	return (u0.x * v0.x) +
 	(u0.y * v0.y) +
 	(u0.z * v0.z) ;
+}
+
+void projectEdge(const Projection * proj, const Edge *e, Edge *o){
+	size_t j;
+	for (j = START; j <= END; ++j) {
+		proj->f(e->coords + j,o->coords + j,proj->state);
+	}
 }

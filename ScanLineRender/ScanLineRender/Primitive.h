@@ -30,7 +30,7 @@ void makeTri(const Edge *e1, const Edge *e2, const Edge *e3, Primitive *o);
 void makeQuad(const Edge *e1, const Edge *e2, const Edge *e3, const Edge *e4, Primitive *o);
 
 const int16_t getZForXY(const Primitive *p, const int16_t x, const int16_t y);
-void projectPrimitive(Projection proj, const Primitive *p, Primitive *o, void * state);
+void projectPrimitive(const Projection * proj, const Primitive *p, Primitive *o);
 
 
 #endif /* Primitive_h */
