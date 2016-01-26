@@ -237,6 +237,14 @@
 		E93B36911C56CB1300A88A02 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				OTHER_CFLAGS = (
+					"-pedantic",
+					"-ansi",
+					"-Werror=declaration-after-statement",
+					"-Werror=implicit-function-declaration",
+					"-Werror=missing-prototypes",
+					"-Werror=return-type",
+				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
 			name = Debug;
@@ -244,6 +252,14 @@
 		E93B36921C56CB1300A88A02 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				OTHER_CFLAGS = (
+					"-pedantic",
+					"-ansi",
+					"-Werror=declaration-after-statement",
+					"-Werror=implicit-function-declaration",
+					"-Werror=missing-prototypes",
+					"-Werror=return-type",
+				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
 			name = Release;

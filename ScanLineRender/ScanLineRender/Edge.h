@@ -1,10 +1,10 @@
-//
+/*
 //  Edge.h
 //  ScanLineRender
 //
 //  Created by Thomas Dickerson on 1/25/16.
 //  Copyright © 2016 StickFigure Graphic Productions. All rights reserved.
-//
+*/
 
 #ifndef Edge_h
 #define Edge_h
@@ -18,10 +18,7 @@ typedef struct {
 } Edge;
 
 void flip(Edge * );
-inline const Edge flipped(const Edge *e){
-	return (Edge){{e->coords[END], e->coords[START]}};
-	
-}
+const Edge flipped(const Edge *e);
 
 
 int16_t dot(const Edge *, const Edge *);

@@ -1,10 +1,10 @@
-//
+/*
 //  Edge.c
 //  ScanLineRender
 //
 //  Created by Thomas Dickerson on 1/25/16.
 //  Copyright © 2016 StickFigure Graphic Productions. All rights reserved.
-//
+*/
 
 #include "Edge.h"
 
@@ -15,19 +15,24 @@ void flip(Edge * e){
 	e->coords[END] = tmp;
 }
 
-int16_t dot(const Edge *u, const Edge *v){
-	const Point *us, *ue, *vs, *ve;
-	us = u->coords + START;
-	ue = u->coords + END;
-	vs = v->coords + START;
-	ve = v->coords + END;
+const Edge flipped(const Edge *e){
+	return (Edge){{e->coords[END], e->coords[START]}};
 	
-	Point u0 = {ue->x - us->x,
+}
+
+int16_t dot(const Edge *u, const Edge *v){
+	const Point
+	*us= u->coords + START,
+	*ue = u->coords + END,
+	*vs = v->coords + START,
+	*ve = v->coords + END,
+	u0 = {ue->x - us->x,
 		ue->y - us->y,
-		ue->z - us->z};
-	Point v0 = {ve->x - vs->x,
-		ve->y - vs->y,
-		ve->z - vs->z};
+		ue->z - us->z},
+	v0 = (Point){ve->x - vs->x,
+			ve->y - vs->y,
+			ve->z - vs->z};
+	
 	return (u0.x * v0.x) +
 	(u0.y * v0.y) +
 	(u0.z * v0.z) ;

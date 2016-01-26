@@ -1,10 +1,10 @@
-//
+/*
 //  Projection.h
 //  ScanLineRender
 //
 //  Created by Thomas Dickerson on 1/25/16.
 //  Copyright © 2016 StickFigure Graphic Productions. All rights reserved.
-//
+*/
 
 #ifndef Projection_h
 #define Projection_h
