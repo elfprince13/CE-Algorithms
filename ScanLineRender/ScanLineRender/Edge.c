@@ -45,8 +45,10 @@ int16_t dot(const Edge *u, const Edge *v){
 }
 
 void projectEdge(const Projection * proj, const Edge *e, Edge *o){
+	const ProjectionF f = proj->f;
+	void * state = proj->state;
 	size_t j;
 	for (j = START; j <= END; ++j) {
-		proj->f(e->coords + j,o->coords + j,proj->state);
+		f(e->coords + j,o->coords + j, state);
 	}
 }

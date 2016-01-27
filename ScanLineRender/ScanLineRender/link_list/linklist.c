@@ -7,12 +7,13 @@
 */
 
 #include "linklist.h"
+#include <stdlib.h>
 
 void stealHead(LinkN**, LinkN**);
-LinkN* merge(LinkN*, LinkN*, CompareF);
+LinkN* merge(LinkN*, LinkN*, const Comparator*);
 void divide(LinkN*, LinkN**, LinkN**);
 
-void mergeSort(LinkN** headRef, CompareF comparator) {
+void mergeSort(LinkN** headRef, const Comparator *comparator) {
 	LinkN *head = *headRef, *left, *right;
 	if(head && head->tail){
 		divide(head, &left, &right);
@@ -22,11 +23,13 @@ void mergeSort(LinkN** headRef, CompareF comparator) {
 	}
 }
 
-LinkN* merge(LinkN* left, LinkN* right, CompareF comparator){
+LinkN* merge(LinkN* left, LinkN* right, const Comparator *comparator){
+	const CompareF f = comparator->f;
+	void * state = comparator->state;
 	LinkN* result = NULL;
 	LinkN** tail;
 	for(tail = &result;left && right;tail = &((*tail)->tail)){
-		stealHead(tail, comparator(left->data, right->data) <= 0 ? &left : &right);
+		stealHead(tail, f(left->data, right->data, state) <= 0 ? &left : &right);
 	}
 	if(left){
 		*tail = left;
@@ -64,5 +67,19 @@ void divide(LinkN* source, LinkN** leftRef, LinkN** rightRef)
 		/* length < 2 cases */
 		*leftRef = source;
 		*rightRef = NULL;
+	}
+}
+
+
+
+void freeLink(LinkN *link, void(*freeData)(void*)){
+	if(freeData) freeData(link->data);
+	free(link);
+}
+void freeList(LinkN *link, void(*freeData)(void*)){
+	LinkN *head, *tail;
+	for(head = link; head; head=tail){
+		tail = head->tail;
+		freeLink(head,freeData);
 	}
 }

@@ -11,34 +11,33 @@
 
 #include "stdbool.h"
 #include "Primitive.h"
+#include "link_list/linklist.h"
 
-typedef struct _EdgeListNode {
+typedef struct _EdgeListEntry {
 	Edge * edge;
 	Primitive * owner;
 	bool placeHolder;
-	struct _EdgeListNode * next;
-} EdgeListNode;
+} EdgeListEntry;
 
 #define INIT_ELN(n, ev, ov, pv) \
 (n).edge = (ev);\
 (n).owner = (ov);\
-(n).placeHolder = (pv);\
-(n).next = NULL
+(n).placeHolder = (pv)
 
 #define INIT_ELN_EZ(n, ev, ov) INIT_ELN(n, ev, ov, false)
 
-int16_t getMinXForLine(const EdgeListNode * node, const Projection * p, const int16_t scanLine);
-int16_t getMaxXForLine(const EdgeListNode * node, const Projection * p, const int16_t scanLine);
-int16_t getSmartXForLine(const EdgeListNode * node, const Projection * p, const int16_t scanLine);
-bool nodeHoldsSingleton(const EdgeListNode * node);
+int16_t getMinXForLine(const EdgeListEntry * node, const Projection * p, const int16_t scanLine);
+int16_t getMaxXForLine(const EdgeListEntry * node, const Projection * p, const int16_t scanLine);
+int16_t getSmartXForLine(const EdgeListEntry * node, const Projection * p, const int16_t scanLine);
+bool nodeHoldsSingleton(const EdgeListEntry * node);
 
 typedef struct {
-	EdgeListNode * activeEdges;
+	LinkN* activeEdges;
 	int16_t scanLine;
 } ActiveEdgeList;
 
 const ActiveEdgeList freshAEL(void);
-void stepEdges(ActiveEdgeList *ael, const void * activePrims);
+void stepEdges(ActiveEdgeList *ael, const LinkN* activePrims);
 
 
 #endif /* AEL_h */
