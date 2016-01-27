@@ -26,9 +26,9 @@ typedef struct _EdgeListEntry {
 
 #define INIT_ELN_EZ(n, ev, ov) INIT_ELN(n, ev, ov, false)
 
-int16_t getMinXForLine(const EdgeListEntry * node, const Projection * p, const int16_t scanLine);
-int16_t getMaxXForLine(const EdgeListEntry * node, const Projection * p, const int16_t scanLine);
-int16_t getSmartXForLine(const EdgeListEntry * node, const Projection * p, const int16_t scanLine);
+int16_t getMinXForLine(const EdgeListEntry * node, const int16_t scanLine);
+int16_t getMaxXForLine(const EdgeListEntry * node, const int16_t scanLine);
+int16_t getSmartXForLine(const EdgeListEntry * node, const int16_t scanLine);
 bool nodeHoldsSingleton(const EdgeListEntry * node);
 
 typedef struct {

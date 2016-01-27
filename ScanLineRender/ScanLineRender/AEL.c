@@ -8,43 +8,44 @@
 
 #include "AEL.h"
 
-int16_t getMinXForLine(const EdgeListEntry * node, const Projection * p, const int16_t scanLine){
-	Edge projEdge;
-	int16_t sx, ex, sy, ey, run, rise, ret;
-	int32_t dxp;
-	projectEdge(p, node->edge, &projEdge);
-	sx = projEdge.coords[START].x,
-	sy = projEdge.coords[START].y,
-	ex = projEdge.coords[END].x,
-	ey = projEdge.coords[END].y,
+int16_t getMinXForLine(const EdgeListEntry * node, const int16_t scanLine){
+	const Point *coords = node->edge->coords;
+	const int16_t sx = coords[START].x,
+	sy = coords[START].y,
+	ex = coords[END].x,
+	ey = coords[END].y,
 	run = ex - sx,
-	rise = ey - sy,
-	/* Potentially some fixed-point accuracy issues here. 
-	 * We may need dedicated routines if the compiler does the stupid thing */
-	ret = rise ? (((dxp = (scanLine - sy) * run) / rise) + sx) : min(ex, sx);
+	rise = ey - sy;
+	int16_t ret;
+	if(rise){
+		/* Potentially some fixed-point accuracy issues here.
+		 * We may need dedicated routines if the compiler does the stupid thing */
+		const int32_t dxp = (scanLine - sy) * run;
+		ret = (dxp / rise) + sx;
+	} else {
+		ret = min(ex, sx);
+	}
 	return ret;
 }
 
-int16_t getMaxXForLine(const EdgeListEntry * node, const Projection * p, const int16_t scanLine){
-	Edge projEdge;
-	int16_t sx, ex, sy, ey, run, rise, minBelow, minAbove, ret;
-	projectEdge(p, node->edge, &projEdge);
-	sx = projEdge.coords[START].x,
-	sy = projEdge.coords[START].y,
-	ex = projEdge.coords[END].x,
-	ey = projEdge.coords[END].y,
+int16_t getMaxXForLine(const EdgeListEntry * node, const int16_t scanLine){
+	const Point *coords = node->edge->coords;
+	const int16_t sx = coords[START].x,
+	sy = coords[START].y,
+	ex = coords[END].x,
+	ey = coords[END].y,
 	rise = sy - ey,
 	run = sx - ex,
-	minBelow = getMinXForLine(node, p, scanLine - 1),
-	minAbove = getMinXForLine(node, p, scanLine + 1),
+	minBelow = getMinXForLine(node, scanLine - 1),
+	minAbove = getMinXForLine(node, scanLine + 1),
 	/* Potentially some fixed-point accuracy issues here.
 	 * We may need dedicated routines if the compiler does the stupid thing */
 	ret = rise ? (run ? (max(minBelow, minAbove) - 1) : sx) : max(sx, ex);
 	return ret;
 }
 
-int16_t getSmartXForLine(const EdgeListEntry * node, const Projection * p, const int16_t scanLine){
-	return (node->placeHolder ? getMaxXForLine : getMinXForLine)(node, p, scanLine);
+int16_t getSmartXForLine(const EdgeListEntry * node, const int16_t scanLine){
+	return (node->placeHolder ? getMaxXForLine : getMinXForLine)(node, scanLine);
 }
 
 bool nodeHoldsSingleton(const EdgeListEntry * node){
@@ -132,6 +133,5 @@ LinkN* makeLink(Edge *e, Primitive *p, bool s){
 }
 
 int16_t leftToRightF(EdgeListEntry *o1, EdgeListEntry *o2, int16_t *scanLine){
-	const static Projection id = {&identProj, NULL};
-	return getSmartXForLine(o1, &id, *scanLine) - getSmartXForLine(o2, &id, *scanLine);
+	return getSmartXForLine(o1, *scanLine) - getSmartXForLine(o2, *scanLine);
 }
