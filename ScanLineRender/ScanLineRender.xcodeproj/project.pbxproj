@@ -16,6 +16,7 @@
 		E95714EC1C581551006FBFB1 /* misc.c in Sources */ = {isa = PBXBuildFile; fileRef = E95714E31C581551006FBFB1 /* misc.c */; };
 		E95714ED1C581551006FBFB1 /* red_black_tree.c in Sources */ = {isa = PBXBuildFile; fileRef = E95714E51C581551006FBFB1 /* red_black_tree.c */; };
 		E95714EE1C581551006FBFB1 /* stack.c in Sources */ = {isa = PBXBuildFile; fileRef = E95714E81C581551006FBFB1 /* stack.c */; };
+		E95714F31C582399006FBFB1 /* linklist.c in Sources */ = {isa = PBXBuildFile; fileRef = E95714F11C582399006FBFB1 /* linklist.c */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -50,6 +51,8 @@
 		E95714E61C581551006FBFB1 /* red_black_tree.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = red_black_tree.h; sourceTree = "<group>"; };
 		E95714E81C581551006FBFB1 /* stack.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = stack.c; sourceTree = "<group>"; };
 		E95714E91C581551006FBFB1 /* stack.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = stack.h; sourceTree = "<group>"; };
+		E95714F11C582399006FBFB1 /* linklist.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = linklist.c; sourceTree = "<group>"; };
+		E95714F21C582399006FBFB1 /* linklist.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = linklist.h; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -82,6 +85,7 @@
 		E93B368B1C56CB1300A88A02 /* ScanLineRender */ = {
 			isa = PBXGroup;
 			children = (
+				E95714F01C58237C006FBFB1 /* link_list */,
 				E95714DF1C581551006FBFB1 /* rb_tree */,
 				E93B368C1C56CB1300A88A02 /* main.cpp */,
 				E93B369F1C56E8D700A88A02 /* AEL.c */,
@@ -110,6 +114,15 @@
 				E95714E91C581551006FBFB1 /* stack.h */,
 			);
 			path = rb_tree;
+			sourceTree = "<group>";
+		};
+		E95714F01C58237C006FBFB1 /* link_list */ = {
+			isa = PBXGroup;
+			children = (
+				E95714F11C582399006FBFB1 /* linklist.c */,
+				E95714F21C582399006FBFB1 /* linklist.h */,
+			);
+			path = link_list;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -173,6 +186,7 @@
 				E93B36951C56CBFA00A88A02 /* Point.c in Sources */,
 				E93B369B1C56D27900A88A02 /* Primitive.c in Sources */,
 				E95714EC1C581551006FBFB1 /* misc.c in Sources */,
+				E95714F31C582399006FBFB1 /* linklist.c in Sources */,
 				E95714ED1C581551006FBFB1 /* red_black_tree.c in Sources */,
 				E93B368D1C56CB1300A88A02 /* main.cpp in Sources */,
 				E93B36981C56CE7600A88A02 /* Edge.c in Sources */,
