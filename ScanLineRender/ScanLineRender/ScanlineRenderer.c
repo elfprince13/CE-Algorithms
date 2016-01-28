@@ -31,11 +31,15 @@ void render(Color *raster, int16_t lineWidth, int16_t numLines, const Primitive 
 	static OntoProj screenPlaneData = {offsetof(Point, z), 0};
 	static const Projection screenPlane = {(ProjectionF)(&ontoProj), &screenPlaneData};
 	Primitive *projectedGeometry = malloc(geomCount * sizeof(Primitive));
+	Edge *projectedEdges; size_t edgeCount;
 	const Primitive* projGEnd = projectedGeometry + geomCount;
 	size_t *bucketEnd = calloc(numLines, sizeof(size_t)); /* delta encode bucket start */
 	size_t i;
-	for(i = 0; i < geomCount; ++i){
-		projectPrimitive(p, geometry, projectedGeometry);
+	for(i = 0, edgeCount = 0; i < geomCount; edgeCount += geometry[i++].arity);
+	projectedEdges = malloc(edgeCount * sizeof(Edge));
+	for(i = 0, edgeCount = 0; i < geomCount; edgeCount += geometry[i++].arity){
+		INIT_PRIM(projectedGeometry[i], geometry[i].color, geometry[i].arity, projectedEdges + edgeCount);
+		projectPrimitive(p, geometry+i, projectedGeometry+i);
 	}
 	qsort(projectedGeometry, geomCount, sizeof(Primitive), topToBottomF);
 	{
@@ -67,14 +71,16 @@ void render(Color *raster, int16_t lineWidth, int16_t numLines, const Primitive 
 		RBTreeMapInit(&inFlags, pointerDiffF, NULL, &RBMapNodeAlloc, NULL);
 		RBTreeInit(&deFlags, pointerDiffF, NULL, &RBNodeAlloc);
 		for(line = 0; line < numLines; (++line), (raster += lineWidth)) {
-			LinkN* primIt, *p;
+			LinkN *primIt, *p, *nextP;
 			const size_t maxPrimI = bucketEnd[line];
 			size_t keySetCt = 0;
-			for (p = NULL, primIt = activePrimSet; primIt; (p=primIt),(primIt=primIt->tail)) {
-				const Primitive* prim = p->data;
+			for (p = NULL, primIt = activePrimSet; primIt; (p=primIt),(primIt=nextP)) {
+				const Primitive* prim = primIt->data;
 				const int16_t top = topMostPrimPoint(prim);
+				nextP = primIt->tail;
 				if(top < line){
 					removeLink(&activePrimSet, primIt, p);
+					primIt = p; /* We don't want to advance p into garbage data */
 				}
 			}
 			
@@ -199,7 +205,6 @@ void render(Color *raster, int16_t lineWidth, int16_t numLines, const Primitive 
 							}
 							RBTreeClear(&deFlags);
 						}
-						
 						if (!keySetCt && nextEdge) {
 							curPixel = nextX;
 						}
@@ -208,7 +213,6 @@ void render(Color *raster, int16_t lineWidth, int16_t numLines, const Primitive 
 				}
 			}
 			
-			
 			/* This data was for the old line, we don't care anymore */
 			RBTreeClear(&deFlags);
 			RBTreeClear((rb_red_blk_tree*)(&inFlags));
@@ -216,12 +220,11 @@ void render(Color *raster, int16_t lineWidth, int16_t numLines, const Primitive 
 		RBTreeDestroy(&deFlags, false);
 		RBTreeDestroy((rb_red_blk_tree*)(&inFlags), false);
 	}
-	
+	free(projectedEdges);
+	free(projectedGeometry);
 }
 
-
-
-int pointerDiff(const Primitive*p1, const Primitive*p2){
+int pointerDiff(const Primitive *p1, const Primitive *p2){
 	const ptrdiff_t delta = p1 - p2;
 	return delta ? (delta < 0 ? -1 : 1) : 0;
 }

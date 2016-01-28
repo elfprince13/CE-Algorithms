@@ -70,15 +70,17 @@ void stepEdges(ActiveEdgeList *ael, const LinkN* activePrims){
 	const static Comparator leftToRight = {(CompareF)(&leftToRightF), &scanLine};
 	scanLine = ++(ael->scanLine);
 	{
-		LinkN *i, *p;
-		for(p = NULL, i = ael->activeEdges; i; (p = i),(i = i->tail)){
+		LinkN *i, *p, *nextP;
+		for(p = NULL, i = ael->activeEdges; i; (p = i),(i = nextP)){
 			const EdgeListEntry* edge = i->data;
 			const int16_t ys = edge->edge->coords[START].y,
 			ye = edge->edge->coords[END].y,
 			edgeEnd = max(ys, ye);
+			nextP = i->tail;
 			/* const int16_t lowEnd = min(ys, ye); */
 			if(edgeEnd < scanLine){
 				removeLink(ael, i, p);
+				i = p; /* We don't want to advance p into garbage data */
 			}
 		}
 	}
@@ -86,7 +88,8 @@ void stepEdges(ActiveEdgeList *ael, const LinkN* activePrims){
 		const LinkN *i;
 		for(i = activePrims; i; i = i->tail){
 			Primitive *prim = i->data;
-			size_t j; uint16_t jMax = prim->arity;
+			size_t j;
+			uint16_t jMax = prim->arity;
 			for(j = 0; j < jMax; ++j){
 				Edge *e = prim->boundary + j;
 				const int16_t sy = e->coords[START].y,

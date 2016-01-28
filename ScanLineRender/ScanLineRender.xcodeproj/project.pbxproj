@@ -7,7 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		E93B368D1C56CB1300A88A02 /* main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E93B368C1C56CB1300A88A02 /* main.cpp */; };
+		E93B368D1C56CB1300A88A02 /* main.c in Sources */ = {isa = PBXBuildFile; fileRef = E93B368C1C56CB1300A88A02 /* main.c */; };
 		E93B36951C56CBFA00A88A02 /* Point.c in Sources */ = {isa = PBXBuildFile; fileRef = E93B36931C56CBFA00A88A02 /* Point.c */; };
 		E93B36981C56CE7600A88A02 /* Edge.c in Sources */ = {isa = PBXBuildFile; fileRef = E93B36961C56CE7600A88A02 /* Edge.c */; };
 		E93B369B1C56D27900A88A02 /* Primitive.c in Sources */ = {isa = PBXBuildFile; fileRef = E93B36991C56D27900A88A02 /* Primitive.c */; };
@@ -34,7 +34,7 @@
 
 /* Begin PBXFileReference section */
 		E93B36891C56CB1300A88A02 /* ScanLineRender */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = ScanLineRender; sourceTree = BUILT_PRODUCTS_DIR; };
-		E93B368C1C56CB1300A88A02 /* main.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = main.cpp; sourceTree = "<group>"; };
+		E93B368C1C56CB1300A88A02 /* main.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = main.c; sourceTree = "<group>"; };
 		E93B36931C56CBFA00A88A02 /* Point.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = Point.c; sourceTree = "<group>"; };
 		E93B36941C56CBFA00A88A02 /* Point.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Point.h; sourceTree = "<group>"; };
 		E93B36961C56CE7600A88A02 /* Edge.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = Edge.c; sourceTree = "<group>"; };
@@ -90,7 +90,7 @@
 			children = (
 				E95714F01C58237C006FBFB1 /* link_list */,
 				E95714DF1C581551006FBFB1 /* rb_tree */,
-				E93B368C1C56CB1300A88A02 /* main.cpp */,
+				E93B368C1C56CB1300A88A02 /* main.c */,
 				E93B369F1C56E8D700A88A02 /* AEL.c */,
 				E93B36A01C56E8D700A88A02 /* AEL.h */,
 				E93B36961C56CE7600A88A02 /* Edge.c */,
@@ -194,7 +194,7 @@
 				E95714F31C582399006FBFB1 /* linklist.c in Sources */,
 				E95714ED1C581551006FBFB1 /* red_black_tree.c in Sources */,
 				E95714F61C593AD5006FBFB1 /* ScanlineRenderer.c in Sources */,
-				E93B368D1C56CB1300A88A02 /* main.cpp in Sources */,
+				E93B368D1C56CB1300A88A02 /* main.c in Sources */,
 				E93B36981C56CE7600A88A02 /* Edge.c in Sources */,
 				E93B369E1C56DFF200A88A02 /* Projection.c in Sources */,
 			);
