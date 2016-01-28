@@ -3,6 +3,7 @@
 #endif
 #include"misc.h"
 #include"stack.h"
+#include <stdbool.h>
 
 /*  CONVENTIONS:  All data structures for red-black trees have the prefix */
 /*                "rb_" to prevent name conflicts. */
@@ -24,19 +25,23 @@
 #define DEBUG_ASSERT 1
 
 typedef struct rb_red_blk_node {
-  void* key;
+  const void* key;
   int red; /* if red=0 then the node is black */
   struct rb_red_blk_node* left;
   struct rb_red_blk_node* right;
   struct rb_red_blk_node* parent;
 } rb_red_blk_node;
 
+rb_red_blk_node* RBNodeAlloc(void);
+
 typedef struct rb_red_blk_map_node {
 	rb_red_blk_node node;
 	void* info;
 } rb_red_blk_map_node;
 
-/* Compare(a,b) should return 1 if *a > *b, -1 if *a < *b, and 0 otherwise */
+rb_red_blk_node* RBMapNodeAlloc(void);
+
+/* Compare(a,b) should return +Val if *a > *b, -Val if *a < *b, and 0 otherwise */
 /* Destroy(a) takes a pointer to whatever key might be and frees it accordingly */
 typedef struct rb_red_blk_tree {
   int (*Compare)(const void* a, const void* b); 
@@ -69,10 +74,11 @@ void RBTreeMapInit(rb_red_blk_map_tree* ,
 				   rb_red_blk_node* (*AllocNode)(void),
 				   void (*InfoDestFunc)(void*));
 
-rb_red_blk_node * RBTreeInsert(rb_red_blk_tree*, void* key);
+rb_red_blk_node * RBTreeInsert(rb_red_blk_tree*, const void* key);
 void RBDelete(rb_red_blk_tree* , rb_red_blk_node* );
-void RBTreeDestroy(rb_red_blk_tree*);
-rb_red_blk_node* TreePredecessor(rb_red_blk_tree*,rb_red_blk_node*);
-rb_red_blk_node* TreeSuccessor(rb_red_blk_tree*,rb_red_blk_node*);
-rb_red_blk_node* RBExactQuery(rb_red_blk_tree*, void*);
-stk_stack * RBEnumerate(rb_red_blk_tree* tree,void* low, void* high);
+void RBTreeDestroy(rb_red_blk_tree*, bool ownTree);
+void RBTreeClear(rb_red_blk_tree*);
+rb_red_blk_node* TreePredecessor(const rb_red_blk_tree*,const rb_red_blk_node*);
+rb_red_blk_node* TreeSuccessor(const rb_red_blk_tree*,const rb_red_blk_node*);
+rb_red_blk_node* RBExactQuery(const rb_red_blk_tree*, const void*);
+void RBEnumerate(const rb_red_blk_tree* tree,const void* low, const void* high, stk_stack *enumResultStack);

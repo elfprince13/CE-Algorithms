@@ -9,9 +9,9 @@
 #include "linklist.h"
 #include <stdlib.h>
 
-void stealHead(LinkN**, LinkN**);
-LinkN* merge(LinkN*, LinkN*, const Comparator*);
-void divide(LinkN*, LinkN**, LinkN**);
+static void stealHead(LinkN**, LinkN**);
+static LinkN* merge(LinkN*, LinkN*, const Comparator*);
+static void divide(LinkN*, LinkN**, LinkN**);
 
 void mergeSort(LinkN** headRef, const Comparator *comparator) {
 	LinkN *head = *headRef, *left, *right;

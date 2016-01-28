@@ -58,21 +58,20 @@ const ActiveEdgeList freshAEL(){
 	return ael;
 }
 
-void removeLink(ActiveEdgeList *ael, LinkN* target, LinkN* prev);
-void linkFront(ActiveEdgeList *ael, LinkN* target);
-LinkN* makeLink(Edge *e, Primitive *p, bool s);
+static void removeLink(ActiveEdgeList *ael, LinkN* target, LinkN* prev);
+static void linkFront(ActiveEdgeList *ael, LinkN* target);
+static LinkN* makeLink(Edge *e, Primitive *p, bool s);
 #define makeLinkEZ(e, p) makeLink(e,p,false)
 
-int16_t leftToRightF(EdgeListEntry *, EdgeListEntry *, int16_t *);
+static int16_t leftToRightF(EdgeListEntry *, EdgeListEntry *, int16_t *);
 
 void stepEdges(ActiveEdgeList *ael, const LinkN* activePrims){
 	static int16_t scanLine;
 	const static Comparator leftToRight = {(CompareF)(&leftToRightF), &scanLine};
-	
 	scanLine = ++(ael->scanLine);
 	{
 		LinkN *i, *p;
-		for(p = NULL, i = ael->activeEdges; i; ((p = i),(i = i->tail))){
+		for(p = NULL, i = ael->activeEdges; i; (p = i),(i = i->tail)){
 			const EdgeListEntry* edge = i->data;
 			const int16_t ys = edge->edge->coords[START].y,
 			ye = edge->edge->coords[END].y,
@@ -114,7 +113,8 @@ void removeLink(ActiveEdgeList *ael, LinkN* target, LinkN* prev){
 	} else {
 		ael->activeEdges = target->tail;
 	}
-	/* Entries don't own the primitives they point to */
+	/* Entries don't own the primitives they point to, 
+	 * so we can get away with a simple free  */
 	freeLink(target, &free);
 }
 

@@ -37,6 +37,8 @@ typedef struct stk_stack {
 /*  I didn't think additional comments would be useful */
 stk_stack * StackJoin(stk_stack * stack1, stk_stack * stack2);
 stk_stack * StackCreate(void);
+const stk_stack FreshStack(void);
+void StackClear(stk_stack * theStack,void DestFunc(void * a));
 void StackDestroy(stk_stack * theStack,void DestFunc(void * a));
 void StackPush(stk_stack * theStack, DATA_TYPE newInfoPointer);
 void * StackPop(stk_stack * theStack);

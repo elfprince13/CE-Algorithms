@@ -16,12 +16,16 @@ stk_stack * StackJoin(stk_stack * stack1, stk_stack * stack2) {
   }
 }
 
+const stk_stack FreshStack(void) {
+	const stk_stack ret = {NULL, NULL};
+	return ret;
+}
+
 stk_stack * StackCreate() {
-  stk_stack * newStack;
-  
-  newStack=(stk_stack *) SafeMalloc(sizeof(stk_stack));
-  newStack->top=newStack->tail=NULL;
-  return(newStack);
+	stk_stack * newStack;
+	newStack=(stk_stack *) SafeMalloc(sizeof(stk_stack));
+	*newStack = FreshStack();
+	return(newStack);
 }
 
 
@@ -59,18 +63,21 @@ DATA_TYPE StackPop(stk_stack * theStack) {
   return(popInfo);
 }
 
-void StackDestroy(stk_stack * theStack,void DestFunc(void * a)) {
-  stk_stack_node * x=theStack->top;
-  stk_stack_node * y;
+void StackClear(stk_stack * theStack,void DestFunc(void * a)){
+	if(theStack) {
+		stk_stack_node * x=theStack->top;
+		stk_stack_node * y;
+		while(x) {
+			y=x->next;
+			DestFunc(x->info);
+			free(x);
+			x=y;
+		}
+	}
+}
 
-  if(theStack) {
-    while(x) {
-      y=x->next;
-      DestFunc(x->info);
-      free(x);
-      x=y;
-    }
-    free(theStack);
-  }
-} 
+void StackDestroy(stk_stack * theStack,void DestFunc(void * a)) {
+	StackClear(theStack, DestFunc);
+	free(theStack);
+}
     
