@@ -130,6 +130,7 @@ public class ScanlineRenderer<T extends Projection> {
 						nextX = 0;
 					}
 					
+					nextX = Math.min(lineWidth, nextX);
 					while((nextEdge == null && curPixel < lineWidth) || (curPixel < nextX)){
 						boolean zFight = false;
 						boolean solitary = false;
@@ -157,10 +158,12 @@ public class ScanlineRenderer<T extends Projection> {
 						}
 	
 						if (curDraw != null) {
+							/*
 							if(nextEdge == null && !solitary){
 								System.out.println("Warning: we probably shouldn't have to draw if there are no edges to turn us off. Look for parity errors");
 								inFlags.clear();
 							} else {
+							//*/
 								int drawWidth = (zFight || solitary) ? 1 : (((nextEdge == null) ? lineWidth : nextX) - curPixel);
 								System.out.println("Drawing " + drawWidth + " @ " + "(" + curPixel + ", " + line + ")");
 								drawWidth = Math.min(lineWidth - curPixel, Math.max(0, drawWidth));
@@ -169,7 +172,7 @@ public class ScanlineRenderer<T extends Projection> {
 								Arrays.fill(rgbs, curDraw.color.getRGB());
 								raster.setRGB(curPixel, line, drawWidth, 1, rgbs, 0, 1);
 								curPixel +=  drawWidth;
-							}
+							//}
 						} else if (inFlags.size() == 0 && nextEdge != null) {
 							System.out.println("Not in any polys at the moment, fast-forwarding(1) to " + nextX);
 							curPixel = nextX;

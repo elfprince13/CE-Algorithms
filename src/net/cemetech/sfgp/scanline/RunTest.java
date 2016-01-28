@@ -95,11 +95,11 @@ public class RunTest {
 				int x = p.getComponent(Point.CoordName.X);
 				int y = p.getComponent(Point.CoordName.Y);
 				int z = p.getComponent(Point.CoordName.Z);
-				return new Point((int)(100 + x + 0.7*z), (int)(40 + y + 0.7*z), z);
+				return new Point((int)(170 + x + 0.7*z), (int)(40 + y + 0.7*z), z);
 			}
 		
 		},new Scale(100));
-		view = new Compose(new Orthographic(new Point(-h/2,-w/2,-depth),new Point(h/2,w/2,depth)), new Scale(25000));
+		//view = new Compose(new Orthographic(new Point(-h/2,-w/2,-depth),new Point(h/2,w/2,depth)), new Scale(25000));
 		/*
 		int k = 0;
 		for(Primitive p: cube){
