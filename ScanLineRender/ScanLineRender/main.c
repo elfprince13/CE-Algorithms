@@ -7,6 +7,8 @@
 */
 
 #include "ScanlineRenderer.h"
+#include <netpbm/ppm.h>
+#include <memory.h>
 
 typedef enum {
 	RED = 0xf800,
@@ -23,14 +25,18 @@ typedef struct {
 	int16_t y;
 	int16_t zNum;
 	int16_t zDen;
+	int16_t scale;
 } DrawCoords;
 
-static DrawCoords drawCoords = {170, 40, 7, 10};
+static DrawCoords drawCoords = {100, 40, 7, 10, 100};
 
 void viewF(const Point *p, Point *o, const DrawCoords *offset);
 void viewF(const Point *p, Point *o, const DrawCoords *offset){
-	int16_t zOff = (p->z * offset->zNum) / offset->zDen;
-	INIT_POINT(*o, offset->x + p->x + zOff, offset->y + p->y + zOff, p->z);
+	const int16_t x = offset->scale * p->x,
+	 y = offset->scale * p->y,
+	z = offset->scale * p->z,
+	zOff = (z * offset->zNum) / offset->zDen;
+	INIT_POINT(*o, offset->x + x + zOff, offset->y + y + zOff, z);
 }
 
 const Projection viewProj = {(ProjectionF)(&viewF),&drawCoords};
@@ -46,7 +52,13 @@ int main(int argc, const char * argv[]) {
 	static Primitive cubeAndSkel[18];
 	int16_t numLines = 240;
 	int16_t lineWidth = 320;
-	Color *raster = (Color*)calloc(numLines * lineWidth, sizeof(Color));
+	size_t rasterByteCount = numLines * lineWidth * sizeof(Color);
+	Color *raster = (Color*)malloc(rasterByteCount);
+	pixel** ppm_raster;
+	size_t x,y;
+	FILE *fp;
+	
+	pm_proginit(&argc, argv);
 
 	
 	INIT_EDGE(cubeEdges[0][0],cubePoints[0][0][0],cubePoints[0][0][1]);
@@ -108,7 +120,31 @@ int main(int argc, const char * argv[]) {
 	INIT_PRIM(cubeAndSkel[00], BLUE, 1, cubeEdges[2] + 2);
 	INIT_PRIM(cubeAndSkel[00], BLUE, 1, cubeEdges[2] + 3);
 	
+	memset(raster, 0xff, rasterByteCount);
 	render(raster, lineWidth, numLines, cubeAndSkel, 18, &viewProj);
+	
+	ppm_raster = ppm_allocarray(lineWidth, numLines);
+	
+	for(y = 0; y < numLines; y++){
+		for(x = 0; x < lineWidth; x++){
+			uint16_t rgb = raster[y * lineWidth + x];
+			uint32_t r = (rgb >> 11) << 3,
+			 g = ((rgb >> 5) & 0x3f) << 2,
+			b = (rgb & 0x1f) << 3;
+			ppm_raster[y][x].r = r;
+			ppm_raster[y][x].g = g;
+			ppm_raster[y][x].b = b;
+		}
+	}
+	
+	if((fp = fopen("out.ppm", "wb"))){
+		ppm_writeppm(fp, ppm_raster, lineWidth, numLines, 255, 0);
+		fclose(fp);
+	}
+	
+	ppm_freearray(ppm_raster, numLines);
+	
+	
 	
     return 0;
 }

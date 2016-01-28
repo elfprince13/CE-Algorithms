@@ -18,6 +18,7 @@
 		E95714EE1C581551006FBFB1 /* stack.c in Sources */ = {isa = PBXBuildFile; fileRef = E95714E81C581551006FBFB1 /* stack.c */; };
 		E95714F31C582399006FBFB1 /* linklist.c in Sources */ = {isa = PBXBuildFile; fileRef = E95714F11C582399006FBFB1 /* linklist.c */; };
 		E95714F61C593AD5006FBFB1 /* ScanlineRenderer.c in Sources */ = {isa = PBXBuildFile; fileRef = E95714F41C593AD5006FBFB1 /* ScanlineRenderer.c */; };
+		E9820ADC1C5AC05200ACCF82 /* libnetpbm.a in Frameworks */ = {isa = PBXBuildFile; fileRef = E9820ADB1C5AC05200ACCF82 /* libnetpbm.a */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -56,6 +57,7 @@
 		E95714F21C582399006FBFB1 /* linklist.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = linklist.h; sourceTree = "<group>"; };
 		E95714F41C593AD5006FBFB1 /* ScanlineRenderer.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = ScanlineRenderer.c; sourceTree = "<group>"; };
 		E95714F51C593AD5006FBFB1 /* ScanlineRenderer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ScanlineRenderer.h; sourceTree = "<group>"; };
+		E9820ADB1C5AC05200ACCF82 /* libnetpbm.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libnetpbm.a; path = ../../../../../../opt/local/lib/libnetpbm.a; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -63,6 +65,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				E9820ADC1C5AC05200ACCF82 /* libnetpbm.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -72,6 +75,7 @@
 		E93B36801C56CB1300A88A02 = {
 			isa = PBXGroup;
 			children = (
+				E9820ADB1C5AC05200ACCF82 /* libnetpbm.a */,
 				E93B368B1C56CB1300A88A02 /* ScanLineRender */,
 				E93B368A1C56CB1300A88A02 /* Products */,
 			);
@@ -285,6 +289,11 @@
 		E93B36911C56CB1300A88A02 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				HEADER_SEARCH_PATHS = /opt/local/include;
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					/opt/local/lib,
+				);
 				OTHER_CFLAGS = (
 					"-pedantic",
 					"-ansi",
@@ -300,6 +309,11 @@
 		E93B36921C56CB1300A88A02 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				HEADER_SEARCH_PATHS = /opt/local/include;
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					/opt/local/lib,
+				);
 				OTHER_CFLAGS = (
 					"-pedantic",
 					"-ansi",
