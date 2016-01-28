@@ -52,3 +52,17 @@ void projectEdge(const Projection * proj, const Edge *e, Edge *o){
 		f(e->coords + j,o->coords + j, state);
 	}
 }
+
+
+bool contains(const Edge *e, const Point *p){
+	size_t i;
+	bool ret = false;
+	const Point* coords = e->coords;
+	for(i = START; i <= END; ++i ){
+		const Point* coord = coords + i;
+		if(coord->x == p->x && coord->y == p->y){
+			ret = true; break;
+		}
+	}
+	return ret;
+}

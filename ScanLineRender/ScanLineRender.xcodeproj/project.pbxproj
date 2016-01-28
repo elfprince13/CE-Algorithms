@@ -17,6 +17,7 @@
 		E95714ED1C581551006FBFB1 /* red_black_tree.c in Sources */ = {isa = PBXBuildFile; fileRef = E95714E51C581551006FBFB1 /* red_black_tree.c */; };
 		E95714EE1C581551006FBFB1 /* stack.c in Sources */ = {isa = PBXBuildFile; fileRef = E95714E81C581551006FBFB1 /* stack.c */; };
 		E95714F31C582399006FBFB1 /* linklist.c in Sources */ = {isa = PBXBuildFile; fileRef = E95714F11C582399006FBFB1 /* linklist.c */; };
+		E95714F61C593AD5006FBFB1 /* ScanlineRenderer.c in Sources */ = {isa = PBXBuildFile; fileRef = E95714F41C593AD5006FBFB1 /* ScanlineRenderer.c */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -53,6 +54,8 @@
 		E95714E91C581551006FBFB1 /* stack.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = stack.h; sourceTree = "<group>"; };
 		E95714F11C582399006FBFB1 /* linklist.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = linklist.c; sourceTree = "<group>"; };
 		E95714F21C582399006FBFB1 /* linklist.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = linklist.h; sourceTree = "<group>"; };
+		E95714F41C593AD5006FBFB1 /* ScanlineRenderer.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = ScanlineRenderer.c; sourceTree = "<group>"; };
+		E95714F51C593AD5006FBFB1 /* ScanlineRenderer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ScanlineRenderer.h; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -98,6 +101,8 @@
 				E93B369A1C56D27900A88A02 /* Primitive.h */,
 				E93B369C1C56DFF200A88A02 /* Projection.c */,
 				E93B369D1C56DFF200A88A02 /* Projection.h */,
+				E95714F41C593AD5006FBFB1 /* ScanlineRenderer.c */,
+				E95714F51C593AD5006FBFB1 /* ScanlineRenderer.h */,
 			);
 			path = ScanLineRender;
 			sourceTree = "<group>";
@@ -188,6 +193,7 @@
 				E95714EC1C581551006FBFB1 /* misc.c in Sources */,
 				E95714F31C582399006FBFB1 /* linklist.c in Sources */,
 				E95714ED1C581551006FBFB1 /* red_black_tree.c in Sources */,
+				E95714F61C593AD5006FBFB1 /* ScanlineRenderer.c in Sources */,
 				E93B368D1C56CB1300A88A02 /* main.cpp in Sources */,
 				E93B36981C56CE7600A88A02 /* Edge.c in Sources */,
 				E93B369E1C56DFF200A88A02 /* Projection.c in Sources */,

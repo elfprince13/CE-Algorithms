@@ -10,6 +10,7 @@
 #define Edge_h
 
 #include "Point.h"
+#include <stdbool.h>
 
 typedef enum {START = 0, END = 1} EndPoint;
 
@@ -27,5 +28,6 @@ void flipped(const Edge *e, Edge * o);
 int16_t dot(const Edge *, const Edge *);
 struct _Projection;
 void projectEdge(const struct _Projection * proj, const Edge *e, Edge *o);
+bool contains(const Edge *, const Point *);
 
 #endif /* Edge_h */
