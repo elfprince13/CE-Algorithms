@@ -7,7 +7,7 @@
 */
 
 #include "AEL.h"
-#include <stdio.h>
+#include "debugConfig.h"
 
 int32_t getMinXForLine(const EdgeListEntry * node, const int32_t scanLine){
 	const Point *coords = node->edge->coords;
@@ -81,8 +81,8 @@ void stepEdges(ActiveEdgeList *ael, const LinkN* activePrims){
 			if(edgeEnd < scanLine){
 				{
 					const int32_t lowEnd = min(ys, ye);
-					printf("Deactivating %04x with y-span: %d -> %d with x-span: %d - %d (true: %d -> %d)\n",
-						   edge->owner->color, lowEnd, edgeEnd,
+					printf("Deactivating %s with y-span: %d -> %d with x-span: %d - %d (true: %d -> %d)\n",
+						   fmtColor(edge->owner->color), lowEnd, edgeEnd,
 						   getMinXForLine(edge, scanLine), getMaxXForLine(edge, scanLine),
 						   edge->edge->coords[START].x, edge->edge->coords[END].x);
 				}
@@ -108,8 +108,8 @@ void stepEdges(ActiveEdgeList *ael, const LinkN* activePrims){
 				   || (scanLine == 0 && mnY < 0 && mxY > 0)){
 					LinkN* newEdge = makeLinkEZ(e, prim);
 					{
-						printf("Activating %04x with y-span: %d -> %d with x-span: %d - %d (true: %d -> %d)\n",
-							   prim->color, mnY, mxY,
+						printf("Activating %s with y-span: %d -> %d with x-span: %d - %d (true: %d -> %d)\n",
+							   fmtColor(prim->color), mnY, mxY,
 							   getMinXForLine(newEdge->data, scanLine), getMaxXForLine(newEdge->data, scanLine),
 							   e->coords[START].x, e->coords[END].x);
 					}

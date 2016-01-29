@@ -58,6 +58,7 @@
 		E95714F41C593AD5006FBFB1 /* ScanlineRenderer.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = ScanlineRenderer.c; sourceTree = "<group>"; };
 		E95714F51C593AD5006FBFB1 /* ScanlineRenderer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ScanlineRenderer.h; sourceTree = "<group>"; };
 		E9820ADB1C5AC05200ACCF82 /* libnetpbm.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libnetpbm.a; path = ../../../../../../opt/local/lib/libnetpbm.a; sourceTree = "<group>"; };
+		E9A994F71C5BE33C0036F212 /* debugConfig.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = debugConfig.h; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -97,6 +98,7 @@
 				E93B368C1C56CB1300A88A02 /* main.c */,
 				E93B369F1C56E8D700A88A02 /* AEL.c */,
 				E93B36A01C56E8D700A88A02 /* AEL.h */,
+				E9A994F71C5BE33C0036F212 /* debugConfig.h */,
 				E93B36961C56CE7600A88A02 /* Edge.c */,
 				E93B36971C56CE7600A88A02 /* Edge.h */,
 				E93B36931C56CBFA00A88A02 /* Point.c */,

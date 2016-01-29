@@ -14,6 +14,8 @@
 
 typedef uint32_t Color;
 
+const char * fmtColor(Color c);
+
 typedef struct {
 	Color color;
 	uint32_t arity;

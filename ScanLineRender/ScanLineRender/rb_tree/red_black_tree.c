@@ -137,9 +137,7 @@ void LeftRotate(rb_red_blk_tree* tree, rb_red_blk_node* x) {
 	y->left=x;
 	x->parent=y;
 	
-#ifdef DEBUG_ASSERT
-	Assert(!tree->nil->red,"nil not red in LeftRotate");
-#endif
+	assert(!tree->nil->red && "nil not red in LeftRotate");
 }
 
 
@@ -191,9 +189,7 @@ void RightRotate(rb_red_blk_tree* tree, rb_red_blk_node* y) {
 	x->right=y;
 	y->parent=x;
 	
-#ifdef DEBUG_ASSERT
-	Assert(!tree->nil->red,"nil not red in RightRotate");
-#endif
+	assert(!tree->nil->red && "nil not red in RightRotate");
 }
 
 /***********************************************************************/
@@ -227,9 +223,7 @@ void TreeInsertHelp(rb_red_blk_tree* tree, rb_red_blk_node* z) {
 	z->parent=y;
 	*(rb_red_blk_node**)((uint8_t*)y + (((y == tree->root) ||
 										 (tree->Compare(y->key,z->key) > 0)) ? offsetof(rb_red_blk_node,left) : offsetof(rb_red_blk_node,right))) = z;
-#ifdef DEBUG_ASSERT
-	Assert(!tree->nil->red,"nil not red in TreeInsertHelp");
-#endif
+	assert(!tree->nil->red && "nil not red in TreeInsertHelp");
 }
 
 /*  Before calling Insert RBTree the node x should have its key set */
@@ -252,7 +246,7 @@ void TreeInsertHelp(rb_red_blk_tree* tree, rb_red_blk_node* z) {
 /*            info pointers and inserts it into the tree. */
 /***********************************************************************/
 
-rb_red_blk_node * RBTreeInsert(rb_red_blk_tree* tree, const void* key) {
+rb_red_blk_node * RBTreeInsert(rb_red_blk_tree* tree, void* key) {
 	rb_red_blk_node * y;
 	rb_red_blk_node * x;
 	rb_red_blk_node * newNode;
@@ -299,10 +293,8 @@ rb_red_blk_node * RBTreeInsert(rb_red_blk_tree* tree, const void* key) {
 		}
 	}
 	tree->root->left->red=0;
-#ifdef DEBUG_ASSERT
-	Assert(!tree->nil->red,"nil not red in RBTreeInsert");
-	Assert(!tree->root->red,"root not red in RBTreeInsert");
-#endif
+	assert(!tree->nil->red && "nil not red in RBTreeInsert");
+	assert(!tree->root->red && "root not red in RBTreeInsert");
 	return(newNode);
 }
 
@@ -535,9 +527,7 @@ void RBDeleteFixUp(rb_red_blk_tree* tree, rb_red_blk_node* x) {
 	}
 	x->red=0;
 	
-#ifdef DEBUG_ASSERT
-	Assert(!tree->nil->red,"nil not black in RBDeleteFixUp");
-#endif
+	assert(!tree->nil->red && "nil not black in RBDeleteFixUp");
 }
 
 
@@ -576,9 +566,7 @@ void RBDelete(rb_red_blk_tree* tree, rb_red_blk_node* z){
 	}
 	if (y != z) { /* y should not be nil in this case */
 		
-#ifdef DEBUG_ASSERT
-		Assert( (y!=tree->nil),"y is nil in RBDelete\n");
-#endif
+		assert( (y!=tree->nil) && "y is nil in RBDelete\n");
 		/* y is the node to splice out and x is its child */
 		
 		if (!(y->red)) RBDeleteFixUp(tree,x);
@@ -601,9 +589,7 @@ void RBDelete(rb_red_blk_tree* tree, rb_red_blk_node* z){
 		free(y);
 	}
 	
-#ifdef DEBUG_ASSERT
-	Assert(!tree->nil->red,"nil not black in RBDelete");
-#endif
+	assert(!tree->nil->red && "nil not black in RBDelete");
 }
 
 
@@ -636,4 +622,52 @@ void RBEnumerate(const rb_red_blk_tree* tree, const void* low, const void* high,
 		StackPush(enumResultStack,lastBest);
 		lastBest=TreePredecessor(tree,lastBest);
 	}
+}
+
+
+void* RBMapPut(rb_red_blk_map_tree *tree, void* key, void* value){
+	void * ret;
+	rb_red_blk_map_node* node = (rb_red_blk_map_node*)RBExactQuery((rb_red_blk_tree*)tree, key);
+	if(node) {
+		ret = node->info;
+	} else {
+		ret = NULL;
+		node = (rb_red_blk_map_node*)RBTreeInsert((rb_red_blk_tree*)tree, key);
+	}
+	node->info = value;
+	return ret;
+}
+
+void* RBMapRemove(rb_red_blk_map_tree *tree, const void* key){
+	void * ret;
+	rb_red_blk_map_node* node = (rb_red_blk_map_node*)RBExactQuery((rb_red_blk_tree*)tree, key);
+	if(node) {
+		ret = node->info;
+		RBDelete((rb_red_blk_tree*)tree, (rb_red_blk_node*)node);
+	} else {
+		ret = NULL;
+	}
+	return ret;
+}
+
+bool RBSetAdd(rb_red_blk_tree *tree, void* key){
+	bool ret;
+	rb_red_blk_node* node = RBExactQuery(tree, key);
+	if ((ret = !node)) {
+		RBTreeInsert(tree, key);
+	}
+	return ret;
+}
+
+bool RBSetRemove(rb_red_blk_tree *tree, const void* key){
+	bool ret;
+	rb_red_blk_node* node = RBExactQuery(tree, key);
+	if ((ret = node)) {
+		RBDelete(tree, node);
+	}
+	return ret;
+}
+
+bool RBSetContains(const rb_red_blk_tree *tree, const void* key){
+	return RBExactQuery(tree, key);
 }

@@ -8,6 +8,16 @@
 
 #include "Primitive.h"
 
+#include <stdio.h>
+const char * fmtColor(Color c){
+	/* extra unsafe */
+	static char buf[64];
+	const uint32_t r = (c >> 16),
+	g = ((c >> 8) & 0xff),
+	b = (c & 0xff);
+	sprintf(buf,"java.awt.Color[r=%d,g=%d,b=%d]",r,g,b);
+	return buf;
+}
 
 void makeLine(const Edge *e, Primitive *o){
 	Primitive tmp;
