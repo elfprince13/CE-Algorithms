@@ -37,13 +37,13 @@ void makeQuad(const Edge *e1, const Edge *e2, const Edge *e3, const Edge *e4, Pr
 	*o = tmp;
 }
 
-const int16_t getZForXY(const Primitive *p, const int16_t x, const int16_t y){
+const int32_t getZForXY(const Primitive *p, const int32_t x, const int32_t y){
 	if(p->arity == 1){
 		const Edge * v = p->boundary;
 		const Point * vs = v->coords + START,
 		* ve = v->coords + END;
 		
-		const int16_t sx = vs->x,
+		const int32_t sx = vs->x,
 		sy = vs->y,
 		sz = vs->z,
 		
@@ -57,7 +57,7 @@ const int16_t getZForXY(const Primitive *p, const int16_t x, const int16_t y){
 		 * We may need dedicated routines if the compiler does the stupid thing */
 		const int32_t xNumer = dz * (x - sx),
 		yNumer = dz * (y - sy);
-		const int16_t xEst = (dx == 0) ? min(0,  dz) : (xNumer / dx),
+		const int32_t xEst = (dx == 0) ? min(0,  dz) : (xNumer / dx),
 		yEst = (dy == 0) ? min(0,  dz) : (yNumer / dy);
 		
 		return sz + (xEst + yEst) / 2;
@@ -70,14 +70,14 @@ const int16_t getZForXY(const Primitive *p, const int16_t x, const int16_t y){
 		* vs = e2->coords + START,
 		* ve = e2->coords + END;
 		
-		const int16_t ux = us->x - ue->x,
+		const int32_t ux = us->x - ue->x,
 		uy = us->y - ue->y,
 		uz = us->z - ue->z,
 		vx = vs->x - ve->x,
 		vy = vs->y - ve->y,
 		vz = vs->z - ve->z;
 		
-		const int16_t nx = uy * vz - uz * vy,
+		const int32_t nx = uy * vz - uz * vy,
 		ny = uz * vx - ux * vz,
 		nz = ux * vy - uy * vx;
 		

@@ -12,11 +12,11 @@
 #include "Edge.h"
 #include "Projection.h"
 
-typedef uint16_t Color;
+typedef uint32_t Color;
 
 typedef struct {
 	Color color;
-	uint16_t arity;
+	uint32_t arity;
 	Edge * boundary;
 } Primitive;
 
@@ -29,7 +29,7 @@ void makeLine(const Edge *e, Primitive *o);
 void makeTri(const Edge *e1, const Edge *e2, const Edge *e3, Primitive *o);
 void makeQuad(const Edge *e1, const Edge *e2, const Edge *e3, const Edge *e4, Primitive *o);
 
-const int16_t getZForXY(const Primitive *p, const int16_t x, const int16_t y);
+const int32_t getZForXY(const Primitive *p, const int32_t x, const int32_t y);
 void projectPrimitive(const Projection * proj, const Primitive *p, Primitive *o);
 
 

@@ -8,15 +8,15 @@
 
 #include "AEL.h"
 
-int16_t getMinXForLine(const EdgeListEntry * node, const int16_t scanLine){
+int32_t getMinXForLine(const EdgeListEntry * node, const int32_t scanLine){
 	const Point *coords = node->edge->coords;
-	const int16_t sx = coords[START].x,
+	const int32_t sx = coords[START].x,
 	sy = coords[START].y,
 	ex = coords[END].x,
 	ey = coords[END].y,
 	run = ex - sx,
 	rise = ey - sy;
-	int16_t ret;
+	int32_t ret;
 	if(rise){
 		/* Potentially some fixed-point accuracy issues here.
 		 * We may need dedicated routines if the compiler does the stupid thing */
@@ -28,9 +28,9 @@ int16_t getMinXForLine(const EdgeListEntry * node, const int16_t scanLine){
 	return ret;
 }
 
-int16_t getMaxXForLine(const EdgeListEntry * node, const int16_t scanLine){
+int32_t getMaxXForLine(const EdgeListEntry * node, const int32_t scanLine){
 	const Point *coords = node->edge->coords;
-	const int16_t sx = coords[START].x,
+	const int32_t sx = coords[START].x,
 	sy = coords[START].y,
 	ex = coords[END].x,
 	ey = coords[END].y,
@@ -44,7 +44,7 @@ int16_t getMaxXForLine(const EdgeListEntry * node, const int16_t scanLine){
 	return ret;
 }
 
-int16_t getSmartXForLine(const EdgeListEntry * node, const int16_t scanLine){
+int32_t getSmartXForLine(const EdgeListEntry * node, const int32_t scanLine){
 	return (node->placeHolder ? getMaxXForLine : getMinXForLine)(node, scanLine);
 }
 
@@ -63,21 +63,21 @@ static void linkFront(ActiveEdgeList *ael, LinkN* target);
 static LinkN* makeLink(Edge *e, Primitive *p, bool s);
 #define makeLinkEZ(e, p) makeLink(e,p,false)
 
-static int16_t leftToRightF(EdgeListEntry *, EdgeListEntry *, int16_t *);
+static int32_t leftToRightF(EdgeListEntry *, EdgeListEntry *, int32_t *);
 
 void stepEdges(ActiveEdgeList *ael, const LinkN* activePrims){
-	static int16_t scanLine;
+	static int32_t scanLine;
 	const static Comparator leftToRight = {(CompareF)(&leftToRightF), &scanLine};
 	scanLine = ++(ael->scanLine);
 	{
 		LinkN *i, *p, *nextP;
 		for(p = NULL, i = ael->activeEdges; i; (p = i),(i = nextP)){
 			const EdgeListEntry* edge = i->data;
-			const int16_t ys = edge->edge->coords[START].y,
+			const int32_t ys = edge->edge->coords[START].y,
 			ye = edge->edge->coords[END].y,
 			edgeEnd = max(ys, ye);
 			nextP = i->tail;
-			/* const int16_t lowEnd = min(ys, ye); */
+			/* const int32_t lowEnd = min(ys, ye); */
 			if(edgeEnd < scanLine){
 				removeLink(ael, i, p);
 				i = p; /* We don't want to advance p into garbage data */
@@ -89,10 +89,10 @@ void stepEdges(ActiveEdgeList *ael, const LinkN* activePrims){
 		for(i = activePrims; i; i = i->tail){
 			Primitive *prim = i->data;
 			size_t j;
-			uint16_t jMax = prim->arity;
+			uint32_t jMax = prim->arity;
 			for(j = 0; j < jMax; ++j){
 				Edge *e = prim->boundary + j;
-				const int16_t sy = e->coords[START].y,
+				const int32_t sy = e->coords[START].y,
 				ey = e->coords[END].y,
 				mnY = min(sy, ey),
 				mxY = max(sy, ey);
@@ -135,6 +135,6 @@ LinkN* makeLink(Edge *e, Primitive *p, bool s){
 	return newLink;
 }
 
-int16_t leftToRightF(EdgeListEntry *o1, EdgeListEntry *o2, int16_t *scanLine){
+int32_t leftToRightF(EdgeListEntry *o1, EdgeListEntry *o2, int32_t *scanLine){
 	return getSmartXForLine(o1, *scanLine) - getSmartXForLine(o2, *scanLine);
 }

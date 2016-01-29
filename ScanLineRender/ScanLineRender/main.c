@@ -21,21 +21,21 @@ typedef enum {
 } ColorCodes16BPP;
 
 typedef struct {
-	int16_t x;
-	int16_t y;
-	int16_t zNum;
-	int16_t zDen;
-	int16_t scale;
+	int32_t x;
+	int32_t y;
+	int32_t zNum;
+	int32_t zDen;
+	int32_t scale;
 } DrawCoords;
 
 static DrawCoords drawCoords = {100, 40, 7, 10, 100};
 
 void viewF(const Point *p, Point *o, const DrawCoords *offset);
 void viewF(const Point *p, Point *o, const DrawCoords *offset){
-	const int16_t x = offset->scale * p->x,
+	const int32_t x = offset->scale * p->x,
 	 y = offset->scale * p->y,
 	z = offset->scale * p->z,
-	zOff = (z * offset->zNum) / offset->zDen;
+	zOff = (int32_t)((z * offset->zNum) / (float)offset->zDen);
 	INIT_POINT(*o, offset->x + x + zOff, offset->y + y + zOff, z);
 }
 
@@ -50,8 +50,8 @@ int main(int argc, const char * argv[]) {
 	static Edge cubeEdges[3][4];
 	static Edge cubeFaces[6][4];
 	static Primitive cubeAndSkel[18];
-	int16_t numLines = 240;
-	int16_t lineWidth = 320;
+	int32_t numLines = 240;
+	int32_t lineWidth = 320;
 	size_t rasterByteCount = numLines * lineWidth * sizeof(Color);
 	Color *raster = (Color*)malloc(rasterByteCount);
 	pixel** ppm_raster;
@@ -127,7 +127,7 @@ int main(int argc, const char * argv[]) {
 	
 	for(y = 0; y < numLines; y++){
 		for(x = 0; x < lineWidth; x++){
-			uint16_t rgb = raster[y * lineWidth + x];
+			uint32_t rgb = raster[y * lineWidth + x];
 			uint32_t r = (rgb >> 11) << 3,
 			 g = ((rgb >> 5) & 0x3f) << 2,
 			b = (rgb & 0x1f) << 3;

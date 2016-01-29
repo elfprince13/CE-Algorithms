@@ -18,16 +18,16 @@ static int topToBottom(const Primitive *, const Primitive *);
 static int pointerDiff(const Primitive*, const Primitive*);
 static StatelessCompF topToBottomF = (StatelessCompF)(&topToBottom);
 static StatelessCompF pointerDiffF = (StatelessCompF)(&pointerDiff);
-static int16_t topMostPrimPoint(const Primitive *);
-static int16_t topMostEdgePoint(const Edge *);
-static int16_t bottomMostPrimPoint(const Primitive *);
-static int16_t bottomMostEdgePoint(const Edge *);
+static int32_t topMostPrimPoint(const Primitive *);
+static int32_t topMostEdgePoint(const Edge *);
+static int32_t bottomMostPrimPoint(const Primitive *);
+static int32_t bottomMostEdgePoint(const Edge *);
 
 static void removeLink(LinkN **aPS, LinkN* target, LinkN* prev);
 static void linkFront(LinkN **aPS, LinkN* target);
 static LinkN* makeLink(Primitive *p);
 
-void render(Color *raster, int16_t lineWidth, int16_t numLines, const Primitive *geometry, size_t geomCount, const Projection *p){
+void render(Color *raster, int32_t lineWidth, int32_t numLines, const Primitive *geometry, size_t geomCount, const Projection *p){
 	static OntoProj screenPlaneData = {offsetof(Point, z), 0};
 	static const Projection screenPlane = {(ProjectionF)(&ontoProj), &screenPlaneData};
 	Primitive *projectedGeometry = malloc(geomCount * sizeof(Primitive));
@@ -46,7 +46,7 @@ void render(Color *raster, int16_t lineWidth, int16_t numLines, const Primitive 
 		/* Capture the full span of each bucket */
 		for(i = 0; i < geomCount; ++i){
 			const Primitive *prim = projectedGeometry + i;
-			const int16_t pScanLine = bottomMostPrimPoint(prim);
+			const int32_t pScanLine = bottomMostPrimPoint(prim);
 			if(pScanLine < numLines && (pScanLine >= 0 || topMostPrimPoint(prim) >= 0)){
 				size_t * dstBucket = bucketEnd + max(0, pScanLine);
 				if(*dstBucket <= i) *dstBucket = i+1;
@@ -62,7 +62,7 @@ void render(Color *raster, int16_t lineWidth, int16_t numLines, const Primitive 
 		}
 	}
 	{
-		int16_t line;
+		int32_t line;
 		LinkN* activePrimSet = NULL;
 		ActiveEdgeList ael = freshAEL();
 		rb_red_blk_map_tree inFlags;
@@ -76,7 +76,7 @@ void render(Color *raster, int16_t lineWidth, int16_t numLines, const Primitive 
 			size_t keySetCt = 0;
 			for (p = NULL, primIt = activePrimSet; primIt; (p=primIt),(primIt=nextP)) {
 				const Primitive* prim = primIt->data;
-				const int16_t top = topMostPrimPoint(prim);
+				const int32_t top = topMostPrimPoint(prim);
 				nextP = primIt->tail;
 				if(top < line){
 					removeLink(&activePrimSet, primIt, p);
@@ -91,7 +91,7 @@ void render(Color *raster, int16_t lineWidth, int16_t numLines, const Primitive 
 			stepEdges(&ael, activePrimSet);
 			
 			{
-				int16_t curPixel = 0;
+				int32_t curPixel = 0;
 				const Primitive *curDraw = NULL;
 				EdgeListEntry *nextEdge;
 				LinkN* i = ael.activeEdges;
@@ -100,7 +100,7 @@ void render(Color *raster, int16_t lineWidth, int16_t numLines, const Primitive 
 					while(nextEdge && curPixel < lineWidth){
 						EdgeListEntry *startEdge = nextEdge;
 						const Primitive *startOwner = startEdge->owner;
-						int16_t startX = getSmartXForLine(startEdge, line), nextX;
+						int32_t startX = getSmartXForLine(startEdge, line), nextX;
 						rb_red_blk_map_node *inFlag = (rb_red_blk_map_node *)RBExactQuery((rb_red_blk_tree*)(&inFlags), startOwner);
 						/* nextEdge = NULL;  We want an error if we use nextEdge prematurely */
 						
@@ -111,7 +111,7 @@ void render(Color *raster, int16_t lineWidth, int16_t numLines, const Primitive 
 							Edge flatHere, flatIn, vert;
 							Point here;
 							bool sV, eV, v;
-							int16_t dotH, dotIn;
+							int32_t dotH, dotIn;
 							projectEdge(&screenPlane, edgeHere, &flatHere);
 							projectEdge(&screenPlane, edgeIn, &flatIn);
 							INIT_POINT(here, startX, line, 0);
@@ -149,7 +149,7 @@ void render(Color *raster, int16_t lineWidth, int16_t numLines, const Primitive 
 						nextX = min(nextX, lineWidth);
 						while ((!nextEdge && curPixel < lineWidth) || (curPixel < nextX)) {
 							bool zFight = false, solitary = false;
-							int16_t bestZ = 0, j = 0;
+							int32_t bestZ = 0, j = 0;
 							stk_stack keySet;
 							rb_red_blk_node *node;
 							size_t keySetCt = 0;
@@ -157,7 +157,7 @@ void render(Color *raster, int16_t lineWidth, int16_t numLines, const Primitive 
 							RBEnumerate((rb_red_blk_tree*)(&inFlags), projectedGeometry, projGEnd, &keySet);
 							while ((node = StackPop(&keySet))) {
 								const Primitive *prim = node->key;
-								const int16_t testZ = getZForXY(prim, curPixel, line);
+								const int32_t testZ = getZForXY(prim, curPixel, line);
 								++keySetCt;
 								if(++j == 1 || testZ <= bestZ){
 									if (testZ == bestZ && j != 1) {
@@ -177,7 +177,7 @@ void render(Color *raster, int16_t lineWidth, int16_t numLines, const Primitive 
 							
 							if(curDraw){
 								if(nextEdge || solitary){
-									const int16_t drawWidth = (zFight || solitary) ? 1 : ((nextEdge ? nextX : lineWidth) - curPixel),
+									const int32_t drawWidth = (zFight || solitary) ? 1 : ((nextEdge ? nextX : lineWidth) - curPixel),
 									stopPixel = lineWidth + min(lineWidth - curPixel,
 																max(0, drawWidth));
 									const Color drawColor = curDraw->color;
@@ -233,32 +233,32 @@ int topToBottom(const Primitive *p1, const Primitive *p2){
 	return topMostPrimPoint(p1) - topMostPrimPoint(p2);
 }
 
-int16_t topMostPrimPoint(const Primitive *prim){
-	const int16_t arity = prim->arity;
-	int16_t top, i;
+int32_t topMostPrimPoint(const Primitive *prim){
+	const int32_t arity = prim->arity;
+	int32_t top, i;
 	for(top = topMostEdgePoint(prim->boundary),i = 1; i < arity; ++i){
-		const int16_t candidate = topMostEdgePoint(prim->boundary + i);
+		const int32_t candidate = topMostEdgePoint(prim->boundary + i);
 		if(candidate > top) top = candidate;
 	}
 	return top;
 }
 
-int16_t topMostEdgePoint(const Edge *edge){
+int32_t topMostEdgePoint(const Edge *edge){
 	const Point * coords = edge->coords;
 	return max(coords[START].y, coords[END].y);
 }
 
-int16_t bottomMostPrimPoint(const Primitive *prim){
-	const int16_t arity = prim->arity;
-	int16_t bottom, i;
+int32_t bottomMostPrimPoint(const Primitive *prim){
+	const int32_t arity = prim->arity;
+	int32_t bottom, i;
 	for(bottom = bottomMostEdgePoint(prim->boundary),i = 1; i < arity; ++i){
-		const int16_t candidate = bottomMostEdgePoint(prim->boundary + i);
+		const int32_t candidate = bottomMostEdgePoint(prim->boundary + i);
 		if(candidate < bottom) bottom = candidate;
 	}
 	return bottom;
 }
 
-int16_t bottomMostEdgePoint(const Edge *edge){
+int32_t bottomMostEdgePoint(const Edge *edge){
 	const Point * coords = edge->coords;
 	return min(coords[START].y, coords[END].y);
 }
