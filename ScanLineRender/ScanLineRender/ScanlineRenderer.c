@@ -40,6 +40,8 @@ void render(Color *raster, int32_t lineWidth, int32_t numLines, const Primitive 
 	for(i = 0, edgeCount = 0; i < geomCount; edgeCount += geometry[i++].arity){
 		INIT_PRIM(projectedGeometry[i], geometry[i].color, geometry[i].arity, projectedEdges + edgeCount);
 		projectPrimitive(p, geometry+i, projectedGeometry+i);
+		printf("Source geometry with arity %d begins on %d and ends on %d\n", geometry[i].arity, bottomMostPrimPoint(geometry + i), topMostPrimPoint(geometry + i));
+		printf("Projected geometry with arity %d begins on %d and ends on %d\n", projectedGeometry[i].arity, bottomMostPrimPoint(projectedGeometry + i), topMostPrimPoint(projectedGeometry + i));
 	}
 	qsort(projectedGeometry, geomCount, sizeof(Primitive), topToBottomF);
 	{

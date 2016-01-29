@@ -7,6 +7,7 @@
 */
 
 #include "AEL.h"
+#include <stdio.h>
 
 int32_t getMinXForLine(const EdgeListEntry * node, const int32_t scanLine){
 	const Point *coords = node->edge->coords;
@@ -77,8 +78,14 @@ void stepEdges(ActiveEdgeList *ael, const LinkN* activePrims){
 			ye = edge->edge->coords[END].y,
 			edgeEnd = max(ys, ye);
 			nextP = i->tail;
-			/* const int32_t lowEnd = min(ys, ye); */
 			if(edgeEnd < scanLine){
+				{
+					const int32_t lowEnd = min(ys, ye);
+					printf("Deactivating %04x with y-span: %d -> %d with x-span: %d - %d (true: %d -> %d)\n",
+						   edge->owner->color, lowEnd, edgeEnd,
+						   getMinXForLine(edge, scanLine), getMaxXForLine(edge, scanLine),
+						   edge->edge->coords[START].x, edge->edge->coords[END].x);
+				}
 				removeLink(ael, i, p);
 				i = p; /* We don't want to advance p into garbage data */
 			}
@@ -99,8 +106,16 @@ void stepEdges(ActiveEdgeList *ael, const LinkN* activePrims){
 				const bool singleton = prim->arity == 1;
 				if((mnY == scanLine && (sy != ey || (singleton /* newEdge.isSingleton() */)))
 				   || (scanLine == 0 && mnY < 0 && mxY > 0)){
-					linkFront(ael, makeLinkEZ(e, prim));
+					LinkN* newEdge = makeLinkEZ(e, prim);
+					{
+						printf("Activating %04x with y-span: %d -> %d with x-span: %d - %d (true: %d -> %d)\n",
+							   prim->color, mnY, mxY,
+							   getMinXForLine(newEdge->data, scanLine), getMaxXForLine(newEdge->data, scanLine),
+							   e->coords[START].x, e->coords[END].x);
+					}
+					linkFront(ael, newEdge);
 					if (singleton) {
+						printf("\t->Activating dummy end\n");
 						linkFront(ael, makeLink(e, prim, true));
 					}
 				}
