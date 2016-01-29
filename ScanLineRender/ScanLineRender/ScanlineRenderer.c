@@ -35,7 +35,6 @@ void render(Color *raster, int32_t lineWidth, int32_t numLines, const Primitive 
 	static const Projection screenPlane = {(ProjectionF)(&ontoProj), &screenPlaneData};
 	Primitive *const projectedGeometry = malloc(geomCount * sizeof(Primitive));
 	size_t edgeCount;
-	const Primitive *const projGEnd = projectedGeometry + geomCount;
 	rb_red_blk_tree *const scanLinePrimBuckets = malloc(numLines * sizeof(rb_red_blk_tree)); /* delta encode bucket start */
 	size_t i;
 	for(i = 0; i < numLines; RBTreeInit(scanLinePrimBuckets + (i++), pointerDiffF, NULL, &RBNodeAlloc)){}
@@ -70,7 +69,6 @@ void render(Color *raster, int32_t lineWidth, int32_t numLines, const Primitive 
 			RBTreeInit(&deFlags, pointerDiffF, NULL, &RBNodeAlloc);
 			for(line = 0; line < numLines; (++line), (raster += lineWidth)) {
 				LinkN *primIt, *p, *nextP;
-				size_t keySetCt = 0;
 				printf("Scanning line: %d\n", line);
 				printf("\tUpdating activePrimSet\n");
 				for (p = NULL, primIt = activePrimSet; primIt; (p=primIt),(primIt=nextP)) {
@@ -87,10 +85,9 @@ void render(Color *raster, int32_t lineWidth, int32_t numLines, const Primitive 
 					}
 				}
 				{
-					stk_stack bucketContents;
-					rb_red_blk_node *node;
-					RBEnumerate(scanLinePrimBuckets + line, projectedGeometry, projGEnd, &bucketContents);
-					while ((node = StackPop(&bucketContents))) {
+					const rb_red_blk_tree *bucket = scanLinePrimBuckets + line;
+					const rb_red_blk_node *node;
+					for(node = bucket->first; node != bucket->sentinel; node = TreeSuccessor(bucket, node)) {
 						Primitive * prim = node->key;
 						{
 							const int32_t top = topMostPrimPoint(prim),
@@ -142,10 +139,7 @@ void render(Color *raster, int32_t lineWidth, int32_t numLines, const Primitive 
 							} else {
 								printf("\tNow *in* new %s at %d\n",fmtColor(startEdge->owner->color), getSmartXForLine(startEdge, line));
 								/* This might happen if a polygon is parallel to the x-axis */
-								inFlag = RBMapPut(&inFlags, startOwner, startEdge->edge);
-								if(!inFlag){
-									++keySetCt;
-								}
+								RBMapPut(&inFlags, startOwner, startEdge->edge);
 							}
 							
 							if(curPixel < startX){
@@ -168,16 +162,12 @@ void render(Color *raster, int32_t lineWidth, int32_t numLines, const Primitive 
 							while ((!nextEdge && curPixel < lineWidth) || (curPixel < nextX)) {
 								bool zFight = false, solitary = false;
 								int32_t bestZ = 0, j = 0;
-								stk_stack keySet;
-								rb_red_blk_node *node;
-								size_t keySetCt = 0;
+								const rb_red_blk_node *node;
 								curDraw = NULL;
-								RBEnumerate((rb_red_blk_tree*)(&inFlags), projectedGeometry, projGEnd, &keySet);
 								printf("\tTesting depth:\n");
-								while ((node = StackPop(&keySet))) {
+								for(node = inFlags.tree.first; node != inFlags.tree.sentinel; node = TreeSuccessor((rb_red_blk_tree*)(&inFlags), node)) {
 									const Primitive *prim = node->key;
 									const int32_t testZ = getZForXY(prim, curPixel, line);
-									++keySetCt;
 									if(++j == 1 || testZ <= bestZ){
 										printf("\t\tHit: %d <= %d || %d == 1 for %s\n",testZ, bestZ, j,fmtColor(prim->color));
 										if (testZ == bestZ && j != 1) {
@@ -209,9 +199,8 @@ void render(Color *raster, int32_t lineWidth, int32_t numLines, const Primitive 
 									} else {
 										printf("Warning: we probably shouldn't have to draw if there are no more edges to turn us off. Look for parity errors\n");
 										RBTreeClear((rb_red_blk_tree*)&inFlags);
-										keySetCt = 0;
 									}
-								} else if((!keySetCt) && nextEdge){
+								} else if(!inFlags.tree.size && nextEdge){
 									/* fast forward, we aren't in any polys */
 									printf("Not in any polys at the moment, fast-forwarding(1) to %d\n", nextX);
 									curPixel = nextX;
@@ -221,18 +210,12 @@ void render(Color *raster, int32_t lineWidth, int32_t numLines, const Primitive 
 									curPixel = lineWidth;
 								}
 								
-								/* n.b.: keySet is empty here */
-								RBEnumerate(&deFlags, projectedGeometry, projGEnd, &keySet);
-								while ((node = StackPop(&keySet))){
-									bool deleted = RBMapRemove(&inFlags, node->key);
-									if(deleted){
-										--keySetCt;
-									}
-									
+								for(node = deFlags.first; node != deFlags.sentinel; node = TreeSuccessor(&deFlags, node)){
+									RBMapRemove(&inFlags, node->key);
 								}
 								RBTreeClear(&deFlags);
 							}
-							if (!keySetCt && nextEdge) {
+							if (!inFlags.tree.size && nextEdge) {
 								printf("Not in any polys at the moment, fast-forwarding(2) to %d\n", nextX);
 								curPixel = nextX;
 							}
@@ -241,14 +224,11 @@ void render(Color *raster, int32_t lineWidth, int32_t numLines, const Primitive 
 					}
 				}
 				
-				/* This data was for the old line, we don't care anymore */
 				{
-					stk_stack inContents;
-					RBEnumerate((rb_red_blk_tree*)&inFlags, projectedGeometry, projGEnd, &inContents);
-					if(StackNotEmpty(&inContents)){
+					if(inFlags.tree.size){
 						rb_red_blk_node *node;
 						printf("\tGarbage left in inFlags:\n");
-						while ((node = StackPop(&inContents))) {
+						for (node = inFlags.tree.first; node != inFlags.tree.sentinel; node = TreeSuccessor((rb_red_blk_tree*)&inFlags, node)) {
 							printf("\t\t%s\n",fmtColor(((const Primitive*)node->key)->color));
 						}
 					}

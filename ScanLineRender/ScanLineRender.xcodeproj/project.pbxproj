@@ -15,7 +15,6 @@
 		E93B36A11C56E8D700A88A02 /* AEL.c in Sources */ = {isa = PBXBuildFile; fileRef = E93B369F1C56E8D700A88A02 /* AEL.c */; };
 		E95714EC1C581551006FBFB1 /* misc.c in Sources */ = {isa = PBXBuildFile; fileRef = E95714E31C581551006FBFB1 /* misc.c */; };
 		E95714ED1C581551006FBFB1 /* red_black_tree.c in Sources */ = {isa = PBXBuildFile; fileRef = E95714E51C581551006FBFB1 /* red_black_tree.c */; };
-		E95714EE1C581551006FBFB1 /* stack.c in Sources */ = {isa = PBXBuildFile; fileRef = E95714E81C581551006FBFB1 /* stack.c */; };
 		E95714F31C582399006FBFB1 /* linklist.c in Sources */ = {isa = PBXBuildFile; fileRef = E95714F11C582399006FBFB1 /* linklist.c */; };
 		E95714F61C593AD5006FBFB1 /* ScanlineRenderer.c in Sources */ = {isa = PBXBuildFile; fileRef = E95714F41C593AD5006FBFB1 /* ScanlineRenderer.c */; };
 		E9820ADC1C5AC05200ACCF82 /* libnetpbm.a in Frameworks */ = {isa = PBXBuildFile; fileRef = E9820ADB1C5AC05200ACCF82 /* libnetpbm.a */; };
@@ -51,8 +50,6 @@
 		E95714E41C581551006FBFB1 /* misc.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = misc.h; sourceTree = "<group>"; };
 		E95714E51C581551006FBFB1 /* red_black_tree.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = red_black_tree.c; sourceTree = "<group>"; };
 		E95714E61C581551006FBFB1 /* red_black_tree.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = red_black_tree.h; sourceTree = "<group>"; };
-		E95714E81C581551006FBFB1 /* stack.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = stack.c; sourceTree = "<group>"; };
-		E95714E91C581551006FBFB1 /* stack.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = stack.h; sourceTree = "<group>"; };
 		E95714F11C582399006FBFB1 /* linklist.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = linklist.c; sourceTree = "<group>"; };
 		E95714F21C582399006FBFB1 /* linklist.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = linklist.h; sourceTree = "<group>"; };
 		E95714F41C593AD5006FBFB1 /* ScanlineRenderer.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = ScanlineRenderer.c; sourceTree = "<group>"; };
@@ -121,8 +118,6 @@
 				E95714E41C581551006FBFB1 /* misc.h */,
 				E95714E51C581551006FBFB1 /* red_black_tree.c */,
 				E95714E61C581551006FBFB1 /* red_black_tree.h */,
-				E95714E81C581551006FBFB1 /* stack.c */,
-				E95714E91C581551006FBFB1 /* stack.h */,
 			);
 			path = rb_tree;
 			sourceTree = "<group>";
@@ -192,7 +187,6 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				E95714EE1C581551006FBFB1 /* stack.c in Sources */,
 				E93B36A11C56E8D700A88A02 /* AEL.c in Sources */,
 				E93B36951C56CBFA00A88A02 /* Point.c in Sources */,
 				E93B369B1C56D27900A88A02 /* Primitive.c in Sources */,
