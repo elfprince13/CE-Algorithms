@@ -100,25 +100,25 @@ int main(int argc, const char * argv[]) {
 	cubeFaces[5][3] = cubeEdges[2][3];
 	
 	/* Faces here */
-	INIT_PRIM(cubeAndSkel[00], RED,		4, cubeFaces[0]);
-	INIT_PRIM(cubeAndSkel[00], MAGENTA,	4, cubeFaces[1]);
-	INIT_PRIM(cubeAndSkel[00], GREEN,		4, cubeFaces[2]);
-	INIT_PRIM(cubeAndSkel[00], ORANGE,	4, cubeFaces[3]);
-	INIT_PRIM(cubeAndSkel[00], YELLOW,	4, cubeFaces[4]);
-	INIT_PRIM(cubeAndSkel[00], PINK,		4, cubeFaces[5]);
+	INIT_PRIM(cubeAndSkel[0], RED,		4, cubeFaces[0]);
+	INIT_PRIM(cubeAndSkel[1], MAGENTA,	4, cubeFaces[1]);
+	INIT_PRIM(cubeAndSkel[2], GREEN,		4, cubeFaces[2]);
+	INIT_PRIM(cubeAndSkel[3], ORANGE,	4, cubeFaces[3]);
+	INIT_PRIM(cubeAndSkel[4], YELLOW,	4, cubeFaces[4]);
+	INIT_PRIM(cubeAndSkel[5], PINK,		4, cubeFaces[5]);
 	/* Skeleton here */
-	INIT_PRIM(cubeAndSkel[00], BLUE, 1, cubeEdges[0] + 0);
-	INIT_PRIM(cubeAndSkel[00], BLUE, 1, cubeEdges[0] + 1);
-	INIT_PRIM(cubeAndSkel[00], BLUE, 1, cubeEdges[0] + 2);
-	INIT_PRIM(cubeAndSkel[00], BLUE, 1, cubeEdges[0] + 3);
-	INIT_PRIM(cubeAndSkel[00], BLUE, 1, cubeEdges[1] + 0);
-	INIT_PRIM(cubeAndSkel[00], BLUE, 1, cubeEdges[1] + 1);
-	INIT_PRIM(cubeAndSkel[00], BLUE, 1, cubeEdges[1] + 2);
-	INIT_PRIM(cubeAndSkel[00], BLUE, 1, cubeEdges[1] + 3);
-	INIT_PRIM(cubeAndSkel[00], BLUE, 1, cubeEdges[2] + 0);
-	INIT_PRIM(cubeAndSkel[00], BLUE, 1, cubeEdges[2] + 1);
-	INIT_PRIM(cubeAndSkel[00], BLUE, 1, cubeEdges[2] + 2);
-	INIT_PRIM(cubeAndSkel[00], BLUE, 1, cubeEdges[2] + 3);
+	INIT_PRIM(cubeAndSkel[6], BLUE, 1, cubeEdges[0] + 0);
+	INIT_PRIM(cubeAndSkel[7], BLUE, 1, cubeEdges[0] + 1);
+	INIT_PRIM(cubeAndSkel[8], BLUE, 1, cubeEdges[0] + 2);
+	INIT_PRIM(cubeAndSkel[9], BLUE, 1, cubeEdges[0] + 3);
+	INIT_PRIM(cubeAndSkel[10], BLUE, 1, cubeEdges[1] + 0);
+	INIT_PRIM(cubeAndSkel[11], BLUE, 1, cubeEdges[1] + 1);
+	INIT_PRIM(cubeAndSkel[12], BLUE, 1, cubeEdges[1] + 2);
+	INIT_PRIM(cubeAndSkel[13], BLUE, 1, cubeEdges[1] + 3);
+	INIT_PRIM(cubeAndSkel[14], BLUE, 1, cubeEdges[2] + 0);
+	INIT_PRIM(cubeAndSkel[15], BLUE, 1, cubeEdges[2] + 1);
+	INIT_PRIM(cubeAndSkel[16], BLUE, 1, cubeEdges[2] + 2);
+	INIT_PRIM(cubeAndSkel[17], BLUE, 1, cubeEdges[2] + 3);
 	
 	memset(raster, 0xff, rasterByteCount);
 	render(raster, lineWidth, numLines, cubeAndSkel, 18, &viewProj);
