@@ -1,3 +1,6 @@
+#ifndef RED_BLACK_TREE_H_
+#define RED_BLACK_TREE_H_
+
 #ifdef DMALLOC
 #include <dmalloc.h>
 #endif
@@ -87,3 +90,5 @@ void* RBMapRemove(rb_red_blk_map_tree *tree, const void* key);
 bool RBSetAdd(rb_red_blk_tree *tree, void* key);
 bool RBSetRemove(rb_red_blk_tree *tree, const void* key);
 bool RBSetContains(const rb_red_blk_tree *tree, const void* key);
+
+#endif

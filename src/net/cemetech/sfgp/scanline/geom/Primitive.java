@@ -6,13 +6,17 @@ import java.util.LinkedList;
 import net.cemetech.sfgp.scanline.geom.Edge.EndPoint;
 import net.cemetech.sfgp.scanline.geom.Point.CoordName;
 
-public class Primitive {
+public class Primitive implements Comparable<Primitive> {
 	public LinkedList<Edge> boundary;
 	public Color color;
+	private int unique;
+	
+	static int uniqueV = 0;
 	
 	public Primitive(LinkedList<Edge> b){
 		boundary = b;
 		color = Color.black;
+		unique = uniqueV++;
 	}
 	
 	public static Primitive makeLine(Edge e){
@@ -103,6 +107,19 @@ public class Primitive {
 			return (nz == 0) ? ((numer > 0) ? Integer.MAX_VALUE : Integer.MIN_VALUE) : (numer / nz) ;
 		}
 	
+	}
+	//*
+	public int hashCode() {
+		int ret = 0;
+		for(Edge e : boundary){
+			ret ^= e.hashCode();
+		}
+		ret ^= color.hashCode();
+		return ret;
+	}
+	//*/
+	public int compareTo(Primitive o){
+		return this.unique - o.unique;
 	}
 
 }

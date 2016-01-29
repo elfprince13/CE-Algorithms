@@ -23,6 +23,8 @@ typedef struct {
 (p).y = (yv); \
 (p).z = (zv)
 
+#define HASH_POINT(p) ((p).x ^ (p).y ^ (p).z)
+
 const Point origin(void);
 
 void negate(Point *);

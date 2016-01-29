@@ -66,7 +66,7 @@ static LinkN* makeLink(Edge *e, Primitive *p, bool s);
 
 static int32_t leftToRightF(EdgeListEntry *, EdgeListEntry *, int32_t *);
 
-void stepEdges(ActiveEdgeList *ael, const LinkN* activePrims){
+void stepEdges(ActiveEdgeList *ael, const rb_red_blk_tree* activePrims){
 	static int32_t scanLine;
 	const static Comparator leftToRight = {(CompareF)(&leftToRightF), &scanLine};
 	scanLine = ++(ael->scanLine);
@@ -92,9 +92,9 @@ void stepEdges(ActiveEdgeList *ael, const LinkN* activePrims){
 		}
 	}
 	{
-		const LinkN *i;
-		for(i = activePrims; i; i = i->tail){
-			Primitive *prim = i->data;
+		const rb_red_blk_node *i;
+		for(i = activePrims->first; i != activePrims->sentinel; i = TreeSuccessor(activePrims, i)){
+			Primitive *prim = i->key;
 			size_t j;
 			uint32_t jMax = prim->arity;
 			for(j = 0; j < jMax; ++j){
@@ -108,7 +108,7 @@ void stepEdges(ActiveEdgeList *ael, const LinkN* activePrims){
 				   || (scanLine == 0 && mnY < 0 && mxY > 0)){
 					LinkN* newEdge = makeLinkEZ(e, prim);
 					{
-						printf("Activating %s with y-span: %d -> %d with x-span: %d - %d (true: %d -> %d)\n",
+						printf("Activating %s with y-span: %d -> %d with x-span: %d -> %d(true: %d -> %d)\n",
 							   fmtColor(prim->color), mnY, mxY,
 							   getMinXForLine(newEdge->data, scanLine), getMaxXForLine(newEdge->data, scanLine),
 							   e->coords[START].x, e->coords[END].x);
@@ -151,5 +151,17 @@ LinkN* makeLink(Edge *e, Primitive *p, bool s){
 }
 
 int32_t leftToRightF(EdgeListEntry *o1, EdgeListEntry *o2, int32_t *scanLine){
-	return getSmartXForLine(o1, *scanLine) - getSmartXForLine(o2, *scanLine);
+	int32_t delta = getSmartXForLine(o1, *scanLine) - getSmartXForLine(o2, *scanLine);
+#ifndef NDEBUG
+	if (!delta) {
+		delta = o1->edge->coords[START].x - o2->edge->coords[START].x;
+	}
+	if (!delta) {
+		delta = o1->edge->coords[END].x - o2->edge->coords[END].x;
+	}
+	if(!delta) {
+		delta = o1->owner->arity - o2->owner->arity;
+	}
+#endif
+	return delta;
 }

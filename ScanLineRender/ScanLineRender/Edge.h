@@ -22,6 +22,8 @@ typedef struct {
 (ed).coords[START] = (sv); \
 (ed).coords[END] = (ev)
 
+#define HASH_EDGE(e) (HASH_POINT((e).coords[START]) ^ HASH_POINT((e).coords[END]))
+
 void flip(Edge * );
 void flipped(const Edge *e, Edge * o);
 

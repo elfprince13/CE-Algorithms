@@ -18,16 +18,14 @@ typedef int(*StatelessCompF)(const void*,const void*) ;
 /* We really ought to re-type this if possible */
 static int topToBottom(const Primitive *, const Primitive *);
 static int pointerDiff(const Primitive*, const Primitive*);
+static int hashDiff(const Primitive*, const Primitive*);
 static StatelessCompF topToBottomF = (StatelessCompF)(&topToBottom);
 static StatelessCompF pointerDiffF = (StatelessCompF)(&pointerDiff);
+static StatelessCompF hashDiffF = (StatelessCompF)(&pointerDiff);
 static int32_t topMostPrimPoint(const Primitive *);
 static int32_t topMostEdgePoint(const Edge *);
 static int32_t bottomMostPrimPoint(const Primitive *);
 static int32_t bottomMostEdgePoint(const Edge *);
-
-static void removeLink(LinkN **aPS, LinkN* target, LinkN* prev);
-static void linkFront(LinkN **aPS, LinkN* target);
-static LinkN* makeLink(Primitive *p);
 
 
 void render(Color *raster, int32_t lineWidth, int32_t numLines, const Primitive *geometry, size_t geomCount, const Projection *p){
@@ -55,32 +53,33 @@ void render(Color *raster, int32_t lineWidth, int32_t numLines, const Primitive 
 			if(pScanLine < numLines && (pScanLine >= 0 || topMostPrimPoint(prim) >= 0)){
 				rb_red_blk_tree *const dstBucket = scanLinePrimBuckets + max(0, pScanLine);
 				RBSetAdd(dstBucket, prim);
-				printf("dstBucket %ld gets geometry with arity %d begins on %d and ends on %d\n", dstBucket - scanLinePrimBuckets, prim->arity, bottomMostPrimPoint(prim), topMostPrimPoint(prim));
+				printf("dstBucket %ld gets geometry with arity %d begins on %d and ends on %d and now has size %lu\n", dstBucket - scanLinePrimBuckets, prim->arity, bottomMostPrimPoint(prim), topMostPrimPoint(prim), dstBucket->size);
 			}
 		}
 		{
 			int32_t line;
-			LinkN* activePrimSet = NULL;
+			rb_red_blk_tree activePrimSet;
 			ActiveEdgeList ael = freshAEL();
 			rb_red_blk_map_tree inFlags;
 			rb_red_blk_tree deFlags;
 			/* This ensures that both trees are initialized and in a cleared state */
 			RBTreeMapInit(&inFlags, pointerDiffF, NULL, &RBMapNodeAlloc, NULL);
 			RBTreeInit(&deFlags, pointerDiffF, NULL, &RBNodeAlloc);
+			RBTreeInit(&activePrimSet, pointerDiffF, NULL, &RBNodeAlloc);
 			for(line = 0; line < numLines; (++line), (raster += lineWidth)) {
-				LinkN *primIt, *p, *nextP;
+				rb_red_blk_node *primIt, *p = NULL, *nextP;
 				printf("Scanning line: %d\n", line);
 				printf("\tUpdating activePrimSet\n");
-				for (p = NULL, primIt = activePrimSet; primIt; (p=primIt),(primIt=nextP)) {
-					const Primitive* prim = primIt->data;
+				for (primIt = activePrimSet.first; primIt != activePrimSet.sentinel; (p = primIt), (primIt = nextP)) {
+					const Primitive* prim = primIt->key;
 					const int32_t top = topMostPrimPoint(prim);
-					nextP = primIt->tail;
+					nextP = TreeSuccessor(&activePrimSet, primIt);
 					if(top < line){
 						{
 							const int32_t bottom = bottomMostPrimPoint(prim);
 							printf("\t\t%d -> %d ( %s ) is not valid here: %d\n",top,bottom,fmtColor(prim->color), line);
 						}
-						removeLink(&activePrimSet, primIt, p);
+						RBDelete(&activePrimSet, primIt);
 						primIt = p; /* We don't want to advance p into garbage data */
 					}
 				}
@@ -94,11 +93,11 @@ void render(Color *raster, int32_t lineWidth, int32_t numLines, const Primitive 
 							bottom = bottomMostPrimPoint(prim);
 							printf("\t\t%d -> %d ( %s ) is added here: %d\n",top,bottom,fmtColor(prim->color), line);
 						}
-						linkFront(&activePrimSet, makeLink(prim));
+						RBTreeInsert(&activePrimSet, prim);
 					}
 				}
 				
-				stepEdges(&ael, activePrimSet);
+				stepEdges(&ael, &activePrimSet);
 				
 				{
 					int32_t curPixel = 0;
@@ -238,6 +237,7 @@ void render(Color *raster, int32_t lineWidth, int32_t numLines, const Primitive 
 				RBTreeClear(&deFlags);
 				RBTreeClear((rb_red_blk_tree*)(&inFlags));
 			}
+			RBTreeDestroy(&activePrimSet, false);
 			RBTreeDestroy(&deFlags, false);
 			RBTreeDestroy((rb_red_blk_tree*)(&inFlags), false);
 			for (i = 0; i < line; ++i) {
@@ -256,8 +256,18 @@ int pointerDiff(const Primitive *p1, const Primitive *p2){
 	return delta ? (delta < 0 ? -1 : 1) : 0;
 }
 
+int hashDiff(const Primitive *p1, const Primitive *p2){
+	const ptrdiff_t delta = hashPrim(p1) - hashPrim(p2);
+	return delta ? (delta < 0 ? -1 : 1) : 0;
+}
+
 int topToBottom(const Primitive *p1, const Primitive *p2){
-	return topMostPrimPoint(p1) - topMostPrimPoint(p2);
+	int32_t delta = topMostPrimPoint(p1) - topMostPrimPoint(p2);
+#ifndef NDEBUG
+	if(!delta) delta = bottomMostPrimPoint(p1) - bottomMostPrimPoint(p2);
+	if(!delta) delta = p1->arity - p2->arity;
+#endif
+	return delta;
 }
 
 int32_t topMostPrimPoint(const Primitive *prim){
@@ -288,25 +298,4 @@ int32_t bottomMostPrimPoint(const Primitive *prim){
 int32_t bottomMostEdgePoint(const Edge *edge){
 	const Point * coords = edge->coords;
 	return min(coords[START].y, coords[END].y);
-}
-
-void removeLink(LinkN **aPS, LinkN* target, LinkN* prev){
-	if(prev){
-		prev->tail = target->tail;
-	} else {
-		*aPS = target->tail;
-	}
-	/* We don't own the primitive */
-	freeLink(target, NULL);
-}
-
-void linkFront(LinkN **aPS, LinkN *target){
-	target->tail = *aPS;
-	*aPS = target;
-}
-
-LinkN* makeLink(Primitive *p){
-	LinkN *newLink = malloc(sizeof(LinkN));
-	newLink->data = p;
-	return newLink;
 }

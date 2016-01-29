@@ -12,6 +12,7 @@
 #include "stdbool.h"
 #include "Primitive.h"
 #include "link_list/linklist.h"
+#include "rb_tree/red_black_tree.h"
 
 typedef struct _EdgeListEntry {
 	Edge * edge;
@@ -37,7 +38,7 @@ typedef struct {
 } ActiveEdgeList;
 
 const ActiveEdgeList freshAEL(void);
-void stepEdges(ActiveEdgeList *ael, const LinkN* activePrims);
+void stepEdges(ActiveEdgeList *ael, const rb_red_blk_tree* activePrims);
 
 
 #endif /* AEL_h */

@@ -110,3 +110,13 @@ void projectPrimitive(const Projection * proj, const Primitive *p, Primitive *o)
 		projectEdge(proj, p->boundary + i, o->boundary + i);
 	}
 }
+
+
+int32_t hashPrim(const Primitive *p){
+	size_t i; int32_t ret = 0;
+	for(i = 0; i < p->arity; ++i){
+		ret ^= HASH_EDGE(p->boundary[i]);
+	}
+	ret ^= (p->color << 8) | 0xFF;
+	return ret;
+}

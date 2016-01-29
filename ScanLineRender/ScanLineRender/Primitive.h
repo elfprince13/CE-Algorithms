@@ -34,5 +34,8 @@ void makeQuad(const Edge *e1, const Edge *e2, const Edge *e3, const Edge *e4, Pr
 const int32_t getZForXY(const Primitive *p, const int32_t x, const int32_t y);
 void projectPrimitive(const Projection * proj, const Primitive *p, Primitive *o);
 
+int32_t hashPrim(const Primitive *p);
+
+
 
 #endif /* Primitive_h */
