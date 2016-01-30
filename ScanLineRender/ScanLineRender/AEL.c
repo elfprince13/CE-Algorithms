@@ -59,8 +59,6 @@ const ActiveEdgeList freshAEL(){
 	return ael;
 }
 
-static void removeLink(ActiveEdgeList *ael, LinkN* target, LinkN* prev);
-static void linkFront(ActiveEdgeList *ael, LinkN* target);
 static LinkN* makeLink(Edge *e, Primitive *p, bool s);
 #define makeLinkEZ(e, p) makeLink(e,p,false)
 
@@ -69,6 +67,7 @@ static int32_t leftToRightF(EdgeListEntry *, EdgeListEntry *, int32_t *);
 void stepEdges(ActiveEdgeList *ael, const rb_red_blk_tree* activePrims){
 	static int32_t scanLine;
 	const static Comparator leftToRight = {(CompareF)(&leftToRightF), &scanLine};
+	LinkN **aelHead = &(ael->activeEdges);
 	scanLine = ++(ael->scanLine);
 	{
 		LinkN *i, *p, *nextP;
@@ -86,7 +85,9 @@ void stepEdges(ActiveEdgeList *ael, const rb_red_blk_tree* activePrims){
 						   getMinXForLine(edge, scanLine), getMaxXForLine(edge, scanLine),
 						   edge->edge->coords[START].x, edge->edge->coords[END].x);
 				}
-				removeLink(ael, i, p);
+				/* Entries don't own the primitives they point to,
+				 * so we can get away with a simple free  */
+				freeLink(removeLink(aelHead, i, p), &free);
 				i = p; /* We don't want to advance p into garbage data */
 			}
 		}
@@ -113,10 +114,10 @@ void stepEdges(ActiveEdgeList *ael, const rb_red_blk_tree* activePrims){
 							   getMinXForLine(newEdge->data, scanLine), getMaxXForLine(newEdge->data, scanLine),
 							   e->coords[START].x, e->coords[END].x);
 					}
-					linkFront(ael, newEdge);
+					linkFront(aelHead, newEdge);
 					if (singleton) {
 						printf("\t->Activating dummy end\n");
-						linkFront(ael, makeLink(e, prim, true));
+						linkFront(aelHead, makeLink(e, prim, true));
 					}
 				}
 			}
@@ -124,23 +125,6 @@ void stepEdges(ActiveEdgeList *ael, const rb_red_blk_tree* activePrims){
 	}
 	mergeSort(&(ael->activeEdges), &leftToRight);
 }
-
-void removeLink(ActiveEdgeList *ael, LinkN* target, LinkN* prev){
-	if(prev){
-		prev->tail = target->tail;
-	} else {
-		ael->activeEdges = target->tail;
-	}
-	/* Entries don't own the primitives they point to, 
-	 * so we can get away with a simple free  */
-	freeLink(target, &free);
-}
-
-void linkFront(ActiveEdgeList *ael, LinkN *target){
-	target->tail = ael->activeEdges;
-	ael->activeEdges = target;
-}
-
 
 LinkN* makeLink(Edge *e, Primitive *p, bool s){
 	LinkN *newLink = malloc(sizeof(LinkN));
@@ -159,11 +143,20 @@ int32_t leftToRightF(EdgeListEntry *o1, EdgeListEntry *o2, int32_t *scanLine){
 	if (!delta) {
 		delta = o1->edge->coords[END].x - o2->edge->coords[END].x;
 	}
+	if (!delta) {
+		delta = o1->edge->coords[START].y - o2->edge->coords[START].y;
+	}
+	if (!delta) {
+		delta = o1->edge->coords[END].y - o2->edge->coords[END].y;
+	}
 	if(!delta) {
 		delta = o1->owner->arity - o2->owner->arity;
 	}
 	if(!delta) {
 		delta = o1->owner->color - o2->owner->color;
+	}
+	if(!delta) {
+		delta = (int32_t)(o1->placeHolder) - (int32_t)(o2->placeHolder);
 	}
 #endif
 	return delta;

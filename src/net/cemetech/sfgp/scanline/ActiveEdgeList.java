@@ -127,10 +127,19 @@ public class ActiveEdgeList {
 				delta = o1.edge.getEndPoint(Edge.EndPoint.END).getComponent(Point.CoordName.X) - o2.edge.getEndPoint(Edge.EndPoint.END).getComponent(Point.CoordName.X);
 			}
 			if(delta == 0){
+				delta = o1.edge.getEndPoint(Edge.EndPoint.START).getComponent(Point.CoordName.Y) - o2.edge.getEndPoint(Edge.EndPoint.START).getComponent(Point.CoordName.Y);
+			}
+			if(delta == 0){
+				delta = o1.edge.getEndPoint(Edge.EndPoint.END).getComponent(Point.CoordName.Y) - o2.edge.getEndPoint(Edge.EndPoint.END).getComponent(Point.CoordName.Y);
+			}
+			if(delta == 0){
 				delta = o1.owner.getArity() - o2.owner.getArity();
 			}
 			if(delta == 0){
 				delta = o1.owner.color.hashCode() - o2.owner.color.hashCode();
+			}
+			if(delta == 0){
+				delta = (o1.placeHolder ? 1 : 0) - (o2.placeHolder ? 1 : 0);
 			}
 			return delta;
 		}
