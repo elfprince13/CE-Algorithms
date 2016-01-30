@@ -134,7 +134,7 @@ void render(Color *raster, int32_t lineWidth, int32_t numLines, const Primitive 
 								dotH = v ? dot(&vert, &flatHere) : 0;
 								dotIn = v ? dot(&vert, &flatIn) : 0;
 								if(!v || dotH * dotIn > 0){
-									printf("\t Not *in* old %s at %d\n", fmtColor(startEdge->owner->color), getSmartXForLine(startEdge, line));
+									printf("\tNot *in* old %s at %d\n", fmtColor(startEdge->owner->color), getSmartXForLine(startEdge, line));
 									RBSetAdd(&deFlags, startOwner);
 								} else {
 									printf("\tFound horizontal vertex %s at %d\n",fmtColor(startEdge->owner->color), getSmartXForLine(startEdge, line));
