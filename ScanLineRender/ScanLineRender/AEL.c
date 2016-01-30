@@ -81,7 +81,7 @@ void stepEdges(ActiveEdgeList *ael, const rb_red_blk_tree* activePrims){
 			if(edgeEnd < scanLine){
 				{
 					const int32_t lowEnd = min(ys, ye);
-					printf("Deactivating %s with y-span: %d -> %d with x-span: %d - %d (true: %d -> %d)\n",
+					printf("Deactivating %s with y-span: %d -> %d with x-span: %d -> %d(true: %d -> %d)\n",
 						   fmtColor(edge->owner->color), lowEnd, edgeEnd,
 						   getMinXForLine(edge, scanLine), getMaxXForLine(edge, scanLine),
 						   edge->edge->coords[START].x, edge->edge->coords[END].x);
