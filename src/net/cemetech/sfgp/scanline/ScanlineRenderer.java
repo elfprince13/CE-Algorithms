@@ -35,6 +35,7 @@ public class ScanlineRenderer<T extends Projection> {
 		for(int i = 0; i < numLines; i++) scanLinePrimBuckets.add(new TreeSet<Primitive>());
 		Arrays.sort(projectedGeometry,new TopToBottom());
 		for(Primitive prim : projectedGeometry){
+			prim.unique = prim.uniqueV++;
 			int pScanline = bottomMostPoint(prim);
 			if(pScanline < numLines && (pScanline >= 0 || topMostPoint(prim) >= 0)){
 				int dstBucket = Math.max(0,pScanline);
@@ -204,7 +205,16 @@ public class ScanlineRenderer<T extends Projection> {
 				delta = bottomMostPoint(o1) - bottomMostPoint(o2);
 			}
 			if(delta == 0){
+				delta = leftMostPoint(o1) - leftMostPoint(o2);
+			}
+			if(delta == 0){
+				delta = rightMostPoint(o1) - rightMostPoint(o2);
+			}
+			if(delta == 0){
 				delta = o1.getArity() - o2.getArity();
+			}
+			if(delta == 0){
+				delta = o1.color.hashCode() - o2.color.hashCode();
 			}
 			return delta;
 		}
@@ -238,5 +248,35 @@ public class ScanlineRenderer<T extends Projection> {
 		return Math.min(
 				e.getEndPoint(EndPoint.START).getComponent(CoordName.Y),
 				e.getEndPoint(EndPoint.END).getComponent(CoordName.Y));
+	}
+	
+	private int rightMostPoint(Primitive prim){
+		int top = 0, i = 0;
+		for(Edge e : prim.boundary) {
+			int candidate = rightMostPoint(e);
+			if(i++ == 0 || candidate > top) top = candidate;
+		}
+		return top;
+	}
+	
+	private int leftMostPoint(Primitive prim){
+		int bottom = 0, i = 0;
+		for(Edge e : prim.boundary) {
+			int candidate = leftMostPoint(e);
+			if(i++ == 0 || candidate < bottom) bottom = candidate;
+		}
+		return bottom;
+	}
+	
+	private int rightMostPoint(Edge e){
+		return Math.max(
+				e.getEndPoint(EndPoint.START).getComponent(CoordName.X),
+				e.getEndPoint(EndPoint.END).getComponent(CoordName.X));
+	}
+	
+	private int leftMostPoint(Edge e){
+		return Math.min(
+				e.getEndPoint(EndPoint.START).getComponent(CoordName.X),
+				e.getEndPoint(EndPoint.END).getComponent(CoordName.X));
 	}
 }

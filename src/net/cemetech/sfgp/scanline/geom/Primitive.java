@@ -9,9 +9,9 @@ import net.cemetech.sfgp.scanline.geom.Point.CoordName;
 public class Primitive implements Comparable<Primitive> {
 	public LinkedList<Edge> boundary;
 	public Color color;
-	private int unique;
+	public int unique;
 	
-	static int uniqueV = 0;
+	public static int uniqueV = 0;
 	
 	public Primitive(LinkedList<Edge> b){
 		boundary = b;

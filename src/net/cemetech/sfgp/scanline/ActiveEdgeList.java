@@ -129,6 +129,9 @@ public class ActiveEdgeList {
 			if(delta == 0){
 				delta = o1.owner.getArity() - o2.owner.getArity();
 			}
+			if(delta == 0){
+				delta = o1.owner.color.hashCode() - o2.owner.color.hashCode();
+			}
 			return delta;
 		}
 		

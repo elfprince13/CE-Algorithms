@@ -162,6 +162,9 @@ int32_t leftToRightF(EdgeListEntry *o1, EdgeListEntry *o2, int32_t *scanLine){
 	if(!delta) {
 		delta = o1->owner->arity - o2->owner->arity;
 	}
+	if(!delta) {
+		delta = o1->owner->color - o2->owner->color;
+	}
 #endif
 	return delta;
 }

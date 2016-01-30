@@ -26,6 +26,10 @@ static int32_t topMostPrimPoint(const Primitive *);
 static int32_t topMostEdgePoint(const Edge *);
 static int32_t bottomMostPrimPoint(const Primitive *);
 static int32_t bottomMostEdgePoint(const Edge *);
+static int32_t rightMostPrimPoint(const Primitive *);
+static int32_t rightMostEdgePoint(const Edge *);
+static int32_t leftMostPrimPoint(const Primitive *);
+static int32_t leftMostEdgePoint(const Edge *);
 
 
 void render(Color *raster, int32_t lineWidth, int32_t numLines, const Primitive *geometry, size_t geomCount, const Projection *p){
@@ -265,7 +269,10 @@ int topToBottom(const Primitive *p1, const Primitive *p2){
 	int32_t delta = topMostPrimPoint(p1) - topMostPrimPoint(p2);
 #ifndef NDEBUG
 	if(!delta) delta = bottomMostPrimPoint(p1) - bottomMostPrimPoint(p2);
+	if(!delta) delta = leftMostPrimPoint(p1) - leftMostPrimPoint(p2);
+	if(!delta) delta = rightMostPrimPoint(p1) - rightMostPrimPoint(p2);
 	if(!delta) delta = p1->arity - p2->arity;
+	if(!delta) delta = p1->color - p2->color;
 #endif
 	return delta;
 }
@@ -298,4 +305,34 @@ int32_t bottomMostPrimPoint(const Primitive *prim){
 int32_t bottomMostEdgePoint(const Edge *edge){
 	const Point * coords = edge->coords;
 	return min(coords[START].y, coords[END].y);
+}
+
+int32_t rightMostPrimPoint(const Primitive *prim){
+	const int32_t arity = prim->arity;
+	int32_t top, i;
+	for(top = rightMostEdgePoint(prim->boundary),i = 1; i < arity; ++i){
+		const int32_t candidate = rightMostEdgePoint(prim->boundary + i);
+		if(candidate > top) top = candidate;
+	}
+	return top;
+}
+
+int32_t rightMostEdgePoint(const Edge *edge){
+	const Point * coords = edge->coords;
+	return max(coords[START].x, coords[END].x);
+}
+
+int32_t leftMostPrimPoint(const Primitive *prim){
+	const int32_t arity = prim->arity;
+	int32_t bottom, i;
+	for(bottom = leftMostEdgePoint(prim->boundary),i = 1; i < arity; ++i){
+		const int32_t candidate = leftMostEdgePoint(prim->boundary + i);
+		if(candidate < bottom) bottom = candidate;
+	}
+	return bottom;
+}
+
+int32_t leftMostEdgePoint(const Edge *edge){
+	const Point * coords = edge->coords;
+	return min(coords[START].x, coords[END].x);
 }
