@@ -78,13 +78,15 @@ void stepEdges(ActiveEdgeList *ael, const rb_red_blk_tree* activePrims){
 			edgeEnd = max(ys, ye);
 			nextP = i->tail;
 			if(edgeEnd < scanLine){
+#ifndef NDEBUG
 				{
 					const int32_t lowEnd = min(ys, ye);
-					printf("Deactivating %s with y-span: %d -> %d with x-span: %d -> %d(true: %d -> %d)\n",
+					dPrintf(("Deactivating %s with y-span: %d -> %d with x-span: %d -> %d(true: %d -> %d)\n",
 						   fmtColor(edge->owner->color), lowEnd, edgeEnd,
 						   getMinXForLine(edge, scanLine), getMaxXForLine(edge, scanLine),
-						   edge->edge->coords[START].x, edge->edge->coords[END].x);
+						   edge->edge->coords[START].x, edge->edge->coords[END].x));
 				}
+#endif
 				/* Entries don't own the primitives they point to,
 				 * so we can get away with a simple free  */
 				freeLink(removeLink(aelHead, i, p), &free);
@@ -108,15 +110,17 @@ void stepEdges(ActiveEdgeList *ael, const rb_red_blk_tree* activePrims){
 				if((mnY == scanLine && (sy != ey || (singleton /* newEdge.isSingleton() */)))
 				   || (scanLine == 0 && mnY < 0 && mxY > 0)){
 					LinkN* newEdge = makeLinkEZ(e, prim);
+#ifndef NDEBUG
 					{
-						printf("Activating %s with y-span: %d -> %d with x-span: %d -> %d(true: %d -> %d)\n",
+						dPrintf(("Activating %s with y-span: %d -> %d with x-span: %d -> %d(true: %d -> %d)\n",
 							   fmtColor(prim->color), mnY, mxY,
 							   getMinXForLine(newEdge->data, scanLine), getMaxXForLine(newEdge->data, scanLine),
-							   e->coords[START].x, e->coords[END].x);
+							   e->coords[START].x, e->coords[END].x));
 					}
+#endif
 					linkFront(aelHead, newEdge);
 					if (singleton) {
-						printf("\t->Activating dummy end\n");
+						dPrintf(("\t->Activating dummy end\n"));
 						linkFront(aelHead, makeLink(e, prim, true));
 					}
 				}
@@ -137,27 +141,13 @@ LinkN* makeLink(Edge *e, Primitive *p, bool s){
 int32_t leftToRightF(EdgeListEntry *o1, EdgeListEntry *o2, int32_t *scanLine){
 	int32_t delta = getSmartXForLine(o1, *scanLine) - getSmartXForLine(o2, *scanLine);
 #ifndef NDEBUG
-	if (!delta) {
-		delta = o1->edge->coords[START].x - o2->edge->coords[START].x;
-	}
-	if (!delta) {
-		delta = o1->edge->coords[END].x - o2->edge->coords[END].x;
-	}
-	if (!delta) {
-		delta = o1->edge->coords[START].y - o2->edge->coords[START].y;
-	}
-	if (!delta) {
-		delta = o1->edge->coords[END].y - o2->edge->coords[END].y;
-	}
-	if(!delta) {
-		delta = o1->owner->arity - o2->owner->arity;
-	}
-	if(!delta) {
-		delta = o1->owner->color - o2->owner->color;
-	}
-	if(!delta) {
-		delta = (int32_t)(o1->placeHolder) - (int32_t)(o2->placeHolder);
-	}
+	if (!delta) delta = o1->edge->coords[START].x - o2->edge->coords[START].x;
+	if (!delta) delta = o1->edge->coords[END].x - o2->edge->coords[END].x;
+	if (!delta) delta = o1->edge->coords[START].y - o2->edge->coords[START].y;
+	if (!delta) delta = o1->edge->coords[END].y - o2->edge->coords[END].y;
+	if (!delta) delta = o1->owner->arity - o2->owner->arity;
+	if (!delta) delta = o1->owner->color - o2->owner->color;
+	if (!delta) delta = (int32_t)(o1->placeHolder) - (int32_t)(o2->placeHolder);
 #endif
 	return delta;
 }

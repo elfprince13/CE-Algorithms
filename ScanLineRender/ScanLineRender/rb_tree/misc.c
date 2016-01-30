@@ -1,4 +1,7 @@
+#include<stdlib.h>
 #include "misc.h"
+#include "../debugConfig.h"
+
 
 /***********************************************************************/
 /*  FUNCTION:  SafeMalloc */
@@ -20,8 +23,8 @@ void * SafeMalloc(size_t size) {
   if ( (result = malloc(size)) ) { /* assignment intentional */
     return(result);
   } else {
-    printf("memory overflow: malloc failed in SafeMalloc.");
-    printf("  Exiting Program.\n");
+    dPrintf(("memory overflow: malloc failed in SafeMalloc."));
+    dPrintf(("  Exiting Program.\n"));
     exit(-1);
     return(0);
   }

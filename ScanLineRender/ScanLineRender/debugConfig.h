@@ -9,12 +9,15 @@
 #ifndef debugConfig_h
 #define debugConfig_h
 
+#define NDEBUG
+
 #include <assert.h>
 
 #ifdef NDEBUG
-#define printf(...) ((void)0)
+#define dPrintf(args) ((void)0)
 #else
 #include <stdio.h>
+#define dPrintf(args) printf args
 #endif
 
 

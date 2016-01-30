@@ -1,4 +1,5 @@
 #include "red_black_tree.h"
+#include <stdlib.h>
 
 static void RBTreeNodeDestroy(rb_red_blk_tree* tree, rb_red_blk_node* target);
 void RBTreeNodeDestroy(rb_red_blk_tree* tree, rb_red_blk_node* target){

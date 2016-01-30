@@ -11,10 +11,13 @@
 
 #include "Edge.h"
 #include "Projection.h"
+#include "debugConfig.h"
 
 typedef uint32_t Color;
 
+#ifndef NDEBUG
 const char * fmtColor(Color c);
+#endif
 
 typedef struct {
 	Color color;

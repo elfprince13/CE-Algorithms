@@ -1,8 +1,7 @@
-#include<stdio.h>
-#include<stdlib.h>
-
 #ifndef INC_E_MISC_
 #define INC_E_MISC_
+
+#include <stdint.h>
 
 
 /*  CONVENTIONS:  All data structures for red-black trees have the prefix */

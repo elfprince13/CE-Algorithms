@@ -8,7 +8,7 @@
 
 #include "Primitive.h"
 
-#include <stdio.h>
+#ifndef NDEBUG
 const char * fmtColor(Color c){
 	/* extra unsafe */
 	static char buf[64];
@@ -18,6 +18,7 @@ const char * fmtColor(Color c){
 	sprintf(buf,"java.awt.Color[r=%d,g=%d,b=%d]",r,g,b);
 	return buf;
 }
+#endif
 
 void makeLine(const Edge *e, Primitive *o){
 	Primitive tmp;
