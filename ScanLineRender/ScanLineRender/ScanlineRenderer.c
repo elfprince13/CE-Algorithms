@@ -70,9 +70,9 @@ void render(Color *raster, int32_t lineWidth, int32_t numLines, const Primitive 
 			RBTreeMapInit(&inFlags, pointerDiffF, NULL, &RBMapNodeAlloc, NULL);
 			RBTreeInit(&deFlags, pointerDiffF, NULL, &RBNodeAlloc);
 			RBTreeInit(&activePrimSet, pointerDiffF, NULL, &RBNodeAlloc);
+			printf("Scanning line: 0\n", line);
 			for(line = 0; line < numLines; (++line), (raster += lineWidth)) {
 				rb_red_blk_node *primIt, *p = NULL, *nextP;
-				printf("Scanning line: %d\n", line);
 				printf("\tUpdating activePrimSet\n");
 				for (primIt = activePrimSet.first; primIt != activePrimSet.sentinel; (p = primIt), (primIt = nextP)) {
 					const Primitive* prim = primIt->key;
@@ -131,6 +131,8 @@ void render(Color *raster, int32_t lineWidth, int32_t numLines, const Primitive 
 								sV = contains(edgeIn, s);
 								eV = contains(edgeIn, e);
 								v = (sV || eV) && contains(&flatIn, &here) && contains(&flatHere, &here) && (startOwner->arity != 1);
+								vert.coords[START] = here;
+								INIT_POINT(vert.coords[END], startX, line+1, 0);
 								dotH = v ? dot(&vert, &flatHere) : 0;
 								dotIn = v ? dot(&vert, &flatIn) : 0;
 								if(!v || dotH * dotIn > 0){
@@ -191,11 +193,11 @@ void render(Color *raster, int32_t lineWidth, int32_t numLines, const Primitive 
 								if(curDraw){
 									if(nextEdge || solitary){
 										const int32_t drawWidth = (zFight || solitary) ? 1 : ((nextEdge ? nextX : lineWidth) - curPixel),
-										stopPixel = lineWidth + min(lineWidth - curPixel,
+										stopPixel = curPixel + min(lineWidth - curPixel,
 																	max(0, drawWidth));
 										const Color drawColor = curDraw->color;
 										printf("Drawing %d @ (%d, %d)\n",drawWidth,curPixel,line);
-										printf("Drawing %d @ (%d, %d)\n",stopPixel - lineWidth,curPixel,line);
+										printf("Drawing %d @ (%d, %d)\n",stopPixel - curPixel,curPixel,line);
 										while(curPixel < stopPixel){
 											raster[curPixel++] = drawColor;
 										}
@@ -228,6 +230,8 @@ void render(Color *raster, int32_t lineWidth, int32_t numLines, const Primitive 
 				}
 				
 				{
+					
+					printf("Scanning line: %d\n", line+1);
 					if(inFlags.tree.size){
 						rb_red_blk_node *node;
 						printf("\tGarbage left in inFlags:\n");
