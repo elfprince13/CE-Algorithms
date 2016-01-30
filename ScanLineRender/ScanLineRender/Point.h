@@ -12,6 +12,7 @@
 #include <stddef.h>
 #include <stdint.h>
 #include <stdlib.h>
+#include <stdbool.h>
 #define min(a, b) (((a) < (b)) ? (a) : (b))
 #define max(a, b) (((a) > (b)) ? (a) : (b))
 
@@ -29,5 +30,10 @@ const Point origin(void);
 
 void negate(Point *);
 void negated(const Point *p, Point *o);
+
+bool pointsEqual(const Point *p, const Point *q);
+
+#define DOT(p, q) (((p).x * (q).x) + ((p).y * (q).y) + ((p).z * (q).z));
+int32_t dot(const Point *p, const Point *q);
 
 #endif /* Point_h */

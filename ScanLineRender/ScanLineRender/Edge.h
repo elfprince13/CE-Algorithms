@@ -27,7 +27,7 @@ typedef struct {
 void flip(Edge * );
 void flipped(const Edge *e, Edge * o);
 
-int32_t dot(const Edge *, const Edge *);
+int32_t dotEdge(const Edge *, const Edge *);
 struct _Projection;
 void projectEdge(const struct _Projection * proj, const Edge *e, Edge *o);
 bool contains(const Edge *, const Point *);

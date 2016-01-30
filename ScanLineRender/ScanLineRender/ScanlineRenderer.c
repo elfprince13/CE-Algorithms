@@ -70,7 +70,7 @@ void render(Color *raster, int32_t lineWidth, int32_t numLines, const Primitive 
 			RBTreeMapInit(&inFlags, pointerDiffF, NULL, &RBMapNodeAlloc, NULL);
 			RBTreeInit(&deFlags, pointerDiffF, NULL, &RBNodeAlloc);
 			RBTreeInit(&activePrimSet, pointerDiffF, NULL, &RBNodeAlloc);
-			printf("Scanning line: 0\n", line);
+			printf("Scanning line: 0\n");
 			for(line = 0; line < numLines; (++line), (raster += lineWidth)) {
 				rb_red_blk_node *primIt, *p = NULL, *nextP;
 				printf("\tUpdating activePrimSet\n");
@@ -133,13 +133,13 @@ void render(Color *raster, int32_t lineWidth, int32_t numLines, const Primitive 
 								v = (sV || eV) && contains(&flatIn, &here) && contains(&flatHere, &here) && (startOwner->arity != 1);
 								vert.coords[START] = here;
 								INIT_POINT(vert.coords[END], startX, line+1, 0);
-								dotH = v ? dot(&vert, &flatHere) : 0;
-								dotIn = v ? dot(&vert, &flatIn) : 0;
+								dotH = v ? dotEdge(&vert, &flatHere) : 0;
+								dotIn = v ? dotEdge(&vert, &flatIn) : 0;
 								if(!v || dotH * dotIn > 0){
 									printf("\tNot *in* old %s at %d\n", fmtColor(startEdge->owner->color), getSmartXForLine(startEdge, line));
 									RBSetAdd(&deFlags, startOwner);
 								} else {
-									printf("\tFound horizontal vertex %s at %d\n",fmtColor(startEdge->owner->color), getSmartXForLine(startEdge, line));
+									printf("\tFound horizontal vertex %s at %d. Don't delete it yet\n",fmtColor(startEdge->owner->color), getSmartXForLine(startEdge, line));
 								}
 							} else {
 								printf("\tNow *in* new %s at %d\n",fmtColor(startEdge->owner->color), getSmartXForLine(startEdge, line));
