@@ -39,15 +39,17 @@ public class RunTest {
 		}};
 		
 		Color[] faceColors = { Color.RED, Color.MAGENTA, Color.GREEN, Color.ORANGE, Color.YELLOW, Color.PINK, Color.BLUE };
+		/*
 		for(int i = 0; i < faceColors.length; i++){
 			Color c = faceColors[i];
-			int r = c.getRed() >> 3;
-			int g = c.getGreen() >> 2;
-			int b = c.getBlue() >> 3;
-			int rgb16 = (r << 11 | g << 5 | b);
+			int r = c.getRed();// >> 3;
+			int g = c.getGreen();// >> 2;
+			int b = c.getBlue();// >> 3;
+			int rgb16 = (r << 16/*11*//* | g << 8/*5*//* | b);
 			System.out.println(Integer.toHexString(rgb16));
 		}
 		System.exit(0);
+		//*/
 		Primitive[] cube = {
 				Primitive.makeQuad(cubeEdges[0][0], cubeEdges[1][0], cubeEdges[0][1], cubeEdges[1][1]),
 				Primitive.makeQuad(cubeEdges[0][2], cubeEdges[1][3], cubeEdges[0][3], cubeEdges[1][2]),

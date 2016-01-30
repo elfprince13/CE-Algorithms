@@ -11,31 +11,31 @@
 #include <memory.h>
 
 typedef enum {
-	RED = 0xf800,
-	MAGENTA = 0xf81f,
-	GREEN = 0x07e0,
-	ORANGE = 0xfe40,
-	YELLOW = 0xffe0,
-	PINK = 0xfd75,
-	BLUE = 0x01f
+	RED = 0xff0000,
+	MAGENTA = 0xff00ff,
+	GREEN = 0x00ff00,
+	ORANGE = 0xffc800,
+	YELLOW = 0xffff00,
+	PINK = 0xffafaf,
+	BLUE = 0x0000ff
 } ColorCodes16BPP;
 
 typedef struct {
-	int16_t x;
-	int16_t y;
-	int16_t zNum;
-	int16_t zDen;
-	int16_t scale;
+	int32_t x;
+	int32_t y;
+	int32_t zNum;
+	int32_t zDen;
+	int32_t scale;
 } DrawCoords;
 
-static DrawCoords drawCoords = {100, 40, 7, 10, 100};
+static DrawCoords drawCoords = {170, 40, 7, 10, 100};
 
 void viewF(const Point *p, Point *o, const DrawCoords *offset);
 void viewF(const Point *p, Point *o, const DrawCoords *offset){
-	const int16_t x = offset->scale * p->x,
+	const int32_t x = offset->scale * p->x,
 	 y = offset->scale * p->y,
 	z = offset->scale * p->z,
-	zOff = (z * offset->zNum) / offset->zDen;
+	zOff = (int32_t)((z * offset->zNum) / (float)offset->zDen);
 	INIT_POINT(*o, offset->x + x + zOff, offset->y + y + zOff, z);
 }
 
@@ -50,8 +50,8 @@ int main(int argc, const char * argv[]) {
 	static Edge cubeEdges[3][4];
 	static Edge cubeFaces[6][4];
 	static Primitive cubeAndSkel[18];
-	int16_t numLines = 240;
-	int16_t lineWidth = 320;
+	int32_t numLines = 240;
+	int32_t lineWidth = 320;
 	size_t rasterByteCount = numLines * lineWidth * sizeof(Color);
 	Color *raster = (Color*)malloc(rasterByteCount);
 	pixel** ppm_raster;
@@ -100,25 +100,25 @@ int main(int argc, const char * argv[]) {
 	cubeFaces[5][3] = cubeEdges[2][3];
 	
 	/* Faces here */
-	INIT_PRIM(cubeAndSkel[00], RED,		4, cubeFaces[0]);
-	INIT_PRIM(cubeAndSkel[00], MAGENTA,	4, cubeFaces[1]);
-	INIT_PRIM(cubeAndSkel[00], GREEN,		4, cubeFaces[2]);
-	INIT_PRIM(cubeAndSkel[00], ORANGE,	4, cubeFaces[3]);
-	INIT_PRIM(cubeAndSkel[00], YELLOW,	4, cubeFaces[4]);
-	INIT_PRIM(cubeAndSkel[00], PINK,		4, cubeFaces[5]);
+	INIT_PRIM(cubeAndSkel[0], RED,		4, cubeFaces[0]);
+	INIT_PRIM(cubeAndSkel[1], MAGENTA,	4, cubeFaces[1]);
+	INIT_PRIM(cubeAndSkel[2], GREEN,		4, cubeFaces[2]);
+	INIT_PRIM(cubeAndSkel[3], ORANGE,	4, cubeFaces[3]);
+	INIT_PRIM(cubeAndSkel[4], YELLOW,	4, cubeFaces[4]);
+	INIT_PRIM(cubeAndSkel[5], PINK,		4, cubeFaces[5]);
 	/* Skeleton here */
-	INIT_PRIM(cubeAndSkel[00], BLUE, 1, cubeEdges[0] + 0);
-	INIT_PRIM(cubeAndSkel[00], BLUE, 1, cubeEdges[0] + 1);
-	INIT_PRIM(cubeAndSkel[00], BLUE, 1, cubeEdges[0] + 2);
-	INIT_PRIM(cubeAndSkel[00], BLUE, 1, cubeEdges[0] + 3);
-	INIT_PRIM(cubeAndSkel[00], BLUE, 1, cubeEdges[1] + 0);
-	INIT_PRIM(cubeAndSkel[00], BLUE, 1, cubeEdges[1] + 1);
-	INIT_PRIM(cubeAndSkel[00], BLUE, 1, cubeEdges[1] + 2);
-	INIT_PRIM(cubeAndSkel[00], BLUE, 1, cubeEdges[1] + 3);
-	INIT_PRIM(cubeAndSkel[00], BLUE, 1, cubeEdges[2] + 0);
-	INIT_PRIM(cubeAndSkel[00], BLUE, 1, cubeEdges[2] + 1);
-	INIT_PRIM(cubeAndSkel[00], BLUE, 1, cubeEdges[2] + 2);
-	INIT_PRIM(cubeAndSkel[00], BLUE, 1, cubeEdges[2] + 3);
+	INIT_PRIM(cubeAndSkel[6], BLUE, 1, cubeEdges[0] + 0);
+	INIT_PRIM(cubeAndSkel[7], BLUE, 1, cubeEdges[0] + 1);
+	INIT_PRIM(cubeAndSkel[8], BLUE, 1, cubeEdges[0] + 2);
+	INIT_PRIM(cubeAndSkel[9], BLUE, 1, cubeEdges[0] + 3);
+	INIT_PRIM(cubeAndSkel[10], BLUE, 1, cubeEdges[1] + 0);
+	INIT_PRIM(cubeAndSkel[11], BLUE, 1, cubeEdges[1] + 1);
+	INIT_PRIM(cubeAndSkel[12], BLUE, 1, cubeEdges[1] + 2);
+	INIT_PRIM(cubeAndSkel[13], BLUE, 1, cubeEdges[1] + 3);
+	INIT_PRIM(cubeAndSkel[14], BLUE, 1, cubeEdges[2] + 0);
+	INIT_PRIM(cubeAndSkel[15], BLUE, 1, cubeEdges[2] + 1);
+	INIT_PRIM(cubeAndSkel[16], BLUE, 1, cubeEdges[2] + 2);
+	INIT_PRIM(cubeAndSkel[17], BLUE, 1, cubeEdges[2] + 3);
 	
 	memset(raster, 0xff, rasterByteCount);
 	render(raster, lineWidth, numLines, cubeAndSkel, 18, &viewProj);
@@ -127,10 +127,10 @@ int main(int argc, const char * argv[]) {
 	
 	for(y = 0; y < numLines; y++){
 		for(x = 0; x < lineWidth; x++){
-			uint16_t rgb = raster[y * lineWidth + x];
-			uint32_t r = (rgb >> 11) << 3,
-			 g = ((rgb >> 5) & 0x3f) << 2,
-			b = (rgb & 0x1f) << 3;
+			const uint32_t rgb = raster[y * lineWidth + x];
+			const uint32_t r = (rgb >> 16),
+			 g = ((rgb >> 8) & 0xff),
+			b = (rgb & 0xff);
 			ppm_raster[y][x].r = r;
 			ppm_raster[y][x].g = g;
 			ppm_raster[y][x].b = b;

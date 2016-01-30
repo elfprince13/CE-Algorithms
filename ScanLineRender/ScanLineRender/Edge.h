@@ -22,10 +22,12 @@ typedef struct {
 (ed).coords[START] = (sv); \
 (ed).coords[END] = (ev)
 
+#define HASH_EDGE(e) (HASH_POINT((e).coords[START]) ^ HASH_POINT((e).coords[END]))
+
 void flip(Edge * );
 void flipped(const Edge *e, Edge * o);
 
-int16_t dot(const Edge *, const Edge *);
+int32_t dotEdge(const Edge *, const Edge *);
 struct _Projection;
 void projectEdge(const struct _Projection * proj, const Edge *e, Edge *o);
 bool contains(const Edge *, const Point *);

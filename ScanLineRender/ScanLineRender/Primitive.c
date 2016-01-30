@@ -8,6 +8,16 @@
 
 #include "Primitive.h"
 
+#include <stdio.h>
+const char * fmtColor(Color c){
+	/* extra unsafe */
+	static char buf[64];
+	const uint32_t r = (c >> 16),
+	g = ((c >> 8) & 0xff),
+	b = (c & 0xff);
+	sprintf(buf,"java.awt.Color[r=%d,g=%d,b=%d]",r,g,b);
+	return buf;
+}
 
 void makeLine(const Edge *e, Primitive *o){
 	Primitive tmp;
@@ -37,13 +47,13 @@ void makeQuad(const Edge *e1, const Edge *e2, const Edge *e3, const Edge *e4, Pr
 	*o = tmp;
 }
 
-const int16_t getZForXY(const Primitive *p, const int16_t x, const int16_t y){
+const int32_t getZForXY(const Primitive *p, const int32_t x, const int32_t y){
 	if(p->arity == 1){
 		const Edge * v = p->boundary;
 		const Point * vs = v->coords + START,
 		* ve = v->coords + END;
 		
-		const int16_t sx = vs->x,
+		const int32_t sx = vs->x,
 		sy = vs->y,
 		sz = vs->z,
 		
@@ -57,7 +67,7 @@ const int16_t getZForXY(const Primitive *p, const int16_t x, const int16_t y){
 		 * We may need dedicated routines if the compiler does the stupid thing */
 		const int32_t xNumer = dz * (x - sx),
 		yNumer = dz * (y - sy);
-		const int16_t xEst = (dx == 0) ? min(0,  dz) : (xNumer / dx),
+		const int32_t xEst = (dx == 0) ? min(0,  dz) : (xNumer / dx),
 		yEst = (dy == 0) ? min(0,  dz) : (yNumer / dy);
 		
 		return sz + (xEst + yEst) / 2;
@@ -70,14 +80,14 @@ const int16_t getZForXY(const Primitive *p, const int16_t x, const int16_t y){
 		* vs = e2->coords + START,
 		* ve = e2->coords + END;
 		
-		const int16_t ux = us->x - ue->x,
+		const int32_t ux = us->x - ue->x,
 		uy = us->y - ue->y,
 		uz = us->z - ue->z,
 		vx = vs->x - ve->x,
 		vy = vs->y - ve->y,
 		vz = vs->z - ve->z;
 		
-		const int16_t nx = uy * vz - uz * vy,
+		const int32_t nx = uy * vz - uz * vy,
 		ny = uz * vx - ux * vz,
 		nz = ux * vy - uy * vx;
 		
@@ -99,4 +109,14 @@ void projectPrimitive(const Projection * proj, const Primitive *p, Primitive *o)
 	for(i = 0; i < p->arity; ++i){
 		projectEdge(proj, p->boundary + i, o->boundary + i);
 	}
+}
+
+
+int32_t hashPrim(const Primitive *p){
+	size_t i; int32_t ret = 0;
+	for(i = 0; i < p->arity; ++i){
+		ret ^= HASH_EDGE(p->boundary[i]);
+	}
+	ret ^= (p->color << 8) | 0xFF;
+	return ret;
 }

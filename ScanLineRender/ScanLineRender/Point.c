@@ -24,3 +24,9 @@ void negated(const Point *p, Point *o){
 	o->y = -p->y;
 	o->z = -p->z;
 }
+
+bool pointsEqual(const Point *p, const Point *q){
+	return (p->x == q->x)
+	&& (p->y == q->y)
+	&& (p->z == q->z);
+}

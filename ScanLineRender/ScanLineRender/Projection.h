@@ -25,14 +25,14 @@ typedef struct {
 
 typedef struct {
 	size_t zeroCoord;
-	int16_t planeValue;
+	int32_t planeValue;
 } OntoProj;
 
 void identProj(const Point *p, Point *o, const void *);
 void orthoProj(const Point *p, Point *o, const Edge * viewportSpan);
 void composeProj(const Point *p, Point *o, const ComposeProj * composition);
 void ontoProj(const Point *p, Point *o, const OntoProj * zOff);
-void scaleProj(const Point *p, Point *o, const int16_t * scale);
+void scaleProj(const Point *p, Point *o, const int32_t * scale);
 
 extern const ProjectionF identity;
 extern const ProjectionF orthographic;

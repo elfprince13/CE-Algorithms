@@ -16,7 +16,7 @@ typedef struct _LinkN {
 	struct _LinkN *tail;
 } LinkN;
 
-typedef uint8_t(*CompareF)(void *, void*, void*);
+typedef int8_t(*CompareF)(void *, void*, void*);
 typedef struct {
 	CompareF f;
 	void * state;
@@ -25,6 +25,9 @@ typedef struct {
 void mergeSort(LinkN** headRef, const Comparator *comparator);
 void freeLink(LinkN *link, void(*freeData)(void*));
 void freeList(LinkN *link, void(*freeData)(void*));
+
+LinkN* removeLink(LinkN **headRef, LinkN* target, LinkN* prev);
+LinkN* linkFront(LinkN **headRef, LinkN* target);
 
 
 

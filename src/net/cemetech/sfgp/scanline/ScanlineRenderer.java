@@ -5,10 +5,9 @@ import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
-import java.util.HashMap;
-import java.util.HashSet;
+import java.util.TreeMap;
+import java.util.TreeSet;
 import java.util.Iterator;
-import java.util.LinkedHashSet;
 import java.util.LinkedList;
 
 import net.cemetech.sfgp.scanline.geom.Edge;
@@ -32,21 +31,22 @@ public class ScanlineRenderer<T extends Projection> {
 		
 		int numLines = raster.getHeight();
 		int lineWidth = raster.getWidth();
-		ArrayList<HashSet<Primitive>> scanLinePrimBuckets = new ArrayList<HashSet<Primitive>>(numLines);
-		for(int i = 0; i < numLines; i++) scanLinePrimBuckets.add(new HashSet<Primitive>());
+		ArrayList<TreeSet<Primitive>> scanLinePrimBuckets = new ArrayList<TreeSet<Primitive>>(numLines);
+		for(int i = 0; i < numLines; i++) scanLinePrimBuckets.add(new TreeSet<Primitive>());
 		Arrays.sort(projectedGeometry,new TopToBottom());
 		for(Primitive prim : projectedGeometry){
+			prim.unique = prim.uniqueV++;
 			int pScanline = bottomMostPoint(prim);
 			if(pScanline < numLines && (pScanline >= 0 || topMostPoint(prim) >= 0)){
 				int dstBucket = Math.max(0,pScanline);
 				scanLinePrimBuckets.get(dstBucket).add(prim);
-				System.out.println("dstBucket " + dstBucket + " gets geometry with arity " + prim.getArity() + " begins on " + bottomMostPoint(prim) + " and ends on " + topMostPoint(prim));
+				System.out.println("dstBucket " + dstBucket + " gets geometry with arity " + prim.getArity() + " begins on " + bottomMostPoint(prim) + " and ends on " + topMostPoint(prim) + " and now has size " + scanLinePrimBuckets.get(dstBucket).size());
 			}
 		}
 		
-		HashSet<Primitive> activePrimSet = new HashSet<Primitive>();
-		HashMap<Primitive,Edge> inFlags = new HashMap<Primitive,Edge>();
-		HashSet<Primitive> deFlags = new HashSet<Primitive>();
+		TreeSet<Primitive> activePrimSet = new TreeSet<Primitive>();
+		TreeMap<Primitive,Edge> inFlags = new TreeMap<Primitive,Edge>();
+		TreeSet<Primitive> deFlags = new TreeSet<Primitive>();
 		ActiveEdgeList ael = new ActiveEdgeList();
 		for(int line = 0; line < numLines; line++){
 			System.out.println("Scanning line: " + line);
@@ -200,7 +200,23 @@ public class ScanlineRenderer<T extends Projection> {
 	private class TopToBottom implements Comparator<Primitive> {	
 		@Override
 		public int compare(Primitive o1, Primitive o2) {
-			return topMostPoint(o1) - topMostPoint(o2);
+			int delta = topMostPoint(o1) - topMostPoint(o2);
+			if(delta == 0){
+				delta = bottomMostPoint(o1) - bottomMostPoint(o2);
+			}
+			if(delta == 0){
+				delta = leftMostPoint(o1) - leftMostPoint(o2);
+			}
+			if(delta == 0){
+				delta = rightMostPoint(o1) - rightMostPoint(o2);
+			}
+			if(delta == 0){
+				delta = o1.getArity() - o2.getArity();
+			}
+			if(delta == 0){
+				delta = o1.color.hashCode() - o2.color.hashCode();
+			}
+			return delta;
 		}
 	}
 	
@@ -232,5 +248,35 @@ public class ScanlineRenderer<T extends Projection> {
 		return Math.min(
 				e.getEndPoint(EndPoint.START).getComponent(CoordName.Y),
 				e.getEndPoint(EndPoint.END).getComponent(CoordName.Y));
+	}
+	
+	private int rightMostPoint(Primitive prim){
+		int top = 0, i = 0;
+		for(Edge e : prim.boundary) {
+			int candidate = rightMostPoint(e);
+			if(i++ == 0 || candidate > top) top = candidate;
+		}
+		return top;
+	}
+	
+	private int leftMostPoint(Primitive prim){
+		int bottom = 0, i = 0;
+		for(Edge e : prim.boundary) {
+			int candidate = leftMostPoint(e);
+			if(i++ == 0 || candidate < bottom) bottom = candidate;
+		}
+		return bottom;
+	}
+	
+	private int rightMostPoint(Edge e){
+		return Math.max(
+				e.getEndPoint(EndPoint.START).getComponent(CoordName.X),
+				e.getEndPoint(EndPoint.END).getComponent(CoordName.X));
+	}
+	
+	private int leftMostPoint(Edge e){
+		return Math.min(
+				e.getEndPoint(EndPoint.START).getComponent(CoordName.X),
+				e.getEndPoint(EndPoint.END).getComponent(CoordName.X));
 	}
 }

@@ -1,6 +1,6 @@
 package net.cemetech.sfgp.scanline;
 
-import java.util.HashSet;
+import java.util.TreeSet;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.Comparator;
@@ -17,7 +17,7 @@ public class ActiveEdgeList {
 	int scanLine;
 	
 	public ActiveEdgeList(){ scanLine = -1; activeEdges = new LinkedList<EdgeListDatum>(); }
-	public void stepEdges(HashSet<Primitive> activePrims){
+	public void stepEdges(TreeSet<Primitive> activePrims){
 		scanLine++;
 		for(Iterator<EdgeListDatum> i = activeEdges.iterator(); i.hasNext();){
 			EdgeListDatum edge = i.next();
@@ -52,10 +52,10 @@ public class ActiveEdgeList {
 							"(true: " + e.getEndPoint(Edge.EndPoint.START).getComponent(Point.CoordName.X) + 
 							" -> " + e.getEndPoint(Edge.EndPoint.END).getComponent(Point.CoordName.X) + ")");
 					
-					activeEdges.add(newEdge);
+					activeEdges.addFirst(newEdge);
 					if(newEdge.isSingleton()){
 						System.out.println("\t->Activating dummy end");
-						activeEdges.add(new EdgeListDatum(e, prim, true));
+						activeEdges.addFirst(new EdgeListDatum(e, prim, true));
 					}
 				}
 			}
@@ -119,7 +119,29 @@ public class ActiveEdgeList {
 
 		@Override
 		public int compare(EdgeListDatum o1, EdgeListDatum o2) {
-			return o1.smartXForLine(id, scanLine) - o2.smartXForLine(id, scanLine);
+			int delta = o1.smartXForLine(id, scanLine) - o2.smartXForLine(id, scanLine);
+			if(delta == 0){
+				delta = o1.edge.getEndPoint(Edge.EndPoint.START).getComponent(Point.CoordName.X) - o2.edge.getEndPoint(Edge.EndPoint.START).getComponent(Point.CoordName.X);
+			}
+			if(delta == 0){
+				delta = o1.edge.getEndPoint(Edge.EndPoint.END).getComponent(Point.CoordName.X) - o2.edge.getEndPoint(Edge.EndPoint.END).getComponent(Point.CoordName.X);
+			}
+			if(delta == 0){
+				delta = o1.edge.getEndPoint(Edge.EndPoint.START).getComponent(Point.CoordName.Y) - o2.edge.getEndPoint(Edge.EndPoint.START).getComponent(Point.CoordName.Y);
+			}
+			if(delta == 0){
+				delta = o1.edge.getEndPoint(Edge.EndPoint.END).getComponent(Point.CoordName.Y) - o2.edge.getEndPoint(Edge.EndPoint.END).getComponent(Point.CoordName.Y);
+			}
+			if(delta == 0){
+				delta = o1.owner.getArity() - o2.owner.getArity();
+			}
+			if(delta == 0){
+				delta = o1.owner.color.hashCode() - o2.owner.color.hashCode();
+			}
+			if(delta == 0){
+				delta = (o1.placeHolder ? 1 : 0) - (o2.placeHolder ? 1 : 0);
+			}
+			return delta;
 		}
 		
 	}

@@ -83,3 +83,20 @@ void freeList(LinkN *link, void(*freeData)(void*)){
 		freeLink(head,freeData);
 	}
 }
+
+
+LinkN* removeLink(LinkN **headRef, LinkN* target, LinkN* prev){
+	if(prev){
+		prev->tail = target->tail;
+	} else {
+		*headRef = target->tail;
+	}
+	return target;
+}
+
+LinkN* linkFront(LinkN **headRef, LinkN *target){
+	LinkN* ret = target->tail;
+	target->tail = *headRef;
+	*headRef = target;
+	return  ret; /* This allows us to more easily avoid leaks if re-arranging two lists */
+}

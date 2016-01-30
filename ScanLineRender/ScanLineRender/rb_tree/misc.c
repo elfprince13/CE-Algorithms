@@ -1,33 +1,6 @@
 #include "misc.h"
 
 /***********************************************************************/
-/*  FUNCTION:  void Assert(int assertion, char* error)  */
-/**/
-/*  INPUTS: assertion should be a predicated that the programmer */
-/*  assumes to be true.  If this assumption is not true the message */
-/*  error is printed and the program exits. */
-/**/
-/*  OUTPUT: None. */
-/**/
-/*  Modifies input:  none */
-/**/
-/*  Note:  If DEBUG_ASSERT is not defined then assertions should not */
-/*         be in use as they will slow down the code.  Therefore the */
-/*         compiler will complain if an assertion is used when */
-/*         DEBUG_ASSERT is undefined. */
-/***********************************************************************/
-
-
-void Assert(int assertion, char* error) {
-  if(!assertion) {
-    printf("Assertion Failed: %s\n",error);
-    exit(-1);
-  }
-}
-
-
-
-/***********************************************************************/
 /*  FUNCTION:  SafeMalloc */
 /**/
 /*    INPUTS:  size is the size to malloc */

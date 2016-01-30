@@ -9,6 +9,8 @@
 #include "Edge.h"
 #include "Projection.h"
 
+#include "debugConfig.h"
+
 
 void flip(Edge * e){
 	Point tmp = e->coords[START];
@@ -21,13 +23,27 @@ void flipped(const Edge *e, Edge * o){
 	o->coords[START] = e->coords[START];	
 }
 
-int16_t dot(const Edge *u, const Edge *v){
+int32_t dotEdge(const Edge *u, const Edge *v){
 	const Point
 	*us= u->coords + START,
 	*ue = u->coords + END,
 	*vs = v->coords + START,
-	*ve = v->coords + END;
+	*ve = v->coords + END, *tmp;
 	Point u0, v0;
+	
+	bool tailTouch = pointsEqual(ue, ve);
+	if (pointsEqual(us, ve) || tailTouch) {
+		tmp = ve;
+		ve = vs;
+		vs = tmp;
+	}
+	if (pointsEqual(ue, vs) || tailTouch) {
+		tmp = ue;
+		ue = us;
+		us = tmp;
+	}
+	
+	assert(pointsEqual(us, vs));
  
 	INIT_POINT(u0,
 			   ue->x - us->x,
@@ -39,9 +55,7 @@ int16_t dot(const Edge *u, const Edge *v){
 			   ve->y - vs->y,
 			   ve->z - vs->z);
 	
-	return (u0.x * v0.x) +
-	(u0.y * v0.y) +
-	(u0.z * v0.z) ;
+	return DOT(u0, v0);
 }
 
 void projectEdge(const Projection * proj, const Edge *e, Edge *o){
