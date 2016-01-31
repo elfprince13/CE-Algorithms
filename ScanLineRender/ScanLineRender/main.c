@@ -11,13 +11,13 @@
 #include <memory.h>
 
 typedef enum {
-	RED = 0xff0000,
-	MAGENTA = 0xff00ff,
-	GREEN = 0x00ff00,
-	ORANGE = 0xffc800,
-	YELLOW = 0xffff00,
-	PINK = 0xffafaf,
-	BLUE = 0x0000ff
+	RED = 0xf800,
+	MAGENTA = 0xf81f,
+	GREEN = 0x07e0,
+	ORANGE = 0xfe40,
+	YELLOW = 0xffe0,
+	PINK = 0xfd75,
+	BLUE = 0x001f
 } ColorCodes16BPP;
 
 typedef struct {
@@ -127,14 +127,13 @@ int main(int argc, const char * argv[]) {
 	
 	for(y = 0; y < numLines; y++){
 		for(x = 0; x < lineWidth; x++){
-			const uint32_t rgb = raster[y * lineWidth + x];
-			const uint32_t r = (rgb >> 16),
-			 g = ((rgb >> 8) & 0xff),
-			b = (rgb & 0xff);
+			const Color rgb = raster[y * lineWidth + x];
+			const uint32_t r = (rgb >> 11) << 3,
+			g = ((rgb >> 5) & 0x3f) << 2,
+			b = (rgb & 0x1f) << 3;
 			ppm_raster[y][x].r = r;
 			ppm_raster[y][x].g = g;
-			ppm_raster[y][x].b = b;
-		}
+			ppm_raster[y][x].b = b;		}
 	}
 	
 	if((fp = fopen("out.ppm", "wb"))){

@@ -13,7 +13,7 @@
 #include "Projection.h"
 #include "debugConfig.h"
 
-typedef uint32_t Color;
+typedef uint16_t Color;
 
 #ifndef NDEBUG
 const char * fmtColor(Color c);
