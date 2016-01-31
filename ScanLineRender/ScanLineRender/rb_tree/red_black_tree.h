@@ -1,10 +1,7 @@
 #ifndef RED_BLACK_TREE_H_
 #define RED_BLACK_TREE_H_
 
-#ifdef DMALLOC
-#include <dmalloc.h>
-#endif
-#include"misc.h"
+#include "misc.h"
 #include <stdbool.h>
 
 /*  CONVENTIONS:  All data structures for red-black trees have the prefix */
