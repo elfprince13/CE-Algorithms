@@ -2,6 +2,7 @@ bin/
 .settings/
 *.ppm
 *.log
+ScanlineRender/toolchain
 
 # Xcode
 #

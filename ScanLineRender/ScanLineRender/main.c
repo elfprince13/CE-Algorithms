@@ -50,16 +50,15 @@ int main(int argc, const char * argv[]) {
 	static Edge cubeEdges[3][4];
 	static Edge cubeFaces[6][4];
 	static Primitive cubeAndSkel[18];
+	const int32_t numLines = 240;
+	const int32_t lineWidth = 320;
+	const size_t rasterByteCount = numLines * lineWidth * sizeof(Color);
 	Color *raster = (Color*)malloc(rasterByteCount);
 	pixel** ppm_raster;
 	size_t x,y;
 	FILE *fp;
 	
 	pm_proginit(&argc, argv);
-
-	const int32_t numLines = 240;
-	const int32_t lineWidth = 320;
-	const size_t rasterByteCount = numLines * lineWidth * sizeof(Color);
 	
 	INIT_EDGE(cubeEdges[0][0],cubePoints[0][0][0],cubePoints[0][0][1]);
 	INIT_EDGE(cubeEdges[0][1],cubePoints[0][1][0],cubePoints[0][1][1]);
