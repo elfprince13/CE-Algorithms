@@ -11,7 +11,7 @@
 #include "link_list/linklist.h"
 #include "rb_tree/red_black_tree.h"
 #include "debugConfig.h"
-
+#include <math.h>
 
 typedef int(*StatelessCompF)(const void*,const void*) ;
 
@@ -20,19 +20,19 @@ static int topToBottom(const Primitive *, const Primitive *);
 static int pointerDiff(const Primitive*, const Primitive*);
 static StatelessCompF topToBottomF = (StatelessCompF)(&topToBottom);
 static StatelessCompF pointerDiffF = (StatelessCompF)(&pointerDiff);
-static int32_t topMostPrimPoint(const Primitive *);
-static int32_t topMostEdgePoint(const Edge *);
-static int32_t bottomMostPrimPoint(const Primitive *);
-static int32_t bottomMostEdgePoint(const Edge *);
+static float topMostPrimPoint(const Primitive *);
+static float topMostEdgePoint(const Edge *);
+static float bottomMostPrimPoint(const Primitive *);
+static float bottomMostEdgePoint(const Edge *);
 #ifndef NDEBUG
-static int32_t rightMostPrimPoint(const Primitive *);
-static int32_t rightMostEdgePoint(const Edge *);
-static int32_t leftMostPrimPoint(const Primitive *);
-static int32_t leftMostEdgePoint(const Edge *);
+static float rightMostPrimPoint(const Primitive *);
+static float rightMostEdgePoint(const Edge *);
+static float leftMostPrimPoint(const Primitive *);
+static float leftMostEdgePoint(const Edge *);
 #endif
 
 
-void render(Color *raster, int32_t lineWidth, int32_t numLines, const Primitive *geometry, size_t geomCount, const Projection *p){
+void render(Color *raster, int lineWidth, int numLines, const Primitive *geometry, size_t geomCount, const Projection *p){
 	static OntoProj screenPlaneData = {offsetof(Point, z), 0};
 	static const Projection screenPlane = {(ProjectionF)(&ontoProj), &screenPlaneData};
 	Primitive *const projectedGeometry = malloc(geomCount * sizeof(Primitive));
@@ -47,21 +47,21 @@ void render(Color *raster, int32_t lineWidth, int32_t numLines, const Primitive 
 		for(i = 0, edgeCount = 0; i < geomCount; edgeCount += geometry[i++].arity){
 			INIT_PRIM(projectedGeometry[i], geometry[i].color, geometry[i].arity, projectedEdges + edgeCount);
 			projectPrimitive(p, geometry+i, projectedGeometry+i);
-			dPrintf(("Source geometry with arity %d begins on %d and ends on %d\n", geometry[i].arity, bottomMostPrimPoint(geometry + i), topMostPrimPoint(geometry + i)));
-			dPrintf(("Projected geometry with arity %d begins on %d and ends on %d\n", projectedGeometry[i].arity, bottomMostPrimPoint(projectedGeometry + i), topMostPrimPoint(projectedGeometry + i)));
+			dPrintf(("Source geometry with arity %lu begins on %f and ends on %f\n", geometry[i].arity, bottomMostPrimPoint(geometry + i), topMostPrimPoint(geometry + i)));
+			dPrintf(("Projected geometry with arity %lu begins on %f and ends on %f\n", projectedGeometry[i].arity, bottomMostPrimPoint(projectedGeometry + i), topMostPrimPoint(projectedGeometry + i)));
 		}
 		qsort(projectedGeometry, geomCount, sizeof(Primitive), topToBottomF);
 		for(i = 0; i < geomCount; ++i){
 			Primitive *prim = projectedGeometry + i;
-			const int32_t pScanLine = bottomMostPrimPoint(prim);
+			const int32_t pScanLine = roundf(bottomMostPrimPoint(prim));
 			if(pScanLine < numLines && (pScanLine >= 0 || topMostPrimPoint(prim) >= 0)){
 				rb_red_blk_tree *const dstBucket = scanLinePrimBuckets + max(0, pScanLine);
 				RBSetAdd(dstBucket, prim);
-				dPrintf(("dstBucket %ld gets geometry with arity %d begins on %d and ends on %d and now has size %lu\n", dstBucket - scanLinePrimBuckets, prim->arity, bottomMostPrimPoint(prim), topMostPrimPoint(prim), dstBucket->size));
+				dPrintf(("dstBucket %ld gets geometry with arity %lu begins on %f and ends on %f and now has size %lu\n", dstBucket - scanLinePrimBuckets, prim->arity, bottomMostPrimPoint(prim), topMostPrimPoint(prim), dstBucket->size));
 			}
 		}
 		{
-			int32_t line;
+			int line;
 			rb_red_blk_tree activePrimSet;
 			ActiveEdgeList ael = freshAEL();
 			rb_red_blk_map_tree inFlags;
@@ -76,12 +76,12 @@ void render(Color *raster, int32_t lineWidth, int32_t numLines, const Primitive 
 				dPrintf(("\tUpdating activePrimSet\n"));
 				for (primIt = activePrimSet.first; primIt != activePrimSet.sentinel; (p = primIt), (primIt = nextP)) {
 					const Primitive* prim = primIt->key;
-					const int32_t top = topMostPrimPoint(prim);
+					const int32_t top = roundf(topMostPrimPoint(prim));
 					nextP = TreeSuccessor(&activePrimSet, primIt);
 					if(top < line){
 #ifndef NDEBUG
 						{
-							const int32_t bottom = bottomMostPrimPoint(prim);
+							const int32_t bottom = roundf(bottomMostPrimPoint(prim));
 							dPrintf(("\t\t%d -> %d ( %s ) is not valid here: %d\n",top,bottom,fmtColor(prim->color), line));
 						}
 #endif
@@ -96,8 +96,8 @@ void render(Color *raster, int32_t lineWidth, int32_t numLines, const Primitive 
 						Primitive * prim = node->key;
 #ifndef NDEBUG
 						{
-							const int32_t top = topMostPrimPoint(prim),
-							bottom = bottomMostPrimPoint(prim);
+							const int32_t top = roundf(topMostPrimPoint(prim)),
+							bottom = roundf(bottomMostPrimPoint(prim));
 							dPrintf(("\t\t%d -> %d ( %s ) is added here: %d\n",top,bottom,fmtColor(prim->color), line));
 						}
 #endif
@@ -106,7 +106,7 @@ void render(Color *raster, int32_t lineWidth, int32_t numLines, const Primitive 
 				}
 				stepEdges(&ael, &activePrimSet);
 				{
-					int32_t curPixel = 0;
+					int curPixel = 0;
 					const Primitive *curDraw = NULL;
 					EdgeListEntry *nextEdge;
 					LinkN* i = ael.activeEdges;
@@ -115,7 +115,7 @@ void render(Color *raster, int32_t lineWidth, int32_t numLines, const Primitive 
 						while(nextEdge && curPixel < lineWidth){
 							EdgeListEntry *const startEdge = nextEdge;
 							Primitive *const startOwner = startEdge->owner;
-							int32_t startX = getSmartXForLine(startEdge, line), nextX;
+							int startX = roundf(getSmartXForLine(startEdge, line)), nextX;
 							rb_red_blk_map_node *inFlag = (rb_red_blk_map_node *)RBExactQuery((rb_red_blk_tree*)(&inFlags), startOwner);
 							
 							if(inFlag){
@@ -125,7 +125,7 @@ void render(Color *raster, int32_t lineWidth, int32_t numLines, const Primitive 
 								Edge flatHere, flatIn, vert;
 								Point here;
 								bool sV, eV, v;
-								int32_t dotH, dotIn;
+								float dotH, dotIn;
 								projectEdge(&screenPlane, edgeHere, &flatHere);
 								projectEdge(&screenPlane, edgeIn, &flatIn);
 								INIT_POINT(here, startX, line, 0);
@@ -137,13 +137,13 @@ void render(Color *raster, int32_t lineWidth, int32_t numLines, const Primitive 
 								dotH = v ? dotEdge(&vert, &flatHere) : 0;
 								dotIn = v ? dotEdge(&vert, &flatIn) : 0;
 								if(!v || dotH * dotIn > 0){
-									dPrintf(("\tNot *in* old %s at %d\n", fmtColor(startEdge->owner->color), getSmartXForLine(startEdge, line)));
+									dPrintf(("\tNot *in* old %s at %f\n", fmtColor(startEdge->owner->color), getSmartXForLine(startEdge, line)));
 									RBSetAdd(&deFlags, startOwner);
 								} else {
-									dPrintf(("\tFound horizontal vertex %s at %d. Don't delete it yet\n",fmtColor(startEdge->owner->color), getSmartXForLine(startEdge, line)));
+									dPrintf(("\tFound horizontal vertex %s at %f. Don't delete it yet\n",fmtColor(startEdge->owner->color), getSmartXForLine(startEdge, line)));
 								}
 							} else {
-								dPrintf(("\tNow *in* new %s at %d\n",fmtColor(startEdge->owner->color), getSmartXForLine(startEdge, line)));
+								dPrintf(("\tNow *in* new %s at %f\n",fmtColor(startEdge->owner->color), getSmartXForLine(startEdge, line)));
 								/* This might happen if a polygon is parallel to the x-axis */
 								RBMapPut(&inFlags, startOwner, startEdge->edge);
 							}
@@ -167,15 +167,15 @@ void render(Color *raster, int32_t lineWidth, int32_t numLines, const Primitive 
 							nextX = min(nextX, lineWidth);
 							while ((!nextEdge && curPixel < lineWidth) || (curPixel < nextX)) {
 								bool zFight = false, solitary = false;
-								int32_t bestZ = 0, j = 0;
+								float bestZ = 0, j = 0;
 								const rb_red_blk_node *node;
 								curDraw = NULL;
 								dPrintf(("\tTesting depth:\n"));
 								for(node = inFlags.tree.first; node != inFlags.tree.sentinel; node = TreeSuccessor((rb_red_blk_tree*)(&inFlags), node)) {
 									const Primitive *prim = node->key;
-									const int32_t testZ = getZForXY(prim, curPixel, line);
+									const float testZ = getZForXY(prim, curPixel, line);
 									if(++j == 1 || testZ <= bestZ){
-										dPrintf(("\t\tHit: %d <= %d || %d == 1 for %s\n",testZ, bestZ, j,fmtColor(prim->color)));
+										dPrintf(("\t\tHit: %f <= %f || %f == 1 for %s\n",testZ, bestZ, j,fmtColor(prim->color)));
 										if (testZ == bestZ && j != 1) {
 											zFight = true;
 											if (prim->arity == 1) {
@@ -195,7 +195,7 @@ void render(Color *raster, int32_t lineWidth, int32_t numLines, const Primitive 
 #ifndef NDEBUG
 									if(nextEdge || solitary){
 #endif
-										const int32_t drawWidth = (zFight || solitary) ? 1 : ((nextEdge ? nextX : lineWidth) - curPixel),
+										const int drawWidth = (zFight || solitary) ? 1 : ((nextEdge ? nextX : lineWidth) - curPixel),
 										stopPixel = curPixel + min(lineWidth - curPixel,
 																	max(0, drawWidth));
 										const Color drawColor = curDraw->color;
@@ -267,7 +267,7 @@ int pointerDiff(const Primitive *p1, const Primitive *p2){
 }
 
 int topToBottom(const Primitive *p1, const Primitive *p2){
-	int32_t delta = topMostPrimPoint(p1) - topMostPrimPoint(p2);
+	float delta = topMostPrimPoint(p1) - topMostPrimPoint(p2);
 #ifndef NDEBUG
 	if(!delta) delta = bottomMostPrimPoint(p1) - bottomMostPrimPoint(p2);
 	if(!delta) delta = leftMostPrimPoint(p1) - leftMostPrimPoint(p2);
@@ -278,63 +278,63 @@ int topToBottom(const Primitive *p1, const Primitive *p2){
 	return delta;
 }
 
-int32_t topMostPrimPoint(const Primitive *prim){
-	const int32_t arity = prim->arity;
-	int32_t top, i;
+float topMostPrimPoint(const Primitive *prim){
+	const size_t arity = prim->arity;
+	size_t i; float top;
 	for(top = topMostEdgePoint(prim->boundary),i = 1; i < arity; ++i){
-		const int32_t candidate = topMostEdgePoint(prim->boundary + i);
+		const float candidate = topMostEdgePoint(prim->boundary + i);
 		if(candidate > top) top = candidate;
 	}
 	return top;
 }
 
-int32_t topMostEdgePoint(const Edge *edge){
+float topMostEdgePoint(const Edge *edge){
 	const Point * coords = edge->coords;
 	return max(coords[START].y, coords[END].y);
 }
 
-int32_t bottomMostPrimPoint(const Primitive *prim){
-	const int32_t arity = prim->arity;
-	int32_t bottom, i;
+float bottomMostPrimPoint(const Primitive *prim){
+	const size_t arity = prim->arity;
+	size_t i; float bottom;
 	for(bottom = bottomMostEdgePoint(prim->boundary),i = 1; i < arity; ++i){
-		const int32_t candidate = bottomMostEdgePoint(prim->boundary + i);
+		const float candidate = bottomMostEdgePoint(prim->boundary + i);
 		if(candidate < bottom) bottom = candidate;
 	}
 	return bottom;
 }
 
-int32_t bottomMostEdgePoint(const Edge *edge){
+float bottomMostEdgePoint(const Edge *edge){
 	const Point * coords = edge->coords;
 	return min(coords[START].y, coords[END].y);
 }
 
 #ifndef NDEBUG
-int32_t rightMostPrimPoint(const Primitive *prim){
-	const int32_t arity = prim->arity;
-	int32_t top, i;
+float rightMostPrimPoint(const Primitive *prim){
+	const size_t arity = prim->arity;
+	size_t i; float top;
 	for(top = rightMostEdgePoint(prim->boundary),i = 1; i < arity; ++i){
-		const int32_t candidate = rightMostEdgePoint(prim->boundary + i);
+		const float candidate = rightMostEdgePoint(prim->boundary + i);
 		if(candidate > top) top = candidate;
 	}
 	return top;
 }
 
-int32_t rightMostEdgePoint(const Edge *edge){
+float rightMostEdgePoint(const Edge *edge){
 	const Point * coords = edge->coords;
 	return max(coords[START].x, coords[END].x);
 }
 
-int32_t leftMostPrimPoint(const Primitive *prim){
-	const int32_t arity = prim->arity;
-	int32_t bottom, i;
+float leftMostPrimPoint(const Primitive *prim){
+	const size_t arity = prim->arity;
+	size_t i; float bottom;
 	for(bottom = leftMostEdgePoint(prim->boundary),i = 1; i < arity; ++i){
-		const int32_t candidate = leftMostEdgePoint(prim->boundary + i);
+		const float candidate = leftMostEdgePoint(prim->boundary + i);
 		if(candidate < bottom) bottom = candidate;
 	}
 	return bottom;
 }
 
-int32_t leftMostEdgePoint(const Edge *edge){
+float leftMostEdgePoint(const Edge *edge){
 	const Point * coords = edge->coords;
 	return min(coords[START].x, coords[END].x);
 }

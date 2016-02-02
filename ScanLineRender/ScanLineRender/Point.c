@@ -30,3 +30,7 @@ bool pointsEqual(const Point *p, const Point *q){
 	&& (p->y == q->y)
 	&& (p->z == q->z);
 }
+
+float dot(const Point *p, const Point *q){
+	return p->x * q->x + p->y * q->y + p->z * q->z;
+}

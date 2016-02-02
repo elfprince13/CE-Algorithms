@@ -20,21 +20,21 @@ const char * fmtColor(Color c);
 #endif
 
 typedef struct {
-	Color color;
-	uint32_t arity;
 	Edge * boundary;
+	size_t arity;
+	Color color;
 } Primitive;
 
 #define INIT_PRIM(p, cv, av, bv) \
-(p).color = (cv); \
+(p).boundary = (bv); \
 (p).arity = (av); \
-(p).boundary = (bv)
+(p).color = (cv)
 
 void makeLine(const Edge *e, Primitive *o);
 void makeTri(const Edge *e1, const Edge *e2, const Edge *e3, Primitive *o);
 void makeQuad(const Edge *e1, const Edge *e2, const Edge *e3, const Edge *e4, Primitive *o);
 
-const int32_t getZForXY(const Primitive *p, const int32_t x, const int32_t y);
+float getZForXY(const Primitive *p, float x, float y);
 void projectPrimitive(const Projection * proj, const Primitive *p, Primitive *o);
 
 int32_t hashPrim(const Primitive *p);

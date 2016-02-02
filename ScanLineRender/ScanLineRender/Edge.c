@@ -23,7 +23,7 @@ void flipped(const Edge *e, Edge * o){
 	o->coords[START] = e->coords[START];	
 }
 
-int32_t dotEdge(const Edge *u, const Edge *v){
+float dotEdge(const Edge *u, const Edge *v){
 	const Point
 	*us= u->coords + START,
 	*ue = u->coords + END,

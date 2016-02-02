@@ -9,7 +9,7 @@
 #include "AEL.h"
 #include "debugConfig.h"
 
-int32_t getMinXForLine(const EdgeListEntry * node, const int32_t scanLine){
+float getMinXForLine(const EdgeListEntry * node, const int32_t scanLine){
 	const Point *coords = node->edge->coords;
 	const int32_t sx = coords[START].x,
 	sy = coords[START].y,
@@ -29,7 +29,7 @@ int32_t getMinXForLine(const EdgeListEntry * node, const int32_t scanLine){
 	return ret;
 }
 
-int32_t getMaxXForLine(const EdgeListEntry * node, const int32_t scanLine){
+float getMaxXForLine(const EdgeListEntry * node, const int32_t scanLine){
 	const Point *coords = node->edge->coords;
 	const int32_t sx = coords[START].x,
 	sy = coords[START].y,
@@ -45,7 +45,7 @@ int32_t getMaxXForLine(const EdgeListEntry * node, const int32_t scanLine){
 	return ret;
 }
 
-int32_t getSmartXForLine(const EdgeListEntry * node, const int32_t scanLine){
+float getSmartXForLine(const EdgeListEntry * node, const int32_t scanLine){
 	return (node->placeHolder ? getMaxXForLine : getMinXForLine)(node, scanLine);
 }
 
@@ -73,15 +73,15 @@ void stepEdges(ActiveEdgeList *ael, const rb_red_blk_tree* activePrims){
 		LinkN *i, *p, *nextP;
 		for(p = NULL, i = ael->activeEdges; i; (p = i),(i = nextP)){
 			const EdgeListEntry* edge = i->data;
-			const int32_t ys = edge->edge->coords[START].y,
+			const float ys = edge->edge->coords[START].y,
 			ye = edge->edge->coords[END].y,
 			edgeEnd = max(ys, ye);
 			nextP = i->tail;
 			if(edgeEnd < scanLine){
 #ifndef NDEBUG
 				{
-					const int32_t lowEnd = min(ys, ye);
-					dPrintf(("Deactivating %s with y-span: %d -> %d with x-span: %d -> %d(true: %d -> %d)\n",
+					const float lowEnd = min(ys, ye);
+					dPrintf(("Deactivating %s with y-span: %f -> %f with x-span: %f -> %f(true: %f -> %f)\n",
 						   fmtColor(edge->owner->color), lowEnd, edgeEnd,
 						   getMinXForLine(edge, scanLine), getMaxXForLine(edge, scanLine),
 						   edge->edge->coords[START].x, edge->edge->coords[END].x));
@@ -99,10 +99,10 @@ void stepEdges(ActiveEdgeList *ael, const rb_red_blk_tree* activePrims){
 		for(i = activePrims->first; i != activePrims->sentinel; i = TreeSuccessor(activePrims, i)){
 			Primitive *prim = i->key;
 			size_t j;
-			uint32_t jMax = prim->arity;
+			size_t jMax = prim->arity;
 			for(j = 0; j < jMax; ++j){
 				Edge *e = prim->boundary + j;
-				const int32_t sy = e->coords[START].y,
+				const float sy = e->coords[START].y,
 				ey = e->coords[END].y,
 				mnY = min(sy, ey),
 				mxY = max(sy, ey);
@@ -112,7 +112,7 @@ void stepEdges(ActiveEdgeList *ael, const rb_red_blk_tree* activePrims){
 					LinkN* newEdge = makeLinkEZ(e, prim);
 #ifndef NDEBUG
 					{
-						dPrintf(("Activating %s with y-span: %d -> %d with x-span: %d -> %d(true: %d -> %d)\n",
+						dPrintf(("Activating %s with y-span: %f -> %f with x-span: %f -> %f(true: %f -> %f)\n",
 							   fmtColor(prim->color), mnY, mxY,
 							   getMinXForLine(newEdge->data, scanLine), getMaxXForLine(newEdge->data, scanLine),
 							   e->coords[START].x, e->coords[END].x));
@@ -139,7 +139,7 @@ LinkN* makeLink(Edge *e, Primitive *p, bool s){
 }
 
 int32_t leftToRightF(EdgeListEntry *o1, EdgeListEntry *o2, int32_t *scanLine){
-	int32_t delta = getSmartXForLine(o1, *scanLine) - getSmartXForLine(o2, *scanLine);
+	float delta = getSmartXForLine(o1, *scanLine) - getSmartXForLine(o2, *scanLine);
 #ifndef NDEBUG
 	if (!delta) delta = o1->edge->coords[START].x - o2->edge->coords[START].x;
 	if (!delta) delta = o1->edge->coords[END].x - o2->edge->coords[END].x;
@@ -149,5 +149,5 @@ int32_t leftToRightF(EdgeListEntry *o1, EdgeListEntry *o2, int32_t *scanLine){
 	if (!delta) delta = o1->owner->color - o2->owner->color;
 	if (!delta) delta = (int32_t)(o1->placeHolder) - (int32_t)(o2->placeHolder);
 #endif
-	return delta;
+	return delta ? (delta > 0 ? 1 : -1) : 0;
 }
