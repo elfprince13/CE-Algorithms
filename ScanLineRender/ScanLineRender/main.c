@@ -7,7 +7,6 @@
 */
 
 #include "ScanlineRenderer.h"
-#include <netpbm/ppm.h>
 #include <string.h>
 
 typedef enum {
@@ -50,16 +49,10 @@ int main(int argc, const char * argv[]) {
 	static Edge cubeEdges[3][4];
 	static Edge cubeFaces[6][4];
 	static Primitive cubeAndSkel[18];
-	Color *raster = (Color*)malloc(rasterByteCount);
-	pixel** ppm_raster;
-	size_t x,y;
-	FILE *fp;
-	
-	pm_proginit(&argc, argv);
-
 	const int32_t numLines = 240;
 	const int32_t lineWidth = 320;
 	const size_t rasterByteCount = numLines * lineWidth * sizeof(Color);
+	Color *const raster = (Color*)0xD40000;
 	
 	INIT_EDGE(cubeEdges[0][0],cubePoints[0][0][0],cubePoints[0][0][1]);
 	INIT_EDGE(cubeEdges[0][1],cubePoints[0][1][0],cubePoints[0][1][1]);
@@ -123,24 +116,5 @@ int main(int argc, const char * argv[]) {
 	memset(raster, 0xff, rasterByteCount);
 	render(raster, lineWidth, numLines, cubeAndSkel, 18, &viewProj);
 	
-	ppm_raster = ppm_allocarray(lineWidth, numLines);
-	
-	for(y = 0; y < numLines; y++){
-		for(x = 0; x < lineWidth; x++){
-			const Color rgb = raster[y * lineWidth + x];
-			const uint32_t r = (rgb >> 11) << 3,
-			g = ((rgb >> 5) & 0x3f) << 2,
-			b = (rgb & 0x1f) << 3;
-			ppm_raster[y][x].r = r;
-			ppm_raster[y][x].g = g;
-			ppm_raster[y][x].b = b;		}
-	}
-	
-	if((fp = fopen("out.ppm", "wb"))){
-		ppm_writeppm(fp, ppm_raster, lineWidth, numLines, 255, 0);
-		fclose(fp);
-	}
-	
-	ppm_freearray(ppm_raster, numLines);
     return 0;
 }
