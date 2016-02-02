@@ -1,5 +1,6 @@
 #include "red_black_tree.h"
 #include <stdlib.h>
+#include <stddef.h>
 
 static void RBTreeNodeDestroy(rb_red_blk_tree* tree, rb_red_blk_node* target);
 void RBTreeNodeDestroy(rb_red_blk_tree* tree, rb_red_blk_node* target){
@@ -645,12 +646,12 @@ bool RBSetAdd(rb_red_blk_tree *tree, void* key){
 bool RBSetRemove(rb_red_blk_tree *tree, const void* key){
 	bool ret;
 	rb_red_blk_node* node = RBExactQuery(tree, key);
-	if ((ret = node)) {
+	if ((ret = (bool)node)) {
 		RBDelete(tree, node);
 	}
 	return ret;
 }
 
 bool RBSetContains(const rb_red_blk_tree *tree, const void* key){
-	return RBExactQuery(tree, key);
+	return (bool)RBExactQuery(tree, key);
 }

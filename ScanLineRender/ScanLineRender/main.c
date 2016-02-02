@@ -8,7 +8,7 @@
 
 #include "ScanlineRenderer.h"
 #include <netpbm/ppm.h>
-#include <memory.h>
+#include <string.h>
 
 typedef enum {
 	RED = 0xf800,
@@ -50,9 +50,6 @@ int main(int argc, const char * argv[]) {
 	static Edge cubeEdges[3][4];
 	static Edge cubeFaces[6][4];
 	static Primitive cubeAndSkel[18];
-	int32_t numLines = 240;
-	int32_t lineWidth = 320;
-	size_t rasterByteCount = numLines * lineWidth * sizeof(Color);
 	Color *raster = (Color*)malloc(rasterByteCount);
 	pixel** ppm_raster;
 	size_t x,y;
@@ -60,6 +57,9 @@ int main(int argc, const char * argv[]) {
 	
 	pm_proginit(&argc, argv);
 
+	const int32_t numLines = 240;
+	const int32_t lineWidth = 320;
+	const size_t rasterByteCount = numLines * lineWidth * sizeof(Color);
 	
 	INIT_EDGE(cubeEdges[0][0],cubePoints[0][0][0],cubePoints[0][0][1]);
 	INIT_EDGE(cubeEdges[0][1],cubePoints[0][1][0],cubePoints[0][1][1]);
@@ -142,8 +142,5 @@ int main(int argc, const char * argv[]) {
 	}
 	
 	ppm_freearray(ppm_raster, numLines);
-	
-	
-	
     return 0;
 }

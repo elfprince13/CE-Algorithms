@@ -19,7 +19,7 @@
 /*                names beginning with "g".  An example of a global */
 /*                variable name is gNewtonsConstant. */
 
-void * SafeMalloc(size_t size);
+void * SafeMalloc(size_t);
 
 #endif
 
