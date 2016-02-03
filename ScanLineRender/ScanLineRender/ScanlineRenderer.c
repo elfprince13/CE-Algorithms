@@ -133,12 +133,12 @@ void render(Color *raster, int lineWidth, int numLines, const rb_red_blk_tree *s
 						
 						if(inFlag){
 							static Point localPoints[6]; /* We don't recurse, so this is fine */
+							static Edge flatHere = {localPoints, localPoints + 1},
+							flatIn = {localPoints + 2, localPoints + 3},
+							vert = {localPoints + 4, localPoints + 5};
 							const Edge *const edgeHere = startEdge->edge, *edgeIn = inFlag->info;
 							const Point *const s = (*edgeHere)[START],
 							*const e = (*edgeHere)[END];
-							Edge flatHere = {localPoints, localPoints + 1},
-							flatIn = {localPoints + 2, localPoints + 3},
-							vert = {localPoints + 4, localPoints + 5};
 							Point here;
 							bool sV, eV, v;
 							float dotH, dotIn;
