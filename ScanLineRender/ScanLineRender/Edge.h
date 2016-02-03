@@ -14,15 +14,13 @@
 
 typedef enum {START = 0, END = 1} EndPoint;
 
-typedef struct {
-	Point coords[2];
-} Edge;
+typedef Point*(Edge)[2];
 
 #define INIT_EDGE(ed, sv, ev) \
 (ed).coords[START] = (sv); \
 (ed).coords[END] = (ev)
 
-#define HASH_EDGE(e) (HASH_POINT((e).coords[START]) ^ HASH_POINT((e).coords[END]))
+#define HASH_EDGE(e) (HASH_POINT(*((e)[START])) ^ HASH_POINT(*((e)[END])))
 
 void flip(Edge * );
 void flipped(const Edge *e, Edge * o);

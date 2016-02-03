@@ -13,8 +13,8 @@ void identProj(const Point *p, Point *o, const void * discard){
 }
 
 void orthoProj(const Point *p, Point *o, const Edge * viewportSpan){
-	const Point * min = viewportSpan->coords + START;
-	const Point * max = viewportSpan->coords + END;
+	const Point * min = (*viewportSpan)[START];
+	const Point * max = (*viewportSpan)[END];
 	int32_t l = min->x;
 	int32_t r = max->x;
 	int32_t b = min->y;

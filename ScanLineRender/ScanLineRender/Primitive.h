@@ -20,7 +20,7 @@ const char * fmtColor(Color c);
 #endif
 
 typedef struct {
-	Edge * boundary;
+	Edge ** boundary;
 	size_t arity;
 	Color color;
 } Primitive;

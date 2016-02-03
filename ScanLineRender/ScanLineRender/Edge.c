@@ -13,22 +13,22 @@
 
 
 void flip(Edge * e){
-	Point tmp = e->coords[START];
-	e->coords[START] = e->coords[END];
-	e->coords[END] = tmp;
+	Point *tmp = (*e)[START];
+	(*e)[START] = (*e)[END];
+	(*e)[END] = tmp;
 }
 
 void flipped(const Edge *e, Edge * o){
-	o->coords[START] = e->coords[END];
-	o->coords[START] = e->coords[START];	
+	(*o)[START] = (*e)[END];
+	(*o)[END] = (*e)[START];
 }
 
 float dotEdge(const Edge *u, const Edge *v){
 	const Point
-	*us= u->coords + START,
-	*ue = u->coords + END,
-	*vs = v->coords + START,
-	*ve = v->coords + END, *tmp;
+	*us= (*u)[START],
+	*ue = (*u)[END],
+	*vs = (*v)[START],
+	*ve = (*v)[END], *tmp;
 	Point u0, v0;
 	
 	bool tailTouch = pointsEqual(ue, ve);
@@ -63,7 +63,7 @@ void projectEdge(const Projection * proj, const Edge *e, Edge *o){
 	void * state = proj->state;
 	size_t j;
 	for (j = START; j <= END; ++j) {
-		f(e->coords + j,o->coords + j, state);
+		f((*e)[j],(*o)[j], state);
 	}
 }
 
@@ -71,9 +71,8 @@ void projectEdge(const Projection * proj, const Edge *e, Edge *o){
 bool contains(const Edge *e, const Point *p){
 	size_t i;
 	bool ret = false;
-	const Point* coords = e->coords;
 	for(i = START; i <= END; ++i ){
-		const Point* coord = coords + i;
+		const Point* coord = (*e)[i];
 		if(coord->x == p->x && coord->y == p->y){
 			ret = true; break;
 		}

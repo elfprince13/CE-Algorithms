@@ -11,7 +11,13 @@
 
 #include "Primitive.h"
 #include "Projection.h"
+#include "rb_tree/red_black_tree.h"
 
-void render(Color *raster, int lineWidth, int numLines, const Primitive *geometry, size_t geomCount, const Projection *p);
+typedef Projection Transformation;
+typedef ProjectionF TransformF;
+void transformData(const Transformation *txForm, const Point *srcGeometry, Point *dstGeometry, size_t pointCount);
+rb_red_blk_tree* teardownBuckets(rb_red_blk_tree* buckets, int numLines);
+rb_red_blk_tree* bucketPrims(rb_red_blk_tree* bucketsRef, int numLines, Primitive *geometry, size_t geomCount);
+void render(Color *raster, int lineWidth, int numLines, const rb_red_blk_tree *scanLinePrimBuckets);
 
 #endif /* ScanlineRenderer_h */
