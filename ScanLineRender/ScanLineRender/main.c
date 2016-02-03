@@ -99,7 +99,7 @@ int main(int argc, const char * argv[]) {
 	const int32_t lineWidth = 320;
 	const size_t rasterByteCount = numLines * lineWidth * sizeof(Color);
 	Color *const raster = (Color*)0xD40000;
-	
+	rb_red_blk_tree* buckets = NULL;
 	
 	transformData(&viewProj, cubePointsSrc, cubePoints, 8);
 	buckets = bucketPrims(buckets, numLines, cube, sizeof(cube) / sizeof(Primitive));
