@@ -28,8 +28,8 @@ int main(int argc, const char * argv[]) {
 	LinkN *null = NULL;
 	LinkN **head = &null;
 	const size_t COUNT = 37;
-	size_t *data = malloc(COUNT * sizeof(size_t)), i;
-	LinkN *nodes = malloc(COUNT * sizeof(LinkN));
+	size_t *data = SafeMalloc(COUNT * sizeof(size_t)), i;
+	LinkN *nodes = SafeMalloc(COUNT * sizeof(LinkN));
 	for(i = 0; i < COUNT; i++){
 		data[i] = i;
 		nodes[i].data = data + i;

@@ -9,6 +9,7 @@
 #include "Primitive.h"
 #include <math.h>
 #include <string.h>
+#include "rb_tree/misc.h"
 
 #ifndef NDEBUG
 const char * fmtColor(Color c){
@@ -24,14 +25,14 @@ const char * fmtColor(Color c){
 
 void makeLine(Primitive *o, Color c, const Edge e){
 	Primitive tmp;
-	Point **const b = malloc(sizeof(Edge));
+	Point **const b = SafeMalloc(sizeof(Edge));
 	memcpy(b, e, sizeof(Edge));
 	INIT_PRIM(tmp, c, 1, b);
 	*o = tmp;
 }
 void makeTri(Primitive *o, Color c, const Edge e1, const Edge e2, const Edge e3){
 	Primitive tmp;
-	Point **const b = malloc(4*sizeof(Point*)),
+	Point **const b = SafeMalloc(4*sizeof(Point*)),
 	**bn = b;
 	assert(e1[END] == e2[START]
 		   && e2[END] == e3[START]
@@ -46,7 +47,7 @@ void makeTri(Primitive *o, Color c, const Edge e1, const Edge e2, const Edge e3)
 
 void makeQuad(Primitive *o, Color c, const Edge e1, const Edge e2, const Edge e3, const Edge e4){
 	Primitive tmp;
-	Point **const b = malloc(5*sizeof(Point*)),
+	Point **const b = SafeMalloc(5*sizeof(Point*)),
 	**bn = b;
 	assert(e1[END] == e2[START]
 		   && e2[END] == e3[START]

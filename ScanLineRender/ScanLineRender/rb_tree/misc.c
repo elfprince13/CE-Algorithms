@@ -6,11 +6,11 @@
 /***********************************************************************/
 /*  FUNCTION:  SafeMalloc */
 /**/
-/*    INPUTS:  size is the size to malloc */
+/*    INPUTS:  size is the size to SafeMalloc */
 /**/
 /*    OUTPUT:  returns pointer to allocated memory if succesful */
 /**/
-/*    EFFECT:  mallocs new memory.  If malloc fails, prints error message */
+/*    EFFECT:  SafeMallocs new memory.  If SafeMalloc fails, prints error message */
 /*             and terminates program. */
 /**/
 /*    Modifies Input: none */
@@ -18,14 +18,18 @@
 /***********************************************************************/
 
 void * SafeMalloc(size_t size) {
-  void * result;
+	void *const mem = malloc(size);
 
-  if ( (result = malloc(size)) ) { /* assignment intentional */
-    return(result);
-  } else {
-    dPrintf(("memory overflow: malloc failed in SafeMalloc."));
-    dPrintf(("  Exiting Program.\n"));
-    exit(-1);
-    return(0);
+  if ( !mem ) {
+#ifdef _EZ80
+	  cleanUp();
+	  asm("LD A,E_Memory");
+	  _OS( asm("JP _JError") );
+#else
+	  dPrintf(("memory overflow: SafeMalloc failed in SafeMalloc."));
+	  dPrintf(("  Exiting Program.\n"));
+	  exit(-1);
+#endif
   }
+	return mem;
 }

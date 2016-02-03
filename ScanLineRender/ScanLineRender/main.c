@@ -99,7 +99,7 @@ int main(int argc, const char * argv[]) {
 	const int32_t numLines = 240;
 	const int32_t lineWidth = 320;
 	const size_t rasterByteCount = numLines * lineWidth * sizeof(Color);
-	Color *raster = (Color*)malloc(rasterByteCount);
+	Color *raster = (Color*)SafeMalloc(rasterByteCount);
 	pixel** ppm_raster;
 	size_t x,y;
 	FILE *fp;

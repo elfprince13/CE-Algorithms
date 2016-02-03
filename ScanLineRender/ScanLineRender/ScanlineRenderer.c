@@ -39,7 +39,7 @@ void transformData(const Transformation *txForm, const Point *srcGeometry, Point
 rb_red_blk_tree* bucketPrims(rb_red_blk_tree* buckets, int numLines, Primitive *geometry, size_t geomCount){
 	size_t i;
 	if(!buckets){
-		buckets = malloc(numLines * sizeof(rb_red_blk_tree));
+		buckets = SafeMalloc(numLines * sizeof(rb_red_blk_tree));
 		for(i = 0; i < numLines; RBTreeInit(buckets + (i++), pointerDiffF, NULL, &RBNodeAlloc));
 	} else {
 		for(i = 0; i < numLines; RBTreeClear(buckets + (i++)));

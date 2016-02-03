@@ -134,8 +134,8 @@ void stepEdges(ActiveEdgeList *ael, const rb_red_blk_tree* activePrims){
 }
 
 LinkN* makeLink(Point **e, Primitive *p, bool s){
-	LinkN *newLink = malloc(sizeof(LinkN));
-	EdgeListEntry *newEdge = malloc(sizeof(EdgeListEntry));
+	LinkN *newLink = SafeMalloc(sizeof(LinkN));
+	EdgeListEntry *newEdge = SafeMalloc(sizeof(EdgeListEntry));
 	newLink->data = newEdge;
 	INIT_ELN(*newEdge, e, p, s);
 	return newLink;
