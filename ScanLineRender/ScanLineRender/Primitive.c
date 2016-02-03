@@ -7,6 +7,7 @@
 */
 
 #include "Primitive.h"
+#include <math.h>
 
 #ifndef NDEBUG
 const char * fmtColor(Color c){
@@ -48,13 +49,13 @@ void makeQuad(const Edge *e1, const Edge *e2, const Edge *e3, const Edge *e4, Pr
 	*o = tmp;
 }
 
-const int32_t getZForXY(const Primitive *p, const int32_t x, const int32_t y){
+float getZForXY(const Primitive *p, float x, float y){
 	if(p->arity == 1){
 		const Edge * v = p->boundary;
 		const Point * vs = v->coords + START,
 		* ve = v->coords + END;
 		
-		const int32_t sx = vs->x,
+		const float sx = vs->x,
 		sy = vs->y,
 		sz = vs->z,
 		
@@ -64,11 +65,9 @@ const int32_t getZForXY(const Primitive *p, const int32_t x, const int32_t y){
 		
 		/* Theoretically these should be the same, but
 		 // we'll average for robustness */
-		/* Potentially some fixed-point accuracy issues here.
-		 * We may need dedicated routines if the compiler does the stupid thing */
-		const int32_t xNumer = dz * (x - sx),
+		const float xNumer = dz * (x - sx),
 		yNumer = dz * (y - sy);
-		const int32_t xEst = (dx == 0) ? min(0,  dz) : (xNumer / dx),
+		const float xEst = (dx == 0) ? min(0,  dz) : (xNumer / dx),
 		yEst = (dy == 0) ? min(0,  dz) : (yNumer / dy);
 		
 		return sz + (xEst + yEst) / 2;
@@ -81,25 +80,23 @@ const int32_t getZForXY(const Primitive *p, const int32_t x, const int32_t y){
 		* vs = e2->coords + START,
 		* ve = e2->coords + END;
 		
-		const int32_t ux = us->x - ue->x,
+		const float ux = us->x - ue->x,
 		uy = us->y - ue->y,
 		uz = us->z - ue->z,
 		vx = vs->x - ve->x,
 		vy = vs->y - ve->y,
 		vz = vs->z - ve->z;
 		
-		const int32_t nx = uy * vz - uz * vy,
+		const float nx = uy * vz - uz * vy,
 		ny = uz * vx - ux * vz,
 		nz = ux * vy - uy * vx;
 		
-		/* Potentially some fixed-point accuracy issues here.
-		 * We may need dedicated routines if the compiler does the stupid thing */
-		const int32_t d = -nx * us->x
+		const float d = -nx * us->x
 		-ny * us->y
 		-nz * us->z,
 		numer = (-d - nx * x - ny * y);
 		
-		return (nz == 0) ? ((numer > 0) ? INT16_MAX : INT16_MIN) : (numer / nz) ;
+		return (nz == 0) ? ((numer > 0) ? HUGE_VALF : -HUGE_VALF) : (numer / nz) ;
 	}
 	
 }

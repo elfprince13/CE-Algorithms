@@ -12,6 +12,6 @@
 #include "Primitive.h"
 #include "Projection.h"
 
-void render(Color *raster, int32_t lineWidth, int32_t numLines, const Primitive *geometry, size_t geomCount, const Projection *p);
+void render(Color *raster, int lineWidth, int numLines, const Primitive *geometry, size_t geomCount, const Projection *p);
 
 #endif /* ScanlineRenderer_h */

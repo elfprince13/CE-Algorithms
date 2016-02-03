@@ -17,14 +17,15 @@
 #define max(a, b) (((a) > (b)) ? (a) : (b))
 
 typedef struct {
-	int32_t x; int32_t y; int32_t z;
+	float x; float y; float z;
 } Point;
 #define INIT_POINT(p, xv, yv, zv) \
 (p).x = (xv); \
 (p).y = (yv); \
 (p).z = (zv)
 
-#define HASH_POINT(p) ((p).x ^ (p).y ^ (p).z)
+#define FLOATBITS(f) (*(int32_t*)&(f))
+#define HASH_POINT(p) (FLOATBITS((p).x) ^ FLOATBITS((p).y) ^ FLOATBITS((p).z))
 
 const Point origin(void);
 
@@ -34,6 +35,6 @@ void negated(const Point *p, Point *o);
 bool pointsEqual(const Point *p, const Point *q);
 
 #define DOT(p, q) (((p).x * (q).x) + ((p).y * (q).y) + ((p).z * (q).z));
-int32_t dot(const Point *p, const Point *q);
+float dot(const Point *p, const Point *q);
 
 #endif /* Point_h */
