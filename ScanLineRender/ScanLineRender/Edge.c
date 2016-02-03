@@ -60,7 +60,7 @@ float dotEdge(const Edge *u, const Edge *v){
 
 void transformEdge(const Transformation * txForm, const Edge *e, Edge *o){
 	const TransformationF f = txForm->f;
-	void * state = txForm->state;
+	const void * state = txForm->state;
 	size_t j;
 	for (j = START; j <= END; ++j) {
 		f((*e)[j],(*o)[j], state);
