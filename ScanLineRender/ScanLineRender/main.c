@@ -99,10 +99,7 @@ int main(int argc, const char * argv[]) {
 	const int32_t numLines = 240;
 	const int32_t lineWidth = 320;
 	const size_t rasterByteCount = numLines * lineWidth * sizeof(Color);
-	Color *raster = (Color*)SafeMalloc(rasterByteCount);
-	pixel** ppm_raster;
-	size_t x,y;
-	FILE *fp;
+	Color *const raster = (Color*)SafeMalloc(rasterByteCount);
 	rb_red_blk_tree* buckets = NULL;
 	pm_proginit(&argc, argv);
 	
@@ -114,24 +111,30 @@ int main(int argc, const char * argv[]) {
 	
 	buckets = teardownBuckets(buckets, numLines);
 	
-	ppm_raster = ppm_allocarray(lineWidth, numLines);
-	
-	for(y = 0; y < numLines; y++){
-		for(x = 0; x < lineWidth; x++){
-			const Color rgb = raster[y * lineWidth + x];
-			const uint32_t r = (rgb >> 11) << 3,
-			g = ((rgb >> 5) & 0x3f) << 2,
-			b = (rgb & 0x1f) << 3;
-			ppm_raster[y][x].r = r;
-			ppm_raster[y][x].g = g;
-			ppm_raster[y][x].b = b;		}
+	{
+		pixel **const ppm_raster = ppm_allocarray(lineWidth, numLines);
+		size_t x,y;
+		FILE *fp;
+		
+		for(y = 0; y < numLines; y++){
+			for(x = 0; x < lineWidth; x++){
+				const Color rgb = raster[y * lineWidth + x];
+				const uint32_t r = (rgb >> 11) << 3,
+				g = ((rgb >> 5) & 0x3f) << 2,
+				b = (rgb & 0x1f) << 3;
+				ppm_raster[y][x].r = r;
+				ppm_raster[y][x].g = g;
+				ppm_raster[y][x].b = b;		}
+		}
+		
+		if((fp = fopen("out.ppm", "wb"))){
+			ppm_writeppm(fp, ppm_raster, lineWidth, numLines, 255, 0);
+			fclose(fp);
+		}
+		
+		ppm_freearray(ppm_raster, numLines);
 	}
+	free(raster);
 	
-	if((fp = fopen("out.ppm", "wb"))){
-		ppm_writeppm(fp, ppm_raster, lineWidth, numLines, 255, 0);
-		fclose(fp);
-	}
-	
-	ppm_freearray(ppm_raster, numLines);
     return 0;
 }
