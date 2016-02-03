@@ -58,9 +58,9 @@ float dotEdge(const Edge *u, const Edge *v){
 	return DOT(u0, v0);
 }
 
-void projectEdge(const Transformation * proj, const Edge *e, Edge *o){
-	const TransformationF f = proj->f;
-	void * state = proj->state;
+void transformEdge(const Transformation * txForm, const Edge *e, Edge *o){
+	const TransformationF f = txForm->f;
+	void * state = txForm->state;
 	size_t j;
 	for (j = START; j <= END; ++j) {
 		f((*e)[j],(*o)[j], state);

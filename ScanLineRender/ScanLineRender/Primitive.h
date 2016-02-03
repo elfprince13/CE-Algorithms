@@ -35,7 +35,7 @@ void makeTri(const Edge *e1, const Edge *e2, const Edge *e3, Primitive *o);
 void makeQuad(const Edge *e1, const Edge *e2, const Edge *e3, const Edge *e4, Primitive *o);
 
 float getZForXY(const Primitive *p, float x, float y);
-void projectPrimitive(const Transformation * proj, const Primitive *p, Primitive *o);
+void transformPrimitive(const Transformation * txForm, const Primitive *p, Primitive *o);
 
 int32_t hashPrim(const Primitive *p);
 

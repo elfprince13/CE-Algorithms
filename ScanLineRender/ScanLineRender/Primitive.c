@@ -106,12 +106,12 @@ float getZForXY(const Primitive *p, float x, float y){
 }
 
 
-void projectPrimitive(const Transformation * proj, const Primitive *p, Primitive *o){
+void transformPrimitive(const Transformation * txForm, const Primitive *p, Primitive *o){
 	Edge **const pBoundary = p->boundary;
 	Edge **const oBoundary = o->boundary;
 	size_t i;
 	for(i = 0; i < p->arity; ++i){
-		projectEdge(proj, pBoundary[i], oBoundary[i]);
+		transformEdge(txForm, pBoundary[i], oBoundary[i]);
 	}
 }
 

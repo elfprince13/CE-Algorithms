@@ -142,8 +142,8 @@ void render(Color *raster, int lineWidth, int numLines, const rb_red_blk_tree *s
 							Point here;
 							bool sV, eV, v;
 							float dotH, dotIn;
-							projectEdge(&screenPlane, edgeHere, &flatHere);
-							projectEdge(&screenPlane, edgeIn, &flatIn);
+							transformEdge(&screenPlane, edgeHere, &flatHere);
+							transformEdge(&screenPlane, edgeIn, &flatIn);
 							INIT_POINT(here, startX, line, 0);
 							sV = contains(edgeIn, s);
 							eV = contains(edgeIn, e);

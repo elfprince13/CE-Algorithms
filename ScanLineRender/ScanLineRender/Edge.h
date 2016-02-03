@@ -27,7 +27,7 @@ void flipped(const Edge *e, Edge * o);
 
 float dotEdge(const Edge *, const Edge *);
 struct _Transformation;
-void projectEdge(const struct _Transformation * proj, const Edge *e, Edge *o);
+void transformEdge(const struct _Transformation * txForm, const Edge *e, Edge *o);
 bool contains(const Edge *, const Point *);
 
 #endif /* Edge_h */
