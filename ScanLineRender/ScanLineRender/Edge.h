@@ -22,12 +22,12 @@ typedef Point*(Edge)[2];
 
 #define HASH_EDGE(e) (HASH_POINT(*((e)[START])) ^ HASH_POINT(*((e)[END])))
 
-void flip(Edge * );
-void flipped(const Edge *e, Edge * o);
+void flip(Edge);
+void flipped(const Edge e, Edge o);
 
-float dotEdge(const Edge *, const Edge *);
+float dotEdge(const Edge, const Edge);
 struct _Transformation;
-void transformEdge(const struct _Transformation * txForm, const Edge *e, Edge *o);
-bool contains(const Edge *, const Point *);
+void transformEdge(const struct _Transformation * txForm, const Edge e, Edge o);
+bool contains(const Edge, const Point *);
 
 #endif /* Edge_h */

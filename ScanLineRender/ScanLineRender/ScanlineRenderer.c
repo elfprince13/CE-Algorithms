@@ -20,14 +20,10 @@ static int pointerDiff(const Primitive*, const Primitive*);
 static StatelessCompF topToBottomF = (StatelessCompF)(&topToBottom);
 static StatelessCompF pointerDiffF = (StatelessCompF)(&pointerDiff);
 static float topMostPrimPoint(const Primitive *);
-static float topMostEdgePoint(const Edge *);
 static float bottomMostPrimPoint(const Primitive *);
-static float bottomMostEdgePoint(const Edge *);
 #ifndef NDEBUG
 static float rightMostPrimPoint(const Primitive *);
-static float rightMostEdgePoint(const Edge *);
 static float leftMostPrimPoint(const Primitive *);
-static float leftMostEdgePoint(const Edge *);
 #endif
 
 void transformData(const Transformation *txForm, const Point *srcGeometry, Point *dstGeometry, size_t pointCount){
@@ -136,22 +132,22 @@ void render(Color *raster, int lineWidth, int numLines, const rb_red_blk_tree *s
 							static Edge flatHere = {localPoints, localPoints + 1},
 							flatIn = {localPoints + 2, localPoints + 3},
 							vert = {localPoints + 4, localPoints + 5};
-							const Edge *const edgeHere = startEdge->edge, *edgeIn = inFlag->info;
-							const Point *const s = (*edgeHere)[START],
-							*const e = (*edgeHere)[END];
+							Point **const edgeHere = startEdge->edge, **edgeIn = inFlag->info;
+							const Point *const s = edgeHere[START],
+							*const e = edgeHere[END];
 							Point here;
 							bool sV, eV, v;
 							float dotH, dotIn;
-							transformEdge(&screenPlane, edgeHere, &flatHere);
-							transformEdge(&screenPlane, edgeIn, &flatIn);
+							transformEdge(&screenPlane, edgeHere, flatHere);
+							transformEdge(&screenPlane, edgeIn, flatIn);
 							INIT_POINT(here, startX, line, 0);
 							sV = contains(edgeIn, s);
 							eV = contains(edgeIn, e);
-							v = (sV || eV) && contains(&flatIn, &here) && contains(&flatHere, &here) && (startOwner->arity != 1);
+							v = (sV || eV) && contains(flatIn, &here) && contains(flatHere, &here) && (startOwner->arity != 1);
 							vert[START] = &here;
 							INIT_POINT(*(vert[END]), startX, line+1, 0);
-							dotH = v ? dotEdge(&vert, &flatHere) : 0;
-							dotIn = v ? dotEdge(&vert, &flatIn) : 0;
+							dotH = v ? dotEdge(vert, flatHere) : 0;
+							dotIn = v ? dotEdge(vert, flatIn) : 0;
 							if(!v || dotH * dotIn > 0){
 								dPrintf(("\tNot *in* old %s at %f\n", fmtColor(startEdge->owner->color), getSmartXForLine(startEdge, line)));
 								RBSetAdd(&deFlags, startOwner);
@@ -287,63 +283,47 @@ int topToBottom(const Primitive *p1, const Primitive *p2){
 }
 
 float topMostPrimPoint(const Primitive *prim){
-	Edge **const boundary = prim->boundary;
+	Point **const boundary = prim->boundary;
 	const size_t arity = prim->arity;
 	size_t i; float top;
-	for(top = topMostEdgePoint(boundary[0]),i = 1; i < arity; ++i){
-		const float candidate = topMostEdgePoint(boundary[i]);
+	for(top = boundary[0]->y,i = 1; i < arity; ++i){
+		const float candidate = boundary[i]->y;
 		if(candidate > top) top = candidate;
 	}
 	return top;
 }
 
-float topMostEdgePoint(const Edge *edge){
-	return max((*edge)[START]->y, (*edge)[END]->y);
-}
-
 float bottomMostPrimPoint(const Primitive *prim){
-	Edge **const boundary = prim->boundary;
+	Point **const boundary = prim->boundary;
 	const size_t arity = prim->arity;
 	size_t i; float bottom;
-	for(bottom = bottomMostEdgePoint(boundary[0]),i = 1; i < arity; ++i){
-		const float candidate = bottomMostEdgePoint(boundary[i]);
+	for(bottom = boundary[0]->y,i = 1; i < arity; ++i){
+		const float candidate = boundary[i]->y;
 		if(candidate < bottom) bottom = candidate;
 	}
 	return bottom;
-}
-
-float bottomMostEdgePoint(const Edge *edge){
-	return min((*edge)[START]->y, (*edge)[END]->y);
 }
 
 #ifndef NDEBUG
 float rightMostPrimPoint(const Primitive *prim){
-	Edge **const boundary = prim->boundary;
+	Point **const boundary = prim->boundary;
 	const size_t arity = prim->arity;
 	size_t i; float top;
-	for(top = rightMostEdgePoint(boundary[0]),i = 1; i < arity; ++i){
-		const float candidate = rightMostEdgePoint(boundary[i]);
+	for(top = boundary[0]->x,i = 1; i < arity; ++i){
+		const float candidate = boundary[i]->x;
 		if(candidate > top) top = candidate;
 	}
 	return top;
 }
 
-float rightMostEdgePoint(const Edge *edge){
-	return max((*edge)[START]->x, (*edge)[END]->x);
-}
-
 float leftMostPrimPoint(const Primitive *prim){
-	Edge **const boundary = prim->boundary;
+	Point **const boundary = prim->boundary;
 	const size_t arity = prim->arity;
 	size_t i; float bottom;
-	for(bottom = leftMostEdgePoint(boundary[0]),i = 1; i < arity; ++i){
-		const float candidate = leftMostEdgePoint(boundary[i]);
+	for(bottom = boundary[0]->x,i = 1; i < arity; ++i){
+		const float candidate = boundary[i]->x;
 		if(candidate < bottom) bottom = candidate;
 	}
 	return bottom;
-}
-
-float leftMostEdgePoint(const Edge *edge){
-	return min((*edge)[START]->x, (*edge)[END]->x);
 }
 #endif

@@ -10,9 +10,9 @@
 #include "debugConfig.h"
 
 float getMinXForLine(const EdgeListEntry * node, const int32_t scanLine){
-	const Edge *const coords = node->edge;
-	const Point *const start = (*coords)[START],
-	*const end = (*coords)[END];
+	Point **const coords = node->edge;
+	const Point *const start = coords[START],
+	*const end = coords[END];
 	const float sx = start->x,
 	sy = start->y,
 	ex = end->x,
@@ -30,9 +30,9 @@ float getMinXForLine(const EdgeListEntry * node, const int32_t scanLine){
 }
 
 float getMaxXForLine(const EdgeListEntry * node, const int32_t scanLine){
-	const Edge *const coords = node->edge;
-	const Point *const start = (*coords)[START],
-	*const end = (*coords)[END];
+	Point **const coords = node->edge;
+	const Point *const start = coords[START],
+	*const end = coords[END];
 	const float sx = start->x,
 	sy = start->y,
 	ex = end->x,
@@ -61,7 +61,7 @@ const ActiveEdgeList freshAEL(){
 	return ael;
 }
 
-static LinkN* makeLink(Edge *e, Primitive *p, bool s);
+static LinkN* makeLink(Point **e, Primitive *p, bool s);
 #define makeLinkEZ(e, p) makeLink(e,p,false)
 
 static int32_t leftToRightF(EdgeListEntry *, EdgeListEntry *, int32_t *);
@@ -75,9 +75,9 @@ void stepEdges(ActiveEdgeList *ael, const rb_red_blk_tree* activePrims){
 		LinkN *i, *p, *nextP;
 		for(p = NULL, i = ael->activeEdges; i; (p = i),(i = nextP)){
 			const EdgeListEntry *const entry = i->data;
-			const Edge *const edge = entry->edge;
-			const float ys = (*edge)[START]->y,
-			ye = (*edge)[END]->y,
+			Point **const edge = entry->edge;
+			const float ys = edge[START]->y,
+			ye = edge[END]->y,
 			edgeEnd = max(ys, ye);
 			nextP = i->tail;
 			if(edgeEnd < scanLine){
@@ -87,7 +87,7 @@ void stepEdges(ActiveEdgeList *ael, const rb_red_blk_tree* activePrims){
 					dPrintf(("Deactivating %s with y-span: %f -> %f with x-span: %f -> %f(true: %f -> %f)\n",
 						   fmtColor(entry->owner->color), lowEnd, edgeEnd,
 						   getMinXForLine(entry, scanLine), getMaxXForLine(entry, scanLine),
-						   (*edge)[START]->x, (*edge)[END]->x));
+						   edge[START]->x, edge[END]->x));
 				}
 #endif
 				/* Entries don't own the primitives they point to,
@@ -104,9 +104,9 @@ void stepEdges(ActiveEdgeList *ael, const rb_red_blk_tree* activePrims){
 			const size_t jMax = prim->arity;
 			size_t j;
 			for(j = 0; j < jMax; ++j){
-				Edge *const e = prim->boundary[j];
-				const float sy = (*e)[START]->y,
-				ey = (*e)[END]->y,
+				Point **const e = prim->boundary + j;
+				const float sy = e[START]->y,
+				ey = e[END]->y,
 				mnY = min(sy, ey),
 				mxY = max(sy, ey);
 				const bool singleton = prim->arity == 1;
@@ -118,7 +118,7 @@ void stepEdges(ActiveEdgeList *ael, const rb_red_blk_tree* activePrims){
 						dPrintf(("Activating %s with y-span: %f -> %f with x-span: %f -> %f(true: %f -> %f)\n",
 							   fmtColor(prim->color), mnY, mxY,
 							   getMinXForLine(newEdge->data, scanLine), getMaxXForLine(newEdge->data, scanLine),
-							   (*e)[START]->x, (*e)[END]->x));
+							   e[START]->x, e[END]->x));
 					}
 #endif
 					linkFront(aelHead, newEdge);
@@ -133,7 +133,7 @@ void stepEdges(ActiveEdgeList *ael, const rb_red_blk_tree* activePrims){
 	mergeSort(&(ael->activeEdges), &leftToRight);
 }
 
-LinkN* makeLink(Edge *e, Primitive *p, bool s){
+LinkN* makeLink(Point **e, Primitive *p, bool s){
 	LinkN *newLink = malloc(sizeof(LinkN));
 	EdgeListEntry *newEdge = malloc(sizeof(EdgeListEntry));
 	newLink->data = newEdge;
@@ -144,12 +144,12 @@ LinkN* makeLink(Edge *e, Primitive *p, bool s){
 int leftToRightF(EdgeListEntry *o1, EdgeListEntry *o2, int *scanLine){
 	float delta = getSmartXForLine(o1, *scanLine) - getSmartXForLine(o2, *scanLine);
 #ifndef NDEBUG
-	const Edge *const e1 = o1->edge,
-	*const e2 = o2->edge;
-	if (!delta) delta = (*e1)[START]->x - (*e2)[START]->x;
-	if (!delta) delta = (*e1)[END]->x - (*e2)[END]->x;
-	if (!delta) delta = (*e1)[START]->y - (*e2)[START]->y;
-	if (!delta) delta = (*e1)[END]->y - (*e2)[END]->y;
+	Point **const e1 = o1->edge,
+	**const e2 = o2->edge;
+	if (!delta) delta = e1[START]->x - e2[START]->x;
+	if (!delta) delta = e1[END]->x - e2[END]->x;
+	if (!delta) delta = e1[START]->y - e2[START]->y;
+	if (!delta) delta = e1[END]->y - e2[END]->y;
 	if (!delta) delta = o1->owner->arity - o2->owner->arity;
 	if (!delta) delta = o1->owner->color - o2->owner->color;
 	if (!delta) delta = (int)(o1->placeHolder) - (int)(o2->placeHolder);

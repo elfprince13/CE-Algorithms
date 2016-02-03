@@ -22,42 +22,50 @@ const char * fmtColor(Color c){
 }
 #endif
 
-void makeLine(const Edge *e, Primitive *o){
+void makeLine(Primitive *o, Color c, const Edge e){
 	Primitive tmp;
-	Edge **const b = malloc(sizeof(Edge*));
-	memcpy(b, &e, sizeof(Edge*));
-	INIT_PRIM(tmp, 0, 1, b);
+	Point **const b = malloc(sizeof(Edge));
+	memcpy(b, e, sizeof(Edge));
+	INIT_PRIM(tmp, c, 1, b);
 	*o = tmp;
 }
-void makeTri(const Edge *e1, const Edge *e2, const Edge *e3, Primitive *o){
+void makeTri(Primitive *o, Color c, const Edge e1, const Edge e2, const Edge e3){
 	Primitive tmp;
-	Edge **const b = malloc(3*sizeof(Edge*)),
+	Point **const b = malloc(4*sizeof(Point*)),
 	**bn = b;
-	memcpy(bn++, &e1, sizeof(Edge*));
-	memcpy(bn++, &e2, sizeof(Edge*));
-	memcpy(bn++, &e3, sizeof(Edge*));
-	INIT_PRIM(tmp, 0, 3, b);
+	assert(e1[END] == e2[START]
+		   && e2[END] == e3[START]
+		   && e3[END] == e1[START]
+		   && "Not a closed line-loop");
+	memcpy(bn++, e1, sizeof(Point*));
+	memcpy(bn++, e2, sizeof(Point*));
+	memcpy(bn, e3, sizeof(Edge));
+	INIT_PRIM(tmp, c, 3, b);
 	*o = tmp;
 }
 
-void makeQuad(const Edge *e1, const Edge *e2, const Edge *e3, const Edge *e4, Primitive *o){
+void makeQuad(Primitive *o, Color c, const Edge e1, const Edge e2, const Edge e3, const Edge e4){
 	Primitive tmp;
-	Edge **const b = malloc(4*sizeof(Edge*)),
+	Point **const b = malloc(5*sizeof(Point*)),
 	**bn = b;
-	memcpy(bn++, &e1, sizeof(Edge*));
-	memcpy(bn++, &e2, sizeof(Edge*));
-	memcpy(bn++, &e3, sizeof(Edge*));
-	memcpy(bn++, &e4, sizeof(Edge*));
-	INIT_PRIM(tmp, 0, 4, b);
+	assert(e1[END] == e2[START]
+		   && e2[END] == e3[START]
+		   && e3[END] == e4[START]
+		   && e4[END] == e1[START]
+		   && "Not a closed line-loop");
+	memcpy(bn++, e1, sizeof(Point*));
+	memcpy(bn++, e2, sizeof(Point*));
+	memcpy(bn++, e3, sizeof(Point*));
+	memcpy(bn, e4, sizeof(Edge));
+	INIT_PRIM(tmp, c, 4, b);
 	*o = tmp;
 }
 
 float getZForXY(const Primitive *p, float x, float y){
-	Edge **const boundary = p->boundary;
+	Point **const boundary = p->boundary;
 	if(p->arity == 1){
-		const Edge *const v = boundary[0];
-		const Point *const vs = (*v)[START],
-		* ve = (*v)[END];
+		const Point *const vs = boundary[START],
+		* ve = boundary[END];
 		
 		const float sx = vs->x,
 		sy = vs->y,
@@ -76,13 +84,13 @@ float getZForXY(const Primitive *p, float x, float y){
 		
 		return sz + (xEst + yEst) / 2;
 	} else {
-		const Edge * e1 = boundary[0],
-		* e2 = boundary[1];
+		Point **const e1 = boundary,
+		**const e2 = e1 + 1;
 		
-		const Point * us = (*e1)[START],
-		* ue = (*e1)[END],
-		* vs = (*e2)[START],
-		* ve = (*e2)[END];
+		const Point * us = e1[START],
+		* ue = e1[END],
+		* vs = e2[START],
+		* ve = e2[END];
 		
 		const float ux = us->x - ue->x,
 		uy = us->y - ue->y,
@@ -107,19 +115,21 @@ float getZForXY(const Primitive *p, float x, float y){
 
 
 void transformPrimitive(const Transformation * txForm, const Primitive *p, Primitive *o){
-	Edge **const pBoundary = p->boundary;
-	Edge **const oBoundary = o->boundary;
-	size_t i;
-	for(i = 0; i < p->arity; ++i){
-		transformEdge(txForm, pBoundary[i], oBoundary[i]);
+	const TransformationF f = txForm->f;
+	const void * state = txForm->state;
+	Point **const pBoundary = p->boundary;
+	Point **const oBoundary = o->boundary;
+	size_t i, iMax = p->arity;
+	for(i = 0; i <= iMax; ++i){
+		f(pBoundary[i],oBoundary[i],state);
 	}
 }
 
 
 int32_t hashPrim(const Primitive *p){
-	size_t i; int32_t ret = 0;
-	for(i = 0; i < p->arity; ++i){
-		ret ^= HASH_EDGE(*(p->boundary[i]));
+	size_t i, iMax = p->arity; int32_t ret = 0;
+	for(i = 0; i <= iMax; ++i){
+		ret ^= HASH_POINT(*(p->boundary[i]));
 	}
 	ret ^= (p->color << 8) | 0xFF;
 	return ret;

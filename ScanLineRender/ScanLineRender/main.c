@@ -50,33 +50,21 @@ int main(int argc, const char * argv[]) {
 	static Point cubePoints[8];
 	static Edge cubeEdges[3][4] = {
 		{
-			{&cubePoints[(0 << 2) | (0 << 1) | (0)],&cubePoints[(0 << 2) | (0 << 1) | (1)]},
-			{&cubePoints[(0 << 2) | (1 << 1) | (0)],&cubePoints[(0 << 2) | (1 << 1) | (1)]},
-			{&cubePoints[(1 << 2) | (0 << 1) | (0)],&cubePoints[(1 << 2) | (0 << 1) | (1)]},
-			{&cubePoints[(1 << 2) | (1 << 1) | (0)],&cubePoints[(1 << 2) | (1 << 1) | (1)]}},
+			{&cubePoints[0],&cubePoints[1]},
+			{&cubePoints[2],&cubePoints[3]},
+			{&cubePoints[4],&cubePoints[5]},
+			{&cubePoints[6],&cubePoints[7]}},
 		{
-			{&cubePoints[(0 << 2) | (0 << 1) | (0)],&cubePoints[(0 << 2) | (1 << 1) | (0)]},
-			{&cubePoints[(0 << 2) | (0 << 1) | (1)],&cubePoints[(0 << 2) | (1 << 1) | (1)]},
-			{&cubePoints[(1 << 2) | (0 << 1) | (0)],&cubePoints[(1 << 2) | (1 << 1) | (0)]},
-			{&cubePoints[(1 << 2) | (0 << 1) | (1)],&cubePoints[(1 << 2) | (1 << 1) | (1)]}},
+			{&cubePoints[0],&cubePoints[2]},
+			{&cubePoints[1],&cubePoints[3]},
+			{&cubePoints[4],&cubePoints[6]},
+			{&cubePoints[5],&cubePoints[7]}},
 		{
-			{&cubePoints[(0 << 2) | (0 << 1) | (0)],&cubePoints[(1 << 2) | (0 << 1) | (0)]},
-			{&cubePoints[(0 << 2) | (0 << 1) | (1)],&cubePoints[(1 << 2) | (0 << 1) | (1)]},
-			{&cubePoints[(0 << 2) | (1 << 1) | (0)],&cubePoints[(1 << 2) | (1 << 1) | (0)]},
-			{&cubePoints[(0 << 2) | (1 << 1) | (1)],&cubePoints[(1 << 2) | (1 << 1) | (1)]}}};
-	static Edge* cubeFaces[6][4] = {
-		{	&cubeEdges[0][0], &cubeEdges[1][0], &cubeEdges[0][1], &cubeEdges[1][1] },
-		{	&cubeEdges[0][2], &cubeEdges[1][3], &cubeEdges[0][3], &cubeEdges[1][2] },
-		{	&cubeEdges[1][1], &cubeEdges[2][3], &cubeEdges[1][3], &cubeEdges[2][1] },
-		{	&cubeEdges[1][2], &cubeEdges[2][2], &cubeEdges[1][0], &cubeEdges[2][0] },
-		{	&cubeEdges[0][0], &cubeEdges[2][1], &cubeEdges[0][2], &cubeEdges[2][0] },
-		{	&cubeEdges[0][1], &cubeEdges[2][2], &cubeEdges[0][3], &cubeEdges[2][3] },
-	};
+			{&cubePoints[0],&cubePoints[4]},
+			{&cubePoints[1],&cubePoints[5]},
+			{&cubePoints[2],&cubePoints[6]},
+			{&cubePoints[3],&cubePoints[7]}}};
 	
-	static Edge* cubeSkeleton[12] = {
-		&cubeEdges[0][0],&cubeEdges[0][1],&cubeEdges[0][2],&cubeEdges[0][3],
-		&cubeEdges[1][0],&cubeEdges[1][1],&cubeEdges[1][2],&cubeEdges[1][3],
-		&cubeEdges[2][0],&cubeEdges[2][1],&cubeEdges[2][2],&cubeEdges[2][3]};
 	static Primitive cubeAndSkel[18];
 	const int32_t numLines = 240;
 	const int32_t lineWidth = 320;
@@ -89,29 +77,29 @@ int main(int argc, const char * argv[]) {
 	pm_proginit(&argc, argv);
 
 	
-	/* Faces here */
-	INIT_PRIM(cubeAndSkel[0], RED,		4, cubeFaces[0]);
-	INIT_PRIM(cubeAndSkel[1], MAGENTA,	4, cubeFaces[1]);
-	INIT_PRIM(cubeAndSkel[2], GREEN,		4, cubeFaces[2]);
-	INIT_PRIM(cubeAndSkel[3], ORANGE,	4, cubeFaces[3]);
-	INIT_PRIM(cubeAndSkel[4], YELLOW,	4, cubeFaces[4]);
-	INIT_PRIM(cubeAndSkel[5], PINK,		4, cubeFaces[5]);
+	/* Faces here 
+	makeQuad(&cubeAndSkel[0], RED,		cubeEdges[0][0], cubeEdges[1][0], cubeEdges[0][1], cubeEdges[1][1]);
+	makeQuad(&cubeAndSkel[1], MAGENTA,	cubeEdges[0][2], cubeEdges[1][3], cubeEdges[0][3], cubeEdges[1][2]);
+	makeQuad(&cubeAndSkel[2], GREEN,	cubeEdges[1][1], cubeEdges[2][3], cubeEdges[1][3], cubeEdges[2][1]);
+	makeQuad(&cubeAndSkel[3], ORANGE,	cubeEdges[1][2], cubeEdges[2][2], cubeEdges[1][0], cubeEdges[2][0]);
+	makeQuad(&cubeAndSkel[4], YELLOW,	cubeEdges[0][0], cubeEdges[2][1], cubeEdges[0][2], cubeEdges[2][0]);
+	makeQuad(&cubeAndSkel[5], PINK,		cubeEdges[0][1], cubeEdges[2][2], cubeEdges[0][3], cubeEdges[2][3]);
 	/* Skeleton here */
-	INIT_PRIM(cubeAndSkel[6], BLUE, 1, &cubeSkeleton[(0 << 2) | (0)]);
-	INIT_PRIM(cubeAndSkel[7], BLUE, 1, &cubeSkeleton[(0 << 2) | (1)]);
-	INIT_PRIM(cubeAndSkel[8], BLUE, 1, &cubeSkeleton[(0 << 2) | (2)]);
-	INIT_PRIM(cubeAndSkel[9], BLUE, 1, &cubeSkeleton[(0 << 2) | (3)]);
-	INIT_PRIM(cubeAndSkel[10], BLUE, 1, &cubeSkeleton[(1 << 2) | (0)]);
-	INIT_PRIM(cubeAndSkel[11], BLUE, 1, &cubeSkeleton[(1 << 2) | (1)]);
-	INIT_PRIM(cubeAndSkel[12], BLUE, 1, &cubeSkeleton[(1 << 2) | (2)]);
-	INIT_PRIM(cubeAndSkel[13], BLUE, 1, &cubeSkeleton[(1 << 2) | (3)]);
-	INIT_PRIM(cubeAndSkel[14], BLUE, 1, &cubeSkeleton[(2 << 2) | (0)]);
-	INIT_PRIM(cubeAndSkel[15], BLUE, 1, &cubeSkeleton[(2 << 2) | (1)]);
-	INIT_PRIM(cubeAndSkel[16], BLUE, 1, &cubeSkeleton[(2 << 2) | (2)]);
-	INIT_PRIM(cubeAndSkel[17], BLUE, 1, &cubeSkeleton[(2 << 2) | (3)]);
+	INIT_PRIM(cubeAndSkel[6], BLUE, 1, cubeEdges[0][0]);
+	INIT_PRIM(cubeAndSkel[7], BLUE, 1, cubeEdges[0][1]);
+	INIT_PRIM(cubeAndSkel[8], BLUE, 1, cubeEdges[0][2]);
+	INIT_PRIM(cubeAndSkel[9], BLUE, 1, cubeEdges[0][3]);
+	INIT_PRIM(cubeAndSkel[10], BLUE, 1, cubeEdges[1][0]);
+	INIT_PRIM(cubeAndSkel[11], BLUE, 1, cubeEdges[1][1]);
+	INIT_PRIM(cubeAndSkel[12], BLUE, 1, cubeEdges[1][2]);
+	INIT_PRIM(cubeAndSkel[13], BLUE, 1, cubeEdges[1][3]);
+	INIT_PRIM(cubeAndSkel[14], BLUE, 1, cubeEdges[2][0]);
+	INIT_PRIM(cubeAndSkel[15], BLUE, 1, cubeEdges[2][1]);
+	INIT_PRIM(cubeAndSkel[16], BLUE, 1, cubeEdges[2][2]);
+	INIT_PRIM(cubeAndSkel[17], BLUE, 1, cubeEdges[2][3]);
 	
 	transformData(&viewProj, cubePointsSrc, cubePoints, 8);
-	buckets = bucketPrims(buckets, numLines, cubeAndSkel, 18);
+	buckets = bucketPrims(buckets, numLines, cubeAndSkel + 6, 12);
 	
 	memset(raster, 0xff, rasterByteCount);
 	render(raster, lineWidth, numLines, buckets);
