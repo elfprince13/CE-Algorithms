@@ -39,7 +39,7 @@ void viewF(const Point *p, Point *o, const DrawCoords *offset){
 	INIT_POINT(*o, offset->x + x + zOff, offset->y + y + zOff, z);
 }
 
-const Projection viewProj = {(ProjectionF)(&viewF),&drawCoords};
+const Transformation viewProj = {(TransformationF)(&viewF),&drawCoords};
 
 
 

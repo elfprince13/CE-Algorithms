@@ -26,8 +26,8 @@ void flip(Edge * );
 void flipped(const Edge *e, Edge * o);
 
 float dotEdge(const Edge *, const Edge *);
-struct _Projection;
-void projectEdge(const struct _Projection * proj, const Edge *e, Edge *o);
+struct _Transformation;
+void projectEdge(const struct _Transformation * proj, const Edge *e, Edge *o);
 bool contains(const Edge *, const Point *);
 
 #endif /* Edge_h */

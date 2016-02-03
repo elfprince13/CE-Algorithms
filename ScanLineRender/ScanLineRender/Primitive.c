@@ -106,7 +106,7 @@ float getZForXY(const Primitive *p, float x, float y){
 }
 
 
-void projectPrimitive(const Projection * proj, const Primitive *p, Primitive *o){
+void projectPrimitive(const Transformation * proj, const Primitive *p, Primitive *o){
 	Edge **const pBoundary = p->boundary;
 	Edge **const oBoundary = o->boundary;
 	size_t i;

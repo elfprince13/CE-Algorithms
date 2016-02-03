@@ -31,7 +31,7 @@ static float leftMostEdgePoint(const Edge *);
 #endif
 
 void transformData(const Transformation *txForm, const Point *srcGeometry, Point *dstGeometry, size_t pointCount){
-	const TransformF f = txForm->f;
+	const TransformationF f = txForm->f;
 	const void* state = txForm->state;
 	size_t i;
 	
@@ -72,7 +72,7 @@ rb_red_blk_tree* teardownBuckets(rb_red_blk_tree* buckets, int numLines){
 
 void render(Color *raster, int lineWidth, int numLines, const rb_red_blk_tree *scanLinePrimBuckets){
 	static OntoProj screenPlaneData = {offsetof(Point, z), 0};
-	static const Projection screenPlane = {(ProjectionF)(&ontoProj), &screenPlaneData};
+	static const Transformation screenPlane = {(TransformationF)(&ontoProj), &screenPlaneData};
 	{
 		int line;
 		rb_red_blk_tree activePrimSet;
