@@ -15,7 +15,7 @@
 #include "rb_tree/red_black_tree.h"
 
 typedef struct _EdgeListEntry {
-	Edge * edge;
+	Point ** edge;
 	Primitive * owner;
 	bool placeHolder;
 } EdgeListEntry;

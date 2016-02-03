@@ -8,6 +8,8 @@
 
 #include "Primitive.h"
 #include <math.h>
+#include <string.h>
+#include "rb_tree/misc.h"
 
 #ifndef NDEBUG
 const char * fmtColor(Color c){
@@ -21,39 +23,50 @@ const char * fmtColor(Color c){
 }
 #endif
 
-void makeLine(const Edge *e, Primitive *o){
+void makeLine(Primitive *o, Color c, const Edge e){
 	Primitive tmp;
-	Edge * b = malloc(sizeof(Edge));
-	b[0] = *e;
-	INIT_PRIM(tmp, 0, 1, b);
+	Point **const b = SafeMalloc(sizeof(Edge));
+	memcpy(b, e, sizeof(Edge));
+	INIT_PRIM(tmp, c, 1, b);
 	*o = tmp;
 }
-void makeTri(const Edge *e1, const Edge *e2, const Edge *e3, Primitive *o){
+void makeTri(Primitive *o, Color c, const Edge e1, const Edge e2, const Edge e3){
 	Primitive tmp;
-	Edge * b = malloc(3*sizeof(Edge));
-	b[0] = *e1;
-	b[1] = *e2;
-	b[2] = *e3;
-	INIT_PRIM(tmp, 0, 3, b);
+	Point **const b = SafeMalloc(4*sizeof(Point*)),
+	**bn = b;
+	assert(e1[END] == e2[START]
+		   && e2[END] == e3[START]
+		   && e3[END] == e1[START]
+		   && "Not a closed line-loop");
+	memcpy(bn++, e1, sizeof(Point*));
+	memcpy(bn++, e2, sizeof(Point*));
+	memcpy(bn, e3, sizeof(Edge));
+	INIT_PRIM(tmp, c, 3, b);
 	*o = tmp;
 }
 
-void makeQuad(const Edge *e1, const Edge *e2, const Edge *e3, const Edge *e4, Primitive *o){
+void makeQuad(Primitive *o, Color c, const Edge e1, const Edge e2, const Edge e3, const Edge e4){
 	Primitive tmp;
-	Edge * b = malloc(4*sizeof(Edge));
-	b[0] = *e1;
-	b[1] = *e2;
-	b[2] = *e3;
-	b[3] = *e4;
-	INIT_PRIM(tmp, 0, 4, b);
+	Point **const b = SafeMalloc(5*sizeof(Point*)),
+	**bn = b;
+	assert(e1[END] == e2[START]
+		   && e2[END] == e3[START]
+		   && e3[END] == e4[START]
+		   && e4[END] == e1[START]
+		   && "Not a closed line-loop");
+	memcpy(bn++, e1, sizeof(Point*));
+	memcpy(bn++, e2, sizeof(Point*));
+	memcpy(bn++, e3, sizeof(Point*));
+	memcpy(bn, e4, sizeof(Edge));
+	INIT_PRIM(tmp, c, 4, b);
 	*o = tmp;
 }
 
 float getZForXY(const Primitive *p, float x, float y){
+	Point **const boundary = p->boundary;
 	if(p->arity == 1){
-		const Edge * v = p->boundary;
-		const Point * vs = v->coords + START,
-		* ve = v->coords + END;
+		const Point *const vs = boundary[START],
+		* ve = boundary[END];
 		
 		const float sx = vs->x,
 		sy = vs->y,
@@ -72,13 +85,13 @@ float getZForXY(const Primitive *p, float x, float y){
 		
 		return sz + (xEst + yEst) / 2;
 	} else {
-		const Edge * e1 = p->boundary,
-		* e2 = e1 + 1;
+		Point **const e1 = boundary,
+		**const e2 = e1 + 1;
 		
-		const Point * us = e1->coords + START,
-		* ue = e1->coords + END,
-		* vs = e2->coords + START,
-		* ve = e2->coords + END;
+		const Point * us = e1[START],
+		* ue = e1[END],
+		* vs = e2[START],
+		* ve = e2[END];
 		
 		const float ux = us->x - ue->x,
 		uy = us->y - ue->y,
@@ -102,18 +115,22 @@ float getZForXY(const Primitive *p, float x, float y){
 }
 
 
-void projectPrimitive(const Projection * proj, const Primitive *p, Primitive *o){
-	size_t i;
-	for(i = 0; i < p->arity; ++i){
-		projectEdge(proj, p->boundary + i, o->boundary + i);
+void transformPrimitive(const Transformation * txForm, const Primitive *p, Primitive *o){
+	const TransformationF f = txForm->f;
+	const void * state = txForm->state;
+	Point **const pBoundary = p->boundary;
+	Point **const oBoundary = o->boundary;
+	size_t i, iMax = p->arity;
+	for(i = 0; i <= iMax; ++i){
+		f(pBoundary[i],oBoundary[i],state);
 	}
 }
 
 
 int32_t hashPrim(const Primitive *p){
-	size_t i; int32_t ret = 0;
-	for(i = 0; i < p->arity; ++i){
-		ret ^= HASH_EDGE(p->boundary[i]);
+	size_t i, iMax = p->arity; int32_t ret = 0;
+	for(i = 0; i <= iMax; ++i){
+		ret ^= HASH_POINT(*(p->boundary[i]));
 	}
 	ret ^= (p->color << 8) | 0xFF;
 	return ret;

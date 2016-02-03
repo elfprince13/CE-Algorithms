@@ -1,26 +1,26 @@
 /*
-//  Projection.h
+//  Transformation.h
 //  ScanLineRender
 //
 //  Created by Thomas Dickerson on 1/25/16.
 //  Copyright © 2016 StickFigure Graphic Productions. All rights reserved.
 */
 
-#ifndef Projection_h
-#define Projection_h
+#ifndef Transformation_h
+#define Transformation_h
 
 #include "Point.h"
 #include "Edge.h"
 
-typedef void(*ProjectionF)(const Point *p, Point *o, const void * state);
-typedef struct _Projection {
-	ProjectionF f;
+typedef void(*TransformationF)(const Point *p, Point *o, const void * state);
+typedef struct _Transformation {
+	TransformationF f;
 	void * state;
-} Projection;
+} Transformation;
 
 typedef struct {
-	Projection l;
-	Projection r;
+	Transformation l;
+	Transformation r;
 } ComposeProj;
 
 typedef struct {
@@ -34,11 +34,11 @@ void composeProj(const Point *p, Point *o, const ComposeProj * composition);
 void ontoProj(const Point *p, Point *o, const OntoProj * zOff);
 void scaleProj(const Point *p, Point *o, const int32_t * scale);
 
-extern const ProjectionF identity;
-extern const ProjectionF orthographic;
-extern const ProjectionF compose;
-extern const ProjectionF onto;
-extern const ProjectionF scale;
+extern const TransformationF identity;
+extern const TransformationF orthographic;
+extern const TransformationF compose;
+extern const TransformationF onto;
+extern const TransformationF scale;
 
 
-#endif /* Projection_h */
+#endif /* Transformation_h */

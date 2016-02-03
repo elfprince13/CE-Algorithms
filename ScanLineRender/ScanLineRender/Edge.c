@@ -7,28 +7,28 @@
 */
 
 #include "Edge.h"
-#include "Projection.h"
+#include "Transformation.h"
 
 #include "debugConfig.h"
 
 
-void flip(Edge * e){
-	Point tmp = e->coords[START];
-	e->coords[START] = e->coords[END];
-	e->coords[END] = tmp;
+void flip(Edge e){
+	Point *tmp = e[START];
+	e[START] = e[END];
+	e[END] = tmp;
 }
 
-void flipped(const Edge *e, Edge * o){
-	o->coords[START] = e->coords[END];
-	o->coords[START] = e->coords[START];	
+void flipped(const Edge e, Edge o){
+	o[START] = e[END];
+	o[END] = e[START];
 }
 
-float dotEdge(const Edge *u, const Edge *v){
+float dotEdge(const Edge u, const Edge v){
 	const Point
-	*us= u->coords + START,
-	*ue = u->coords + END,
-	*vs = v->coords + START,
-	*ve = v->coords + END, *tmp;
+	*us = u[START],
+	*ue = u[END],
+	*vs = v[START],
+	*ve = v[END], *tmp;
 	Point u0, v0;
 	
 	bool tailTouch = pointsEqual(ue, ve);
@@ -58,22 +58,21 @@ float dotEdge(const Edge *u, const Edge *v){
 	return DOT(u0, v0);
 }
 
-void projectEdge(const Projection * proj, const Edge *e, Edge *o){
-	const ProjectionF f = proj->f;
-	void * state = proj->state;
+void transformEdge(const Transformation * txForm, const Edge e, Edge o){
+	const TransformationF f = txForm->f;
+	const void * state = txForm->state;
 	size_t j;
 	for (j = START; j <= END; ++j) {
-		f(e->coords + j,o->coords + j, state);
+		f(e[j],o[j], state);
 	}
 }
 
 
-bool contains(const Edge *e, const Point *p){
+bool contains(const Edge e, const Point *p){
 	size_t i;
 	bool ret = false;
-	const Point* coords = e->coords;
 	for(i = START; i <= END; ++i ){
-		const Point* coord = coords + i;
+		const Point* coord = e[i];
 		if(coord->x == p->x && coord->y == p->y){
 			ret = true; break;
 		}
