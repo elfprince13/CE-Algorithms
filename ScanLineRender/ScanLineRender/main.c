@@ -6,6 +6,14 @@
 //  Copyright © 2016 StickFigure Graphic Productions. All rights reserved.
 */
 
+#ifdef _EZ80
+#include <ti84pce.h>
+char printBuffer[64] = {0};
+void print(const char* string, uint8_t xpos, uint8_t ypos);
+void printPause(const char* string, uint8_t xpos, uint8_t ypos);
+void cleanUp();
+#endif
+
 #include "ScanlineRenderer.h"
 #include <string.h>
 
@@ -106,8 +114,44 @@ int main(int argc, const char * argv[]) {
 	
 	memset(raster, 0xff, rasterByteCount);
 	render(raster, lineWidth, numLines, buckets);
+#ifdef _EZ80
+	_OS( GetKey() );
+	cleanUp();
+#endif
 	
 	buckets = teardownBuckets(buckets, numLines);
 	
     return 0;
 }
+
+#ifdef _EZ80
+void print(const char* string, uint8_t xpos, uint8_t ypos)
+{
+	_OS( asm("LD HL,(IX+6)");
+		asm("LD A,(IX+9)");
+		asm("LD (curCol),A");
+		asm("LD A,(IX+12)");
+		asm("LD (curRow),A");
+		asm("CALL _PutS");
+		);
+}
+
+void printPause(const char* string, uint8_t xpos, uint8_t ypos)
+{
+	print(string, xpos, ypos);
+	_OS( GetKey() );
+}
+
+void cleanUp()
+{
+	// Clear/invalidate some RAM areas
+	// and restore the home screen nicely
+	_OS( asm("CALL _DelRes");
+		asm("CALL _ClrTxtShd");
+		asm("CALL _ClrScrn");
+		asm("SET  graphDraw,(iy+graphFlags)");
+		asm("CALL _HomeUp");
+		asm("CALL _DrawStatusBar");
+		);
+}
+#endif
