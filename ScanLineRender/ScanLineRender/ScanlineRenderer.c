@@ -50,7 +50,7 @@ rb_red_blk_tree* bucketPrims(rb_red_blk_tree* buckets, int numLines, Primitive *
 	qsort(geometry, geomCount, sizeof(Primitive), topToBottomF);
 	for(i = 0; i < geomCount; ++i){
 		Primitive *prim = geometry + i;
-		const int32_t pScanLine = roundOwn(bottomMostPrimPoint(prim));
+		const int pScanLine = roundOwn(bottomMostPrimPoint(prim));
 		if(pScanLine < numLines && (pScanLine >= 0 || topMostPrimPoint(prim) >= 0)){
 			rb_red_blk_tree *const dstBucket = buckets + max(0, pScanLine);
 			RBSetAdd(dstBucket, prim);
@@ -87,12 +87,12 @@ void render(Color *raster, int lineWidth, int numLines, const rb_red_blk_tree *s
 			dPrintf(("\tUpdating activePrimSet\n"));
 			for (primIt = activePrimSet.first; primIt != activePrimSet.sentinel; (p = primIt), (primIt = nextP)) {
 				const Primitive* prim = primIt->key;
-				const int32_t top = roundOwn(topMostPrimPoint(prim));
+				const int top = roundOwn(topMostPrimPoint(prim));
 				nextP = TreeSuccessor(&activePrimSet, primIt);
 				if(top < line){
 #ifndef NDEBUG
 					{
-						const int32_t bottom = roundOwn(bottomMostPrimPoint(prim));
+						const int bottom = roundOwn(bottomMostPrimPoint(prim));
 						dPrintf(("\t\t%d -> %d ( %s ) is not valid here: %d\n",top,bottom,fmtColor(prim->color), line));
 					}
 #endif
@@ -107,7 +107,7 @@ void render(Color *raster, int lineWidth, int numLines, const rb_red_blk_tree *s
 					Primitive * prim = node->key;
 #ifndef NDEBUG
 					{
-						const int32_t top = roundOwn(topMostPrimPoint(prim)),
+						const int top = roundOwn(topMostPrimPoint(prim)),
 						bottom = roundOwn(bottomMostPrimPoint(prim));
 						dPrintf(("\t\t%d -> %d ( %s ) is added here: %d\n",top,bottom,fmtColor(prim->color), line));
 					}
