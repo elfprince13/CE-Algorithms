@@ -26,3 +26,8 @@ xcuserdata
 *.xccheckout
 *.moved-aside
 *.xcuserstate
+*.obj
+*.src
+*.map
+*.hex
+*.8xp
