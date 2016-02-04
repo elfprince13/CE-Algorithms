@@ -116,13 +116,11 @@ int main(int argc, const char * argv[]) {
 	
 	memset(raster, 0xff, rasterByteCount);
 	render(raster, lineWidth, numLines, buckets);
+	buckets = teardownBuckets(buckets, numLines);
 #ifdef _EZ80
 	_OS( GetKey() );
 	cleanUp();
 #endif
-	
-	buckets = teardownBuckets(buckets, numLines);
-	
     return 0;
 }
 
