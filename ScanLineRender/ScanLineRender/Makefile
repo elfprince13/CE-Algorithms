@@ -1,5 +1,6 @@
 REALWINPATH = $(subst /,\,$(realpath $(1)))
-CEDEV ?= $(call REALWINPATH,..\toolchain\CEdev)
+CEDEV ?= ..\toolchain\CEdev
+CEDEV := $(call REALWINPATH,$(CEDEV))
 BIN = $(CEDEV)\bin
 INCLUDE = $(CEDEV)\include
 
