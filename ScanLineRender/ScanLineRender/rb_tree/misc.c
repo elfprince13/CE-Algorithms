@@ -1,6 +1,6 @@
 #include <stdlib.h>
 #include "misc.h"
-#include "debugConfig.h"
+#include "../debugConfig.h"
 
 
 /***********************************************************************/
