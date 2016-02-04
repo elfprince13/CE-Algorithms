@@ -12,6 +12,15 @@
 #include "debugConfig.h"
 #include <math.h>
 
+#ifdef _EZ80
+double round(double x){
+	double intpart,
+	fractpart = modf(x, &intpart),
+	delta = ((fabs(fractpart) < 0.5) ? 0 : 1) * ((x < 0) ? -1 : 1);
+	return intpart + delta;
+}
+#endif
+
 typedef int(*StatelessCompF)(const void*,const void*) ;
 
 /* We really ought to re-type this if possible */
@@ -48,7 +57,7 @@ rb_red_blk_tree* bucketPrims(rb_red_blk_tree* buckets, int numLines, Primitive *
 	qsort(geometry, geomCount, sizeof(Primitive), topToBottomF);
 	for(i = 0; i < geomCount; ++i){
 		Primitive *prim = geometry + i;
-		const int32_t pScanLine = roundf(bottomMostPrimPoint(prim));
+		const int32_t pScanLine = round(bottomMostPrimPoint(prim));
 		if(pScanLine < numLines && (pScanLine >= 0 || topMostPrimPoint(prim) >= 0)){
 			rb_red_blk_tree *const dstBucket = buckets + max(0, pScanLine);
 			RBSetAdd(dstBucket, prim);
@@ -85,12 +94,12 @@ void render(Color *raster, int lineWidth, int numLines, const rb_red_blk_tree *s
 			dPrintf(("\tUpdating activePrimSet\n"));
 			for (primIt = activePrimSet.first; primIt != activePrimSet.sentinel; (p = primIt), (primIt = nextP)) {
 				const Primitive* prim = primIt->key;
-				const int32_t top = roundf(topMostPrimPoint(prim));
+				const int32_t top = round(topMostPrimPoint(prim));
 				nextP = TreeSuccessor(&activePrimSet, primIt);
 				if(top < line){
 #ifndef NDEBUG
 					{
-						const int32_t bottom = roundf(bottomMostPrimPoint(prim));
+						const int32_t bottom = round(bottomMostPrimPoint(prim));
 						dPrintf(("\t\t%d -> %d ( %s ) is not valid here: %d\n",top,bottom,fmtColor(prim->color), line));
 					}
 #endif
@@ -105,8 +114,8 @@ void render(Color *raster, int lineWidth, int numLines, const rb_red_blk_tree *s
 					Primitive * prim = node->key;
 #ifndef NDEBUG
 					{
-						const int32_t top = roundf(topMostPrimPoint(prim)),
-						bottom = roundf(bottomMostPrimPoint(prim));
+						const int32_t top = round(topMostPrimPoint(prim)),
+						bottom = round(bottomMostPrimPoint(prim));
 						dPrintf(("\t\t%d -> %d ( %s ) is added here: %d\n",top,bottom,fmtColor(prim->color), line));
 					}
 #endif
@@ -124,7 +133,7 @@ void render(Color *raster, int lineWidth, int numLines, const rb_red_blk_tree *s
 					while(nextEdge && curPixel < lineWidth){
 						EdgeListEntry *const startEdge = nextEdge;
 						Primitive *const startOwner = startEdge->owner;
-						int startX = roundf(getSmartXForLine(startEdge, line)), nextX;
+						int startX = round(getSmartXForLine(startEdge, line)), nextX;
 						rb_red_blk_map_node *inFlag = (rb_red_blk_map_node *)RBExactQuery((rb_red_blk_tree*)(&inFlags), startOwner);
 						
 						if(inFlag){
