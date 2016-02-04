@@ -19,10 +19,8 @@
 typedef struct {
 	float x; float y; float z;
 } Point;
-#define INIT_POINT(p, xv, yv, zv) \
-(p).x = (xv); \
-(p).y = (yv); \
-(p).z = (zv)
+
+#define INIT_POINT(p, xv, yv, zv)  (((p).x = (xv)), ((p).y = (yv)), ((p).z = (zv)))
 
 #define FLOATBITS(f) (*(int32_t*)&(f))
 #define HASH_POINT(p) (FLOATBITS((p).x) ^ FLOATBITS((p).y) ^ FLOATBITS((p).z))
