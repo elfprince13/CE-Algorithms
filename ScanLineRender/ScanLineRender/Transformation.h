@@ -25,7 +25,7 @@ typedef struct {
 
 typedef struct {
 	size_t zeroCoord;
-	int32_t planeValue;
+	float planeValue;
 } OntoProj;
 
 void identProj(const Point *p, Point *o, const void *);
