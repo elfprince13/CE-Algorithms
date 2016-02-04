@@ -27,14 +27,14 @@ typedef struct _EdgeListEntry {
 
 #define INIT_ELN_EZ(n, ev, ov) INIT_ELN(n, ev, ov, false)
 
-float getMinXForLine(const EdgeListEntry * node, const int32_t scanLine);
-float getMaxXForLine(const EdgeListEntry * node, const int32_t scanLine);
-float getSmartXForLine(const EdgeListEntry * node, const int32_t scanLine);
+float getMinXForLine(const EdgeListEntry * node, const int scanLine);
+float getMaxXForLine(const EdgeListEntry * node, const int scanLine);
+float getSmartXForLine(const EdgeListEntry * node, const int scanLine);
 bool nodeHoldsSingleton(const EdgeListEntry * node);
 
 typedef struct {
 	LinkN* activeEdges;
-	int32_t scanLine;
+	int scanLine;
 } ActiveEdgeList;
 
 const ActiveEdgeList freshAEL(void);

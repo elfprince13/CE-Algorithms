@@ -124,10 +124,10 @@
 				E93B36941C56CBFA00A88A02 /* Point.h */,
 				E93B36991C56D27900A88A02 /* Primitive.c */,
 				E93B369A1C56D27900A88A02 /* Primitive.h */,
-				E93B369C1C56DFF200A88A02 /* Transformation.c */,
-				E93B369D1C56DFF200A88A02 /* Transformation.h */,
 				E95714F41C593AD5006FBFB1 /* ScanlineRenderer.c */,
 				E95714F51C593AD5006FBFB1 /* ScanlineRenderer.h */,
+				E93B369C1C56DFF200A88A02 /* Transformation.c */,
+				E93B369D1C56DFF200A88A02 /* Transformation.h */,
 			);
 			path = ScanLineRender;
 			sourceTree = "<group>";

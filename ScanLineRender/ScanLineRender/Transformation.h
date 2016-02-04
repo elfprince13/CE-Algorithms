@@ -32,7 +32,7 @@ void identProj(const Point *p, Point *o, const void *);
 void orthoProj(const Point *p, Point *o, const Edge * viewportSpan);
 void composeProj(const Point *p, Point *o, const ComposeProj * composition);
 void ontoProj(const Point *p, Point *o, const OntoProj * zOff);
-void scaleProj(const Point *p, Point *o, const int32_t * scale);
+void scaleProj(const Point *p, Point *o, const float * scale);
 
 extern const TransformationF identity;
 extern const TransformationF orthographic;

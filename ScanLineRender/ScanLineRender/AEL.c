@@ -9,7 +9,7 @@
 #include "AEL.h"
 #include "debugConfig.h"
 
-float getMinXForLine(const EdgeListEntry * node, const int32_t scanLine){
+float getMinXForLine(const EdgeListEntry * node, const int scanLine){
 	Point **const coords = node->edge;
 	const Point *const start = coords[START],
 	*const end = coords[END];
@@ -29,7 +29,7 @@ float getMinXForLine(const EdgeListEntry * node, const int32_t scanLine){
 	return ret;
 }
 
-float getMaxXForLine(const EdgeListEntry * node, const int32_t scanLine){
+float getMaxXForLine(const EdgeListEntry * node, const int scanLine){
 	Point **const coords = node->edge;
 	const Point *const start = coords[START],
 	*const end = coords[END];
@@ -47,7 +47,7 @@ float getMaxXForLine(const EdgeListEntry * node, const int32_t scanLine){
 	return ret;
 }
 
-float getSmartXForLine(const EdgeListEntry * node, const int32_t scanLine){
+float getSmartXForLine(const EdgeListEntry * node, const int scanLine){
 	return (node->placeHolder ? getMaxXForLine : getMinXForLine)(node, scanLine);
 }
 
@@ -64,10 +64,10 @@ const ActiveEdgeList freshAEL(){
 static LinkN* makeLink(Point **e, Primitive *p, bool s);
 #define makeLinkEZ(e, p) makeLink(e,p,false)
 
-static int32_t leftToRightF(EdgeListEntry *, EdgeListEntry *, int32_t *);
+static int leftToRightF(EdgeListEntry *, EdgeListEntry *, int *);
 
 void stepEdges(ActiveEdgeList *ael, const rb_red_blk_tree* activePrims){
-	static int32_t scanLine;
+	static int scanLine;
 	const static Comparator leftToRight = {(CompareF)(&leftToRightF), &scanLine};
 	LinkN **aelHead = &(ael->activeEdges);
 	scanLine = ++(ael->scanLine);
