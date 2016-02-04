@@ -188,7 +188,7 @@ void render(Color *raster, int lineWidth, int numLines, const rb_red_blk_tree *s
 						nextX = min(nextX, lineWidth);
 						while ((!nextEdge && curPixel < lineWidth) || (curPixel < nextX)) {
 							bool zFight = false, solitary = false;
-							float bestZ = 0, j = 0;
+							float bestZ = 0; size_t j = 0;
 							const rb_red_blk_node *node;
 							curDraw = NULL;
 							dPrintf(("\tTesting depth:\n"));
@@ -196,7 +196,7 @@ void render(Color *raster, int lineWidth, int numLines, const rb_red_blk_tree *s
 								const Primitive *prim = node->key;
 								const float testZ = getZForXY(prim, curPixel, line);
 								if(++j == 1 || testZ <= bestZ){
-									dPrintf(("\t\tHit: %f <= %f || %f == 1 for %s\n",testZ, bestZ, j,fmtColor(prim->color)));
+									dPrintf(("\t\tHit: %f <= %f || %lu == 1 for %s\n",testZ, bestZ, j,fmtColor(prim->color)));
 									if (testZ == bestZ && j != 1) {
 										zFight = true;
 										if (prim->arity == 1) {
@@ -288,7 +288,7 @@ int topToBottom(const Primitive *p1, const Primitive *p2){
 	if(!delta) delta = p1->arity - p2->arity;
 	if(!delta) delta = p1->color - p2->color;
 #endif
-	return delta;
+	return delta ? (delta > 0 ? 1 : -1) : 0;
 }
 
 float topMostPrimPoint(const Primitive *prim){
