@@ -23,8 +23,7 @@ void * SafeMalloc(size_t size) {
   if ( !mem ) {
 #ifdef _EZ80
 	  cleanUp();
-	  asm("LD A,E_Memory");
-	  _OS( asm("JP _JError") );
+	  _OS( asm("JP _ErrMemory") );
 #else
 	  dPrintf(("memory overflow: SafeMalloc failed in SafeMalloc."));
 	  dPrintf(("  Exiting Program.\n"));
