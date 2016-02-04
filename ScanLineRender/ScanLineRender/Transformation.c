@@ -15,12 +15,12 @@ void identProj(const Point *p, Point *o, const void * discard){
 void orthoProj(const Point *p, Point *o, const Edge * viewportSpan){
 	const Point * min = (*viewportSpan)[START];
 	const Point * max = (*viewportSpan)[END];
-	int32_t l = min->x;
-	int32_t r = max->x;
-	int32_t b = min->y;
-	int32_t t = max->y;
-	int32_t n = min->z;
-	int32_t f = max->z;
+	float l = min->x;
+	float r = max->x;
+	float b = min->y;
+	float t = max->y;
+	float n = min->z;
+	float f = max->z;
 	Point tmp;
 	INIT_POINT(tmp,
 			   (2*p->x - (l + r))/(r-l),
@@ -47,7 +47,7 @@ void ontoProj(const Point *p, Point *o, const OntoProj * state){
 }
 
 
-void scaleProj(const Point *p, Point *o, const int32_t * scale){
+void scaleProj(const Point *p, Point *o, const float * scale){
 	Point tmp;
 	INIT_POINT(tmp,
 			   *scale * p->x,

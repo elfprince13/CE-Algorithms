@@ -28,21 +28,20 @@ typedef enum {
 } ColorCodes16BPP;
 
 typedef struct {
-	int32_t x;
-	int32_t y;
-	int32_t zNum;
-	int32_t zDen;
-	int32_t scale;
+	float x;
+	float y;
+	float zFrac;
+	float scale;
 } DrawCoords;
 
-static DrawCoords drawCoords = {170, 40, 7, 10, 100};
+static DrawCoords drawCoords = {170, 40, 0.7, 100};
 
 void viewF(const Point *p, Point *o, const DrawCoords *offset);
 void viewF(const Point *p, Point *o, const DrawCoords *offset){
-	const int32_t x = offset->scale * p->x,
+	const float x = offset->scale * p->x,
 	 y = offset->scale * p->y,
 	z = offset->scale * p->z,
-	zOff = (int32_t)((z * offset->zNum) / (float)offset->zDen);
+	zOff = z * offset->zFrac;
 	INIT_POINT(*o, offset->x + x + zOff, offset->y + y + zOff, z);
 }
 
@@ -103,8 +102,8 @@ int main(int argc, const char * argv[]) {
 		{cubeEdges[2][3], 1, BLUE}
 	};
 	
-	const int32_t numLines = 240;
-	const int32_t lineWidth = 320;
+	const int numLines = 240;
+	const int lineWidth = 320;
 	const size_t rasterByteCount = numLines * lineWidth * sizeof(Color);
 	Color *const raster = (Color*)0xD40000;
 	rb_red_blk_tree* buckets = NULL;
