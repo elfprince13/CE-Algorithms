@@ -9,8 +9,6 @@
 #ifndef debugConfig_h
 #define debugConfig_h
 
-#define NDEBUG
-
 #include <assert.h>
 
 #ifdef NDEBUG
