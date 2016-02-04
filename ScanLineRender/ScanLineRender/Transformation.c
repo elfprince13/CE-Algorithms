@@ -1,10 +1,10 @@
 /*
-//  Transformation.c
-//  ScanLineRender
-//
-//  Created by Thomas Dickerson on 1/25/16.
-//  Copyright © 2016 StickFigure Graphic Productions. All rights reserved.
-*/
+ //  Transformation.c
+ //  ScanLineRender
+ //
+ //  Created by Thomas Dickerson on 1/25/16.
+ //  Copyright © 2016 StickFigure Graphic Productions. All rights reserved.
+ */
 
 #include "Transformation.h"
 
@@ -15,17 +15,17 @@ void identProj(const Point *p, Point *o, const void * discard){
 void orthoProj(const Point *p, Point *o, const Edge * viewportSpan){
 	const Point * min = (*viewportSpan)[START];
 	const Point * max = (*viewportSpan)[END];
-	float l = min->x;
-	float r = max->x;
-	float b = min->y;
-	float t = max->y;
-	float n = min->z;
-	float f = max->z;
+	const float l = min->x,
+	r = max->x,
+	b = min->y,
+	t = max->y,
+	n = min->z,
+	f = max->z,
+	x = (2*p->x - (l + r))/(r-l),
+	y = (2*p->y - (t + b))/(t-b),
+	z = (-2*p->z + (f + n))/(f-n);
 	Point tmp;
-	INIT_POINT(tmp,
-			   (2*p->x - (l + r))/(r-l),
-			   (2*p->y - (t + b))/(t-b),
-			   (-2*p->z + (f + n))/(f-n));
+	INIT_POINT(tmp, x,y,z);
 	*o = tmp;
 }
 
@@ -39,10 +39,10 @@ void composeProj(const Point *p, Point *o, const ComposeProj * composition){
 
 void ontoProj(const Point *p, Point *o, const OntoProj * state){
 	Point tmp;
-	INIT_POINT(tmp,
-		state->zeroCoord == offsetof(Point, x) ? state->planeValue : p->x,
-		state->zeroCoord == offsetof(Point, y) ? state->planeValue : p->y,
-		state->zeroCoord == offsetof(Point, z) ? state->planeValue : p->z);
+	const float x = state->zeroCoord == offsetof(Point, x) ? state->planeValue : p->x,
+	y = state->zeroCoord == offsetof(Point, y) ? state->planeValue : p->y,
+	z = state->zeroCoord == offsetof(Point, z) ? state->planeValue : p->z;
+	INIT_POINT(tmp,x,y,z);
 	*o = tmp;
 }
 
