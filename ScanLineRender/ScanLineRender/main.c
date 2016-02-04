@@ -7,6 +7,9 @@
 */
 
 #ifdef _EZ80
+#include <stdbool.h>
+#include <stddef.h>
+#include <stdint.h>
 #include <ti84pce.h>
 char printBuffer[64] = {0};
 void print(const char* string, uint8_t xpos, uint8_t ypos);
