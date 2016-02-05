@@ -163,6 +163,23 @@
 		};
 /* End PBXGroup section */
 
+/* Begin PBXLegacyTarget section */
+		E93DF98D1C6511E500063228 /* scanln.8xp */ = {
+			isa = PBXLegacyTarget;
+			buildArgumentsString = "../toolchain/CEdev/bin/make.exe $(ACTION)";
+			buildConfigurationList = E93DF9901C6511E500063228 /* Build configuration list for PBXLegacyTarget "scanln.8xp" */;
+			buildPhases = (
+			);
+			buildToolPath = /opt/local/bin/wine;
+			buildWorkingDirectory = "/Users/thomas/Scanline-Rendering/ScanLineRender/ScanLineRender";
+			dependencies = (
+			);
+			name = scanln.8xp;
+			passBuildSettingsInEnvironment = 0;
+			productName = scanln.8xp;
+		};
+/* End PBXLegacyTarget section */
+
 /* Begin PBXNativeTarget section */
 		E93B36881C56CB1300A88A02 /* ScanLineRender */ = {
 			isa = PBXNativeTarget;
@@ -210,6 +227,9 @@
 					E93B36881C56CB1300A88A02 = {
 						CreatedOnToolsVersion = 7.2;
 					};
+					E93DF98D1C6511E500063228 = {
+						CreatedOnToolsVersion = 7.2.1;
+					};
 					E9A994FB1C5D34B70036F212 = {
 						CreatedOnToolsVersion = 7.2;
 					};
@@ -229,6 +249,7 @@
 			targets = (
 				E93B36881C56CB1300A88A02 /* ScanLineRender */,
 				E9A994FB1C5D34B70036F212 /* SortTest */,
+				E93DF98D1C6511E500063228 /* scanln.8xp */,
 			);
 		};
 /* End PBXProject section */
@@ -382,6 +403,29 @@
 			};
 			name = Release;
 		};
+		E93DF98E1C6511E500063228 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				DEBUGGING_SYMBOLS = YES;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				OTHER_CFLAGS = "";
+				OTHER_LDFLAGS = "";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Debug;
+		};
+		E93DF98F1C6511E500063228 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				OTHER_CFLAGS = "";
+				OTHER_LDFLAGS = "";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Release;
+		};
 		E9A995011C5D34B70036F212 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -416,6 +460,14 @@
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
+		};
+		E93DF9901C6511E500063228 /* Build configuration list for PBXLegacyTarget "scanln.8xp" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				E93DF98E1C6511E500063228 /* Debug */,
+				E93DF98F1C6511E500063228 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
 		};
 		E9A995001C5D34B70036F212 /* Build configuration list for PBXNativeTarget "SortTest" */ = {
 			isa = XCConfigurationList;
