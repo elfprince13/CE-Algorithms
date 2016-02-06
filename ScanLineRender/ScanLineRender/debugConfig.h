@@ -14,8 +14,14 @@
 #ifdef NDEBUG
 #define dPrintf(args) ((void)0)
 #else
+#ifdef _EZ80
+#include <debug.h>
+int dPrintfImpl(const char*, ...);
+#define dPrintf(args) dPrintfImpl args
+#else
 #include <stdio.h>
 #define dPrintf(args) printf args
+#endif
 #endif
 
 

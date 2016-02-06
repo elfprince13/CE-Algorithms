@@ -83,11 +83,12 @@ void stepEdges(ActiveEdgeList *ael, const rb_red_blk_tree* activePrims){
 			if(edgeEnd < scanLine){
 #ifndef NDEBUG
 				{
-					const float lowEnd = min(ys, ye);
-					dPrintf(("Deactivating %s with y-span: %f -> %f with x-span: %f -> %f(true: %f -> %f)\n",
-						   fmtColor(entry->owner->color), lowEnd, edgeEnd,
-						   getMinXForLine(entry, scanLine), getMaxXForLine(entry, scanLine),
-						   edge[START]->x, edge[END]->x));
+					const char* msg = "Deactivating %s with y-span: %f -> %f with x-span: %f -> %f(true: %f -> %f)\n",
+					*color = fmtColor(entry->owner->color);
+					const float lowEnd = min(ys, ye),
+					mnX = getMinXForLine(entry, scanLine), mxX = getMaxXForLine(entry, scanLine),
+					sX = edge[START]->x, eX = edge[END]->x;
+					dPrintf((msg, color, lowEnd, edgeEnd, mnX, mxX, sX, eX));
 				}
 #endif
 				/* Entries don't own the primitives they point to,
@@ -115,10 +116,12 @@ void stepEdges(ActiveEdgeList *ael, const rb_red_blk_tree* activePrims){
 					LinkN* newEdge = makeLinkEZ(e, prim);
 #ifndef NDEBUG
 					{
-						dPrintf(("Activating %s with y-span: %f -> %f with x-span: %f -> %f(true: %f -> %f)\n",
-							   fmtColor(prim->color), mnY, mxY,
-							   getMinXForLine(newEdge->data, scanLine), getMaxXForLine(newEdge->data, scanLine),
-							   e[START]->x, e[END]->x));
+						const char* msg = "Activating %s with y-span: %f -> %f with x-span: %f -> %f(true: %f -> %f)\n",
+						*color = fmtColor(prim->color);
+						const float mnX = getMinXForLine(newEdge->data, scanLine),
+						mxX = getMaxXForLine(newEdge->data, scanLine),
+						sX = e[START]->x, eX = e[END]->x;
+						dPrintf((msg, color, mnY, mxY, mnX, mxX, sX, eX));
 					}
 #endif
 					linkFront(aelHead, newEdge);
