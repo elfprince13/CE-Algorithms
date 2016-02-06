@@ -61,7 +61,7 @@ rb_red_blk_tree* bucketPrims(rb_red_blk_tree* buckets, int numLines, Primitive *
 		if(pScanLine < numLines && (pScanLine >= 0 || topMostPrimPoint(prim) >= 0)){
 			rb_red_blk_tree *const dstBucket = buckets + max(0, pScanLine);
 			RBSetAdd(dstBucket, prim);
-			dPrintf(("dstBucket %ld gets geometry with arity " SZF " begins on %f and ends on %f and now has size " SZF "\n", dstBucket - buckets, prim->arity, bottomMostPrimPoint(prim), topMostPrimPoint(prim), dstBucket->size));
+			dPrintf(("dstBucket " SZF " gets geometry with arity " SZF " begins on %f and ends on %f and now has size " SZF "\n", dstBucket - buckets, prim->arity, bottomMostPrimPoint(prim), topMostPrimPoint(prim), dstBucket->size));
 		}
 	}
 	
