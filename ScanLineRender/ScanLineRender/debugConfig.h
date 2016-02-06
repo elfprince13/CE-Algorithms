@@ -18,9 +18,11 @@
 #include <debug.h>
 int dPrintfImpl(const char*, ...);
 #define dPrintf(args) dPrintfImpl args
+#define SZF "%u"
 #else
 #include <stdio.h>
 #define dPrintf(args) printf args
+#define SZF "%lu"
 #endif
 #endif
 

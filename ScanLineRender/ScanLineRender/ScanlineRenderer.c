@@ -61,7 +61,7 @@ rb_red_blk_tree* bucketPrims(rb_red_blk_tree* buckets, int numLines, Primitive *
 		if(pScanLine < numLines && (pScanLine >= 0 || topMostPrimPoint(prim) >= 0)){
 			rb_red_blk_tree *const dstBucket = buckets + max(0, pScanLine);
 			RBSetAdd(dstBucket, prim);
-			dPrintf(("dstBucket %ld gets geometry with arity %lu begins on %f and ends on %f and now has size %lu\n", dstBucket - buckets, prim->arity, bottomMostPrimPoint(prim), topMostPrimPoint(prim), dstBucket->size));
+			dPrintf(("dstBucket %ld gets geometry with arity " SZF " begins on %f and ends on %f and now has size " SZF "\n", dstBucket - buckets, prim->arity, bottomMostPrimPoint(prim), topMostPrimPoint(prim), dstBucket->size));
 		}
 	}
 	
@@ -196,7 +196,7 @@ void render(Color *raster, int lineWidth, int numLines, const rb_red_blk_tree *s
 								const Primitive *prim = node->key;
 								const float testZ = getZForXY(prim, curPixel, line);
 								if(++j == 1 || testZ <= bestZ){
-									dPrintf(("\t\tHit: %f <= %f || %lu == 1 for %s\n",testZ, bestZ, j,fmtColor(prim->color)));
+									dPrintf(("\t\tHit: %f <= %f || "SZF" == 1 for %s\n",testZ, bestZ, j,fmtColor(prim->color)));
 									if (testZ == bestZ && j != 1) {
 										zFight = true;
 										if (prim->arity == 1) {
