@@ -36,7 +36,14 @@ int qsCompare(size_t *i, size_t *j){
 
 int pointerDiff(const size_t *p1, const size_t *p2){
 	const ptrdiff_t delta = p1 - p2;
-	return delta ? (delta < 0 ? -1 : 1) : 0;
+	dPrintf(("pd delta: %p - %p = " PDF "\n", p1, p2, delta));
+	if(!delta){
+		return 0;
+	} else if (delta > 0){
+		return 1;
+	} else {
+		return -1;
+	}
 }
 
 void dumpList(LinkN **head){
@@ -91,7 +98,8 @@ int main(int argc, const char * argv[]) {
 	
 	dumpSet(&tree);
 	
-	dPrintf(("%p - %p = " PDF " ?= %d ?= (-1 * " PDF ")\n",(void*)&data[2],(void*)&data[3],(&data[2] - &data[3]),pointerDiff(&data[2], &data[3]),(&data[3] - &data[2])));
+	dPrintf(("%p - %p = " PDF " ?= (-1 * " PDF ")\n",(void*)&data[2],(void*)&data[3],(&data[2] - &data[3]),(&data[3] - &data[2])));
+	dPrintf(("\t ?= %d ?= (-1 * %d)\n",pointerDiff(&data[2], &data[3]),pointerDiff(&data[3], &data[2])));
 	
 	
 	free(nodes);
