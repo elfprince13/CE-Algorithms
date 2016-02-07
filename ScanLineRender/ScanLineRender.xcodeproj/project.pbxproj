@@ -9,6 +9,9 @@
 /* Begin PBXBuildFile section */
 		E91AE39B1C664E2C00CEABAA /* debugConfig.c in Sources */ = {isa = PBXBuildFile; fileRef = E91AE39A1C664E2C00CEABAA /* debugConfig.c */; };
 		E91AE39D1C664F8D00CEABAA /* Makefile in Sources */ = {isa = PBXBuildFile; fileRef = E91AE39C1C664F8D00CEABAA /* Makefile */; };
+		E91AE39E1C67F42300CEABAA /* misc.c in Sources */ = {isa = PBXBuildFile; fileRef = E95714E31C581551006FBFB1 /* misc.c */; };
+		E91AE39F1C67F42600CEABAA /* red_black_tree.c in Sources */ = {isa = PBXBuildFile; fileRef = E95714E51C581551006FBFB1 /* red_black_tree.c */; };
+		E91AE3A01C67F55F00CEABAA /* debugConfig.c in Sources */ = {isa = PBXBuildFile; fileRef = E91AE39A1C664E2C00CEABAA /* debugConfig.c */; };
 		E93B36951C56CBFA00A88A02 /* Point.c in Sources */ = {isa = PBXBuildFile; fileRef = E93B36931C56CBFA00A88A02 /* Point.c */; };
 		E93B36981C56CE7600A88A02 /* Edge.c in Sources */ = {isa = PBXBuildFile; fileRef = E93B36961C56CE7600A88A02 /* Edge.c */; };
 		E93B369B1C56D27900A88A02 /* Primitive.c in Sources */ = {isa = PBXBuildFile; fileRef = E93B36991C56D27900A88A02 /* Primitive.c */; };
@@ -284,8 +287,11 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				E91AE39E1C67F42300CEABAA /* misc.c in Sources */,
 				E9A994FF1C5D34B70036F212 /* main.c in Sources */,
 				E9A995031C5D34C40036F212 /* linklist.c in Sources */,
+				E91AE39F1C67F42600CEABAA /* red_black_tree.c in Sources */,
+				E91AE3A01C67F55F00CEABAA /* debugConfig.c in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
