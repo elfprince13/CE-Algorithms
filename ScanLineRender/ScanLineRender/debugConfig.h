@@ -19,10 +19,12 @@
 int dPrintfImpl(const char*, ...);
 #define dPrintf(args) dPrintfImpl args
 #define SZF "%u"
+#define PDF "%d"
 #else
 #include <stdio.h>
 #define dPrintf(args) printf args
 #define SZF "%lu"
+#define PDF "%ld"
 #endif
 #endif
 

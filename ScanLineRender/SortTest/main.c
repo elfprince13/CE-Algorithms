@@ -6,6 +6,17 @@
 //  Copyright © 2016 StickFigure Graphic Productions. All rights reserved.
 */
 
+#include <stdbool.h>
+#include <stddef.h>
+#include <stdint.h>
+#ifdef _EZ80
+#include <ti84pce.h>
+char printBuffer[64] = {0};
+void print(const char* string, uint8_t xpos, uint8_t ypos);
+void printPause(const char* string, uint8_t xpos, uint8_t ypos);
+void cleanUp();
+#endif
+
 #include <stdio.h>
 #include <stdlib.h>
 #include "../ScanLineRender/link_list/linklist.h"
@@ -31,25 +42,25 @@ int pointerDiff(const size_t *p1, const size_t *p2){
 void dumpList(LinkN **head){
 	LinkN *i;
 	for(i = *head; i; i = i->tail){
-		printf(SZF " ",*(size_t*)(i->data));
+		dPrintf((SZF " ",*(size_t*)(i->data)));
 	}
-	printf("\n\n");
+	dPrintf(("\n\n"));
 }
 
 void dumpArray(size_t *ary, size_t COUNT){
 	size_t i;
 	for(i = 0; i < COUNT; i++){
-		printf(SZF " ",ary[i]);
+		dPrintf((SZF " ",ary[i]));
 	}
-	printf("\n\n");
+	dPrintf(("\n\n"));
 }
 
 void dumpSet(rb_red_blk_tree* tree){
 	rb_red_blk_node* i;
 	for(i = tree->first; i != tree->sentinel; i = TreeSuccessor(tree, i)){
-		printf(SZF " ",*(size_t*)(i->key));
+		dPrintf((SZF " ",*(size_t*)(i->key)));
 	}
-	printf("\n\n");
+	dPrintf(("\n\n"));
 }
 
 int main(int argc, const char * argv[]) {
@@ -80,9 +91,28 @@ int main(int argc, const char * argv[]) {
 	
 	dumpSet(&tree);
 	
+	dPrintf(("%p - %p = " PDF " ?= %d ?= (-1 * " PDF ")\n",(void*)&data[2],(void*)&data[3],(&data[2] - &data[3]),pointerDiff(&data[2], &data[3]),(&data[3] - &data[2])));
+	
 	
 	free(nodes);
 	free(data);
 	
     return 0;
 }
+
+
+#ifdef _EZ80
+
+void cleanUp()
+{
+	// Clear/invalidate some RAM areas
+	// and restore the home screen nicely
+	_OS( asm("CALL _DelRes");
+		asm("CALL _ClrTxtShd");
+		asm("CALL _ClrScrn");
+		asm("SET  graphDraw,(iy+graphFlags)");
+		asm("CALL _HomeUp");
+		asm("CALL _DrawStatusBar");
+		);
+}
+#endif
