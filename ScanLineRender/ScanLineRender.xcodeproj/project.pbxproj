@@ -6,6 +6,21 @@
 	objectVersion = 46;
 	objects = {
 
+/* Begin PBXAggregateTarget section */
+		E9650D001C69198400D381AF /* scanline-all */ = {
+			isa = PBXAggregateTarget;
+			buildConfigurationList = E9650D011C69198400D381AF /* Build configuration list for PBXAggregateTarget "scanline-all" */;
+			buildPhases = (
+			);
+			dependencies = (
+				E9650D051C69198B00D381AF /* PBXTargetDependency */,
+				E9650D071C69198B00D381AF /* PBXTargetDependency */,
+			);
+			name = "scanline-all";
+			productName = "scanline-all";
+		};
+/* End PBXAggregateTarget section */
+
 /* Begin PBXBuildFile section */
 		E91AE39B1C664E2C00CEABAA /* debugConfig.c in Sources */ = {isa = PBXBuildFile; fileRef = E91AE39A1C664E2C00CEABAA /* debugConfig.c */; };
 		E91AE39E1C67F42300CEABAA /* misc.c in Sources */ = {isa = PBXBuildFile; fileRef = E95714E31C581551006FBFB1 /* misc.c */; };
@@ -20,11 +35,29 @@
 		E95714ED1C581551006FBFB1 /* red_black_tree.c in Sources */ = {isa = PBXBuildFile; fileRef = E95714E51C581551006FBFB1 /* red_black_tree.c */; };
 		E95714F31C582399006FBFB1 /* linklist.c in Sources */ = {isa = PBXBuildFile; fileRef = E95714F11C582399006FBFB1 /* linklist.c */; };
 		E95714F61C593AD5006FBFB1 /* ScanlineRenderer.c in Sources */ = {isa = PBXBuildFile; fileRef = E95714F41C593AD5006FBFB1 /* ScanlineRenderer.c */; };
+		E9650D0A1C691B3600D381AF /* Colors.c in Sources */ = {isa = PBXBuildFile; fileRef = E9650D081C691B3600D381AF /* Colors.c */; };
 		E9820ADC1C5AC05200ACCF82 /* libnetpbm.a in Frameworks */ = {isa = PBXBuildFile; fileRef = E9820ADB1C5AC05200ACCF82 /* libnetpbm.a */; };
 		E9A994FF1C5D34B70036F212 /* main.c in Sources */ = {isa = PBXBuildFile; fileRef = E9A994FE1C5D34B70036F212 /* main.c */; };
 		E9A995031C5D34C40036F212 /* linklist.c in Sources */ = {isa = PBXBuildFile; fileRef = E95714F11C582399006FBFB1 /* linklist.c */; };
 		E9BF95431C62911D003CDECC /* main.c in Sources */ = {isa = PBXBuildFile; fileRef = E93B368C1C56CB1300A88A02 /* main.c */; };
 /* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		E9650D041C69198B00D381AF /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = E93B36811C56CB1300A88A02 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = E93B36881C56CB1300A88A02;
+			remoteInfo = ScanLineRender;
+		};
+		E9650D061C69198B00D381AF /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = E93B36811C56CB1300A88A02 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = E93DF98D1C6511E500063228;
+			remoteInfo = scanln.8xp;
+		};
+/* End PBXContainerItemProxy section */
 
 /* Begin PBXCopyFilesBuildPhase section */
 		E93B36871C56CB1300A88A02 /* CopyFiles */ = {
@@ -71,6 +104,8 @@
 		E95714F21C582399006FBFB1 /* linklist.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = linklist.h; sourceTree = "<group>"; };
 		E95714F41C593AD5006FBFB1 /* ScanlineRenderer.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = ScanlineRenderer.c; sourceTree = "<group>"; };
 		E95714F51C593AD5006FBFB1 /* ScanlineRenderer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ScanlineRenderer.h; sourceTree = "<group>"; };
+		E9650D081C691B3600D381AF /* Colors.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = Colors.c; sourceTree = "<group>"; };
+		E9650D091C691B3600D381AF /* Colors.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Colors.h; sourceTree = "<group>"; };
 		E9820ADB1C5AC05200ACCF82 /* libnetpbm.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libnetpbm.a; path = ../../../../../../opt/local/lib/libnetpbm.a; sourceTree = "<group>"; };
 		E9A994F71C5BE33C0036F212 /* debugConfig.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = debugConfig.h; sourceTree = "<group>"; };
 		E9A994FC1C5D34B70036F212 /* SortTest */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = SortTest; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -123,6 +158,8 @@
 				E93B368C1C56CB1300A88A02 /* main.c */,
 				E93B369F1C56E8D700A88A02 /* AEL.c */,
 				E93B36A01C56E8D700A88A02 /* AEL.h */,
+				E9650D081C691B3600D381AF /* Colors.c */,
+				E9650D091C691B3600D381AF /* Colors.h */,
 				E9A994F71C5BE33C0036F212 /* debugConfig.h */,
 				E91AE39A1C664E2C00CEABAA /* debugConfig.c */,
 				E91AE39C1C664F8D00CEABAA /* Makefile */,
@@ -252,6 +289,9 @@
 					E93DF98D1C6511E500063228 = {
 						CreatedOnToolsVersion = 7.2.1;
 					};
+					E9650D001C69198400D381AF = {
+						CreatedOnToolsVersion = 7.2.1;
+					};
 					E9A994FB1C5D34B70036F212 = {
 						CreatedOnToolsVersion = 7.2;
 					};
@@ -273,6 +313,7 @@
 				E93DF98D1C6511E500063228 /* scanln.8xp */,
 				E9A994FB1C5D34B70036F212 /* SortTest */,
 				E91AE3A11C6811CA00CEABAA /* sorttest.8xp */,
+				E9650D001C69198400D381AF /* scanline-all */,
 			);
 		};
 /* End PBXProject section */
@@ -293,6 +334,7 @@
 				E95714F61C593AD5006FBFB1 /* ScanlineRenderer.c in Sources */,
 				E93B36981C56CE7600A88A02 /* Edge.c in Sources */,
 				E93B369E1C56DFF200A88A02 /* Transformation.c in Sources */,
+				E9650D0A1C691B3600D381AF /* Colors.c in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -309,6 +351,19 @@
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		E9650D051C69198B00D381AF /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = E93B36881C56CB1300A88A02 /* ScanLineRender */;
+			targetProxy = E9650D041C69198B00D381AF /* PBXContainerItemProxy */;
+		};
+		E9650D071C69198B00D381AF /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = E93DF98D1C6511E500063228 /* scanln.8xp */;
+			targetProxy = E9650D061C69198B00D381AF /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
 
 /* Begin XCBuildConfiguration section */
 		E91AE3A31C6811CA00CEABAA /* Debug */ = {
@@ -476,6 +531,20 @@
 			};
 			name = Release;
 		};
+		E9650D021C69198400D381AF /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Debug;
+		};
+		E9650D031C69198400D381AF /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Release;
+		};
 		E9A995011C5D34B70036F212 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -528,6 +597,14 @@
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
+		};
+		E9650D011C69198400D381AF /* Build configuration list for PBXAggregateTarget "scanline-all" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				E9650D021C69198400D381AF /* Debug */,
+				E9650D031C69198400D381AF /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
 		};
 		E9A995001C5D34B70036F212 /* Build configuration list for PBXNativeTarget "SortTest" */ = {
 			isa = XCConfigurationList;

@@ -11,13 +11,8 @@
 
 #include "Edge.h"
 #include "Transformation.h"
+#include "Colors.h"
 #include "debugConfig.h"
-
-typedef uint16_t Color;
-
-#ifndef NDEBUG
-const char * fmtColor(Color c);
-#endif
 
 typedef struct {
 	Point** boundary;
