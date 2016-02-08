@@ -21,7 +21,7 @@
 #include <stdbool.h>
 #include <stddef.h>
 #include <stdint.h>
-#include <ti84pce.h>
+#pragma asm "_ErrMemory equ 0020768h"
 extern void cleanUp(void);
 #endif
 
@@ -31,7 +31,8 @@ void * SafeMalloc(size_t size) {
 	if ( !mem ) {
 #ifdef _EZ80
 		cleanUp();
-		_OS( asm("JP _ErrMemory") );
+		asm("	LD	IY, 13631616");
+		asm("JP _ErrMemory");
 #else
 		dPrintf(("memory overflow: SafeMalloc failed in SafeMalloc."));
 		dPrintf(("  Exiting Program.\n"));

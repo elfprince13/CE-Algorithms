@@ -24,7 +24,7 @@ ASM_FLAGS = \
 	-pagelen:250 -pagewidth:132 -quiet -sdiopt -warn -NOdebug -NOigcase -cpu:eZ80190
 
 CFLAGS =  \
-	-quiet -define:_EZ80190 -define:_EZ80 -define:_SIMULATE -NOlistinc -NOmodsect -cpu:eZ80190 -keepasm \
+	-quiet -define:_EZ80190 -define:_EZ80 -define:NDEBUG -define:_SIMULATE -NOlistinc -NOmodsect -cpu:eZ80190 -keepasm \
 	-optspeed -NOreduceopt -NOgenprintf -stdinc:"$(HEADERS)" -usrinc:"." -NOdebug \
 	-asmsw:"$(ASM_FLAGS)" -asm $(ASMSOURCES)
 
