@@ -191,10 +191,12 @@ void render(Color *raster, int lineWidth, int numLines, const rb_red_blk_tree *s
 								if(++j == 1 || testZ <= bestZ){
 									dPrintf(("\t\tHit: %f <= %f || "SZF" == 1 for %s\n",testZ, bestZ, j,fmtColor(prim->color)));
 									if (testZ == bestZ && j != 1) {
-										zFight = true;
 										if (prim->arity == 1) {
+											zFight = curDraw->arity == 1;
 											curDraw = prim;
 											solitary = RBSetContains(&deFlags, prim);
+										} else {
+											zFight = curDraw->arity != 1;
 										}
 									} else {
 										zFight = false;
@@ -209,10 +211,10 @@ void render(Color *raster, int lineWidth, int numLines, const rb_red_blk_tree *s
 #ifndef NDEBUG
 								if(nextEdge || solitary){
 #endif
-									const int drawWidth = (zFight || solitary) ? 1 : ((nextEdge ? nextX : lineWidth) - curPixel),
+									const int drawWidth =  (zFight || solitary) ? 1 : ((nextEdge ? nextX : lineWidth) - curPixel),
 									stopPixel = curPixel + min(lineWidth - curPixel,
 															   max(0, drawWidth));
-									const Color drawColor = curDraw->color;
+									const Color drawColor = /*(uint16_t)roundOwn(63 * bestZ / 100) << 5;*/curDraw->color;
 									dPrintf(("Drawing %d @ (%d, %d)\n",drawWidth,curPixel,line));
 									dPrintf(("Drawing %d @ (%d, %d)\n",stopPixel - curPixel,curPixel,line));
 									while(curPixel < stopPixel){

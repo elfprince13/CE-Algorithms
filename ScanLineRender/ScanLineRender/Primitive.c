@@ -52,6 +52,7 @@ void makeQuad(Primitive *o, Color c, const Edge e1, const Edge e2, const Edge e3
 
 float getZForXY(const Primitive *p, float x, float y){
 	Point **const boundary = p->boundary;
+	float ret;
 	if(p->arity == 1){
 		const Point *const vs = boundary[START],
 		* ve = boundary[END];
@@ -71,7 +72,7 @@ float getZForXY(const Primitive *p, float x, float y){
 		const float xEst = (dx == 0) ? min(0,  dz) : (xNumer / dx),
 		yEst = (dy == 0) ? min(0,  dz) : (yNumer / dy);
 		
-		return sz + (xEst + yEst) / 2;
+		ret = sz + (xEst + yEst) / 2;
 	} else {
 		Point **const e1 = boundary,
 		**const e2 = e1 + 1;
@@ -97,9 +98,9 @@ float getZForXY(const Primitive *p, float x, float y){
 		-nz * us->z,
 		numer = (-d - nx * x - ny * y);
 		
-		return (nz == 0) ? ((numer > 0) ? HUGE_VAL : -HUGE_VAL) : (numer / nz) ;
+		ret = (nz == 0) ? ((numer > 0) ? HUGE_VAL : -HUGE_VAL) : (numer / nz) ;
 	}
-	
+	return ret;
 }
 
 
