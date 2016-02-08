@@ -2,95 +2,17 @@
 #include <stdlib.h>
 #include <stddef.h>
 
+/***************************************************************************************
+ *
+ * These are forward declarations of helper functions, and not part of the public API
+ *
+ ***************************************************************************************/
+
+/* Subroutines used to delete a node and make sure it's cleaned up properly */
 static void RBTreeNodeDestroy(rb_red_blk_tree* tree, rb_red_blk_node* target);
-void RBTreeNodeDestroy(rb_red_blk_tree* tree, rb_red_blk_node* target){
-	if(tree->DestroyKey) tree->DestroyKey(target);
-}
-
-
 static void RBMapTreeNodeDestroy(rb_red_blk_map_tree* tree, rb_red_blk_map_node* target);
-void RBMapTreeNodeDestroy(rb_red_blk_map_tree* tree, rb_red_blk_map_node* target){
-	if(tree->DestroyInfo) tree->DestroyInfo(target->info);
-	RBTreeNodeDestroy((rb_red_blk_tree* )tree, (rb_red_blk_node*)target);
-}
-
-
-rb_red_blk_node* RBNodeAlloc() {
-	return (rb_red_blk_node*)SafeMalloc(sizeof(rb_red_blk_node));
-}
-
-
-rb_red_blk_node* RBMapNodeAlloc() {
-	return (rb_red_blk_node*)SafeMalloc(sizeof(rb_red_blk_map_node));
-}
-
-/***********************************************************************/
-/*  FUNCTION:  RBTreeInit */
-/**/
-/*  INPUTS:  All the inputs are names of functions.  CompFunc takes to */
-/*  void pointers to keys and returns 1 if the first arguement is */
-/*  "greater than" the second.   DestFunc takes a pointer to a key and */
-/*  destroys it in the appropriate manner when the node containing that */
-/*  key is deleted.  InfoDestFunc is similiar to DestFunc except it */
-/*  recieves a pointer to the info of a node and destroys it. */
-/*  PrintFunc recieves a pointer to the key of a node and prints it. */
-/*  PrintInfo recieves a pointer to the info of a node and prints it. */
-/*  If RBTreePrint is never called the print functions don't have to be */
-/*  defined and NullFunction can be used.  */
-/**/
-/*  OUTPUT:  This function returns a pointer to the newly created */
-/*  red-black tree. */
-/**/
-/*  Modifies Input: none */
-/***********************************************************************/
-
+/* Subroutine used by both init and clear */
 static void RBPrimeRoot(rb_red_blk_tree * tree);
-void RBPrimeRoot(rb_red_blk_tree * tree){
-	rb_red_blk_node* temp;
-	temp=tree->sentinel;
-	temp->parent=temp->left=temp->right=temp;
-	temp->red=0;
-	temp->key=0;
-	temp=tree->root;
-	temp->parent=temp->left=temp->right=tree->sentinel;
-	temp->key=0;
-	temp->red=0;
-	tree->size = 0;
-	tree->first = tree->sentinel;
-}
-
-void RBTreeInit(rb_red_blk_tree* newTree,
-				int  (*CompFunc)(const void*, const void*),
-				void (*DestFunc)(void*),
-				rb_red_blk_node* (*AllocNode)(void)) {
-	newTree->Compare=  CompFunc;
-	newTree->DestroyKey= DestFunc;
-	newTree->AllocNode = AllocNode;
-	newTree->DestroyNodeContents = &RBTreeNodeDestroy;
-	
-	/*
-	 newTree->PrintInfo= PrintInfo;
-	 newTree->DestroyInfo= InfoDestFunc;
-	 */
-	
-	/*  see the comment in the rb_red_blk_tree structure in red_black_tree.h */
-	/*  for information on sentinel and root */
-	newTree->sentinel= AllocNode();
-	newTree->root= AllocNode();
-	RBPrimeRoot(newTree);
-}
-
-void RBTreeMapInit(rb_red_blk_map_tree* newTree,
-				   int  (*CompFunc)(const void*, const void*),
-				   void (*DestFunc)(void*),
-				   rb_red_blk_node* (*AllocNode)(void),
-				   void (*InfoDestFunc)(void*)){
-	RBTreeInit((rb_red_blk_tree*)newTree, CompFunc, DestFunc, AllocNode);
-	newTree->DestroyInfo = InfoDestFunc;
-	newTree->tree.DestroyNodeContents = (void (*)(rb_red_blk_tree*, rb_red_blk_node*))(&RBMapTreeNodeDestroy);
-	
-}
-
 /***********************************************************************/
 /*  FUNCTION:  LeftRotate */
 /**/
@@ -108,44 +30,8 @@ void RBTreeMapInit(rb_red_blk_map_tree* newTree,
 /*            accordingly. */
 /***********************************************************************/
 static void LeftRotate(rb_red_blk_tree* tree, rb_red_blk_node* x);
-void LeftRotate(rb_red_blk_tree* tree, rb_red_blk_node* x) {
-	rb_red_blk_node* y;
-	rb_red_blk_node* sentinel=tree->sentinel;
-	
-	/*  I originally wrote this function to use the sentinel for */
-	/*  sentinel to avoid checking for sentinel.  However this introduces a */
-	/*  very subtle bug because sometimes this function modifies */
-	/*  the parent pointer of sentinel.  This can be a problem if a */
-	/*  function which calls LeftRotate also uses the sentinel sentinel */
-	/*  and expects the sentinel sentinel's parent pointer to be unchanged */
-	/*  after calling this function.  For example, when RBDeleteFixUP */
-	/*  calls LeftRotate it expects the parent pointer of sentinel to be */
-	/*  unchanged. */
-	
-	y=x->right;
-	x->right=y->left;
-	
-	if (y->left != sentinel) y->left->parent=x; /* used to use sentinel here */
-	/* and do an unconditional assignment instead of testing for sentinel */
-	
-	y->parent=x->parent;
-	
-	/* instead of checking if x->parent is the root as in the book, we */
-	/* count on the root sentinel to implicitly take care of this case */
-	if( x == x->parent->left) {
-		x->parent->left=y;
-	} else {
-		x->parent->right=y;
-	}
-	y->left=x;
-	x->parent=y;
-	
-	assert(!tree->sentinel->red && "sentinel not red in LeftRotate");
-}
-
-
 /***********************************************************************/
-/*  FUNCTION:  RighttRotate */
+/*  FUNCTION:  RightRotate */
 /**/
 /*  INPUTS:  This takes a tree so that it can access the appropriate */
 /*           root and sentinel pointers, and the node to rotate on. */
@@ -161,40 +47,6 @@ void LeftRotate(rb_red_blk_tree* tree, rb_red_blk_node* x) {
 /*            accordingly. */
 /***********************************************************************/
 static void RightRotate(rb_red_blk_tree* tree, rb_red_blk_node* y);
-void RightRotate(rb_red_blk_tree* tree, rb_red_blk_node* y) {
-	rb_red_blk_node* x;
-	rb_red_blk_node* sentinel=tree->sentinel;
-	
-	/*  I originally wrote this function to use the sentinel for */
-	/*  sentinel to avoid checking for sentinel.  However this introduces a */
-	/*  very subtle bug because sometimes this function modifies */
-	/*  the parent pointer of sentinel.  This can be a problem if a */
-	/*  function which calls LeftRotate also uses the sentinel sentinel */
-	/*  and expects the sentinel sentinel's parent pointer to be unchanged */
-	/*  after calling this function.  For example, when RBDeleteFixUP */
-	/*  calls LeftRotate it expects the parent pointer of sentinel to be */
-	/*  unchanged. */
-	
-	x=y->left;
-	y->left=x->right;
-	
-	if (sentinel != x->right)  x->right->parent=y; /*used to use sentinel here */
-	/* and do an unconditional assignment instead of testing for sentinel */
-	
-	/* instead of checking if x->parent is the root as in the book, we */
-	/* count on the root sentinel to implicitly take care of this case */
-	x->parent=y->parent;
-	if( y == y->parent->left) {
-		y->parent->left=x;
-	} else {
-		y->parent->right=x;
-	}
-	x->right=y;
-	y->parent=x;
-	
-	assert(!tree->sentinel->red && "sentinel not red in RightRotate");
-}
-
 /***********************************************************************/
 /*  FUNCTION:  TreeInsertHelp  */
 /**/
@@ -210,44 +62,71 @@ void RightRotate(rb_red_blk_tree* tree, rb_red_blk_node* y) {
 /*            by the RBTreeInsert function and not by the user */
 /***********************************************************************/
 static void TreeInsertHelp(rb_red_blk_tree* tree, rb_red_blk_node* z);
-void TreeInsertHelp(rb_red_blk_tree* tree, rb_red_blk_node* z) {
-	/*  This function should only be called by InsertRBTree (see above) */
-	rb_red_blk_node* x;
-	rb_red_blk_node* y;
-	rb_red_blk_node* sentinel=tree->sentinel;
+/***********************************************************************/
+/*  FUNCTION:  TreeDestHelper */
+/**/
+/*    INPUTS:  tree is the tree to destroy and x is the current node */
+/**/
+/*    OUTPUT:  none  */
+/**/
+/*    EFFECTS:  This function recursively destroys the nodes of the tree */
+/*              postorder using the DestroyKey and DestroyInfo functions. */
+/**/
+/*    Modifies Input: tree, x */
+/**/
+/*    Note:    This function should only be called by RBTreeDestroy */
+/***********************************************************************/
+static void TreeDestHelper(rb_red_blk_tree* tree, rb_red_blk_node* x);
+/***********************************************************************/
+/*  FUNCTION:  RBDeleteFixUp */
+/**/
+/*    INPUTS:  tree is the tree to fix and x is the child of the spliced */
+/*             out node in RBTreeDelete. */
+/**/
+/*    OUTPUT:  none */
+/**/
+/*    EFFECT:  Performs rotations and changes colors to restore red-black */
+/*             properties after a node is deleted */
+/**/
+/*    Modifies Input: tree, x */
+/**/
+/*    The algorithm from this function is from _Introduction_To_Algorithms_ */
+/***********************************************************************/
+static void RBDeleteFixUp(rb_red_blk_tree* tree, rb_red_blk_node* x);
+
+/***************************************************************************************
+ *
+ * The functions that follow are part of the public API
+ *
+ ***************************************************************************************/
+
+rb_red_blk_node* RBNodeAlloc() { return (rb_red_blk_node*)SafeMalloc(sizeof(rb_red_blk_node)); }
+rb_red_blk_node* RBMapNodeAlloc() {	return (rb_red_blk_node*)SafeMalloc(sizeof(rb_red_blk_map_node)); }
+
+void RBTreeInit(rb_red_blk_tree* newTree,
+				int  (*CompFunc)(const void*, const void*),
+				void (*DestFunc)(void*),
+				rb_red_blk_node* (*AllocNode)(void)) {
+	newTree->Compare=  CompFunc;
+	newTree->DestroyKey= DestFunc;
+	newTree->AllocNode = AllocNode;
+	newTree->DestroyNodeContents = &RBTreeNodeDestroy;
 	
-	z->left=z->right=sentinel;
-	y=tree->root;
-	x=tree->root->left;
-	while( x != sentinel) {
-		y=x;
-		x = (tree->Compare(x->key,z->key) > 0) ? x->left : x->right;
-	}
-	z->parent=y;
-	*(rb_red_blk_node**)((uint8_t*)y + (((y == tree->root) ||
-										 (tree->Compare(y->key,z->key) > 0)) ? offsetof(rb_red_blk_node,left) : offsetof(rb_red_blk_node,right))) = z;
-	assert(!tree->sentinel->red && "sentinel not red in TreeInsertHelp");
+	newTree->sentinel= AllocNode();
+	newTree->root= AllocNode();
+	RBPrimeRoot(newTree);
 }
 
-/*  Before calling Insert RBTree the node x should have its key set */
-
-/***********************************************************************/
-/*  FUNCTION:  RBTreeInsert */
-/**/
-/*  INPUTS:  tree is the red-black tree to insert a node which has a key */
-/*           pointed to by key and info pointed to by info.  */
-/**/
-/*  OUTPUT:  This function returns a pointer to the newly inserted node */
-/*           which is guarunteed to be valid until this node is deleted. */
-/*           What this means is if another data structure stores this */
-/*           pointer then the tree does not need to be searched when this */
-/*           is to be deleted. */
-/**/
-/*  Modifies Input: tree */
-/**/
-/*  EFFECTS:  Creates a node node which contains the appropriate key and */
-/*            info pointers and inserts it into the tree. */
-/***********************************************************************/
+void RBTreeMapInit(rb_red_blk_map_tree* newTree,
+				   int  (*CompFunc)(const void*, const void*),
+				   void (*DestFunc)(void*),
+				   rb_red_blk_node* (*AllocNode)(void),
+				   void (*InfoDestFunc)(void*)){
+	RBTreeInit((rb_red_blk_tree*)newTree, CompFunc, DestFunc, AllocNode);
+	newTree->DestroyInfo = InfoDestFunc;
+	newTree->tree.DestroyNodeContents = (void (*)(rb_red_blk_tree*, rb_red_blk_node*))(&RBMapTreeNodeDestroy);
+	
+}
 
 rb_red_blk_node * RBTreeInsert(rb_red_blk_tree* tree, void* key) {
 	rb_red_blk_node * y;
@@ -310,20 +189,6 @@ rb_red_blk_node * RBTreeInsert(rb_red_blk_tree* tree, void* key) {
 	return(newNode);
 }
 
-/***********************************************************************/
-/*  FUNCTION:  TreeSuccessor  */
-/**/
-/*    INPUTS:  tree is the tree in question, and x is the node we want the */
-/*             the successor of. */
-/**/
-/*    OUTPUT:  This function returns the successor of x or NULL if no */
-/*             successor exists. */
-/**/
-/*    Modifies Input: none */
-/**/
-/*    Note:  uses the algorithm in _Introduction_To_Algorithms_ */
-/***********************************************************************/
-
 rb_red_blk_node* TreeSuccessor(const rb_red_blk_tree* tree,const rb_red_blk_node* x) {
 	rb_red_blk_node* y;
 	rb_red_blk_node* sentinel=tree->sentinel;
@@ -344,20 +209,6 @@ rb_red_blk_node* TreeSuccessor(const rb_red_blk_tree* tree,const rb_red_blk_node
 		return(y);
 	}
 }
-
-/***********************************************************************/
-/*  FUNCTION:  Treepredecessor  */
-/**/
-/*    INPUTS:  tree is the tree in question, and x is the node we want the */
-/*             the predecessor of. */
-/**/
-/*    OUTPUT:  This function returns the predecessor of x or NULL if no */
-/*             predecessor exists. */
-/**/
-/*    Modifies Input: none */
-/**/
-/*    Note:  uses the algorithm in _Introduction_To_Algorithms_ */
-/***********************************************************************/
 
 rb_red_blk_node* TreePredecessor(const rb_red_blk_tree* tree, const rb_red_blk_node* x) {
 	rb_red_blk_node* y;
@@ -380,47 +231,6 @@ rb_red_blk_node* TreePredecessor(const rb_red_blk_tree* tree, const rb_red_blk_n
 	}
 }
 
-
-/***********************************************************************/
-/*  FUNCTION:  TreeDestHelper */
-/**/
-/*    INPUTS:  tree is the tree to destroy and x is the current node */
-/**/
-/*    OUTPUT:  none  */
-/**/
-/*    EFFECTS:  This function recursively destroys the nodes of the tree */
-/*              postorder using the DestroyKey and DestroyInfo functions. */
-/**/
-/*    Modifies Input: tree, x */
-/**/
-/*    Note:    This function should only be called by RBTreeDestroy */
-/***********************************************************************/
-
-static void TreeDestHelper(rb_red_blk_tree* tree, rb_red_blk_node* x);
-void TreeDestHelper(rb_red_blk_tree* tree, rb_red_blk_node* x) {
-	rb_red_blk_node* sentinel=tree->sentinel;
-	if (x != sentinel) {
-		TreeDestHelper(tree,x->left);
-		TreeDestHelper(tree,x->right);
-		tree->DestroyNodeContents(tree, x);
-		free(x);
-	}
-}
-
-
-/***********************************************************************/
-/*  FUNCTION:  RBTreeDestroy */
-/**/
-/*    INPUTS:  tree is the tree to destroy */
-/**/
-/*    OUTPUT:  none */
-/**/
-/*    EFFECT:  Destroys the key and frees memory */
-/**/
-/*    Modifies Input: tree */
-/**/
-/***********************************************************************/
-
 void RBTreeDestroy(rb_red_blk_tree* tree, bool ownTree) {
 	TreeDestHelper(tree,tree->root->left);
 	free(tree->root);
@@ -433,20 +243,6 @@ void RBTreeClear(rb_red_blk_tree *tree){
 	TreeDestHelper(tree, tree->root->left);
 	RBPrimeRoot(tree);
 }
-
-/***********************************************************************/
-/*  FUNCTION:  RBExactQuery */
-/**/
-/*    INPUTS:  tree is the tree to print and q is a pointer to the key */
-/*             we are searching for */
-/**/
-/*    OUTPUT:  returns the a node with key equal to q.  If there are */
-/*             multiple nodes with key equal to q this function returns */
-/*             the one highest in the tree */
-/**/
-/*    Modifies Input: none */
-/**/
-/***********************************************************************/
 
 rb_red_blk_node* RBExactQuery(const rb_red_blk_tree* tree, const void* q) {
 	rb_red_blk_node* x=tree->root->left;
@@ -463,101 +259,6 @@ rb_red_blk_node* RBExactQuery(const rb_red_blk_tree* tree, const void* q) {
 	}
 	return (x == sentinel) ? NULL : x;
 }
-
-
-/***********************************************************************/
-/*  FUNCTION:  RBDeleteFixUp */
-/**/
-/*    INPUTS:  tree is the tree to fix and x is the child of the spliced */
-/*             out node in RBTreeDelete. */
-/**/
-/*    OUTPUT:  none */
-/**/
-/*    EFFECT:  Performs rotations and changes colors to restore red-black */
-/*             properties after a node is deleted */
-/**/
-/*    Modifies Input: tree, x */
-/**/
-/*    The algorithm from this function is from _Introduction_To_Algorithms_ */
-/***********************************************************************/
-
-static void RBDeleteFixUp(rb_red_blk_tree* tree, rb_red_blk_node* x);
-void RBDeleteFixUp(rb_red_blk_tree* tree, rb_red_blk_node* x) {
-	rb_red_blk_node* root=tree->root->left;
-	rb_red_blk_node* w;
-	
-	while( (!x->red) && (root != x)) {
-		if (x == x->parent->left) {
-			w=x->parent->right;
-			if (w->red) {
-				w->red=0;
-				x->parent->red=1;
-				LeftRotate(tree,x->parent);
-				w=x->parent->right;
-			}
-			if ( (!w->right->red) && (!w->left->red) ) {
-				w->red=1;
-				x=x->parent;
-			} else {
-				if (!w->right->red) {
-					w->left->red=0;
-					w->red=1;
-					RightRotate(tree,w);
-					w=x->parent->right;
-				}
-				w->red=x->parent->red;
-				x->parent->red=0;
-				w->right->red=0;
-				LeftRotate(tree,x->parent);
-				x=root; /* this is to exit while loop */
-			}
-		} else { /* the code below is has left and right switched from above */
-			w=x->parent->left;
-			if (w->red) {
-				w->red=0;
-				x->parent->red=1;
-				RightRotate(tree,x->parent);
-				w=x->parent->left;
-			}
-			if ( (!w->right->red) && (!w->left->red) ) {
-				w->red=1;
-				x=x->parent;
-			} else {
-				if (!w->left->red) {
-					w->right->red=0;
-					w->red=1;
-					LeftRotate(tree,w);
-					w=x->parent->left;
-				}
-				w->red=x->parent->red;
-				x->parent->red=0;
-				w->left->red=0;
-				RightRotate(tree,x->parent);
-				x=root; /* this is to exit while loop */
-			}
-		}
-	}
-	x->red=0;
-	
-	assert(!tree->sentinel->red && "sentinel not black in RBDeleteFixUp");
-}
-
-
-/***********************************************************************/
-/*  FUNCTION:  RBDelete */
-/**/
-/*    INPUTS:  tree is the tree to delete node z from */
-/**/
-/*    OUTPUT:  none */
-/**/
-/*    EFFECT:  Deletes z from tree and frees the key and info of z */
-/*             using DestroyKey and DestroyInfo.  Then calls */
-/*             RBDeleteFixUp to restore red-black properties */
-/**/
-/*    Modifies Input: tree, z */
-/**/
-/*    The algorithm from this function is from _Introduction_To_Algorithms_ */
-/***********************************************************************/
 
 void RBDelete(rb_red_blk_tree* tree, rb_red_blk_node* z){
 	rb_red_blk_node* y;
@@ -654,4 +355,192 @@ bool RBSetRemove(rb_red_blk_tree *tree, const void* key){
 
 bool RBSetContains(const rb_red_blk_tree *tree, const void* key){
 	return (bool)RBExactQuery(tree, key);
+}
+
+/***************************************************************************************
+ *
+ * The functions that follow are helper functions, and not part of the public API
+ *
+ ***************************************************************************************/
+
+void RBTreeNodeDestroy(rb_red_blk_tree* tree, rb_red_blk_node* target){
+	if(tree->DestroyKey) tree->DestroyKey(target);
+}
+
+void RBMapTreeNodeDestroy(rb_red_blk_map_tree* tree, rb_red_blk_map_node* target){
+	if(tree->DestroyInfo) tree->DestroyInfo(target->info);
+	RBTreeNodeDestroy((rb_red_blk_tree* )tree, (rb_red_blk_node*)target);
+}
+
+void RBPrimeRoot(rb_red_blk_tree * tree){
+	rb_red_blk_node* temp;
+	temp=tree->sentinel;
+	temp->parent=temp->left=temp->right=temp;
+	temp->red=0;
+	temp->key=0;
+	temp=tree->root;
+	temp->parent=temp->left=temp->right=tree->sentinel;
+	temp->key=0;
+	temp->red=0;
+	tree->size = 0;
+	tree->first = tree->sentinel;
+}
+
+
+void LeftRotate(rb_red_blk_tree* tree, rb_red_blk_node* x) {
+	rb_red_blk_node* y;
+	rb_red_blk_node* sentinel=tree->sentinel;
+	
+	/*  I originally wrote this function to use the sentinel for */
+	/*  sentinel to avoid checking for sentinel.  However this introduces a */
+	/*  very subtle bug because sometimes this function modifies */
+	/*  the parent pointer of sentinel.  This can be a problem if a */
+	/*  function which calls LeftRotate also uses the sentinel sentinel */
+	/*  and expects the sentinel sentinel's parent pointer to be unchanged */
+	/*  after calling this function.  For example, when RBDeleteFixUP */
+	/*  calls LeftRotate it expects the parent pointer of sentinel to be */
+	/*  unchanged. */
+	
+	y=x->right;
+	x->right=y->left;
+	
+	if (y->left != sentinel) y->left->parent=x; /* used to use sentinel here */
+	/* and do an unconditional assignment instead of testing for sentinel */
+	
+	y->parent=x->parent;
+	
+	/* instead of checking if x->parent is the root as in the book, we */
+	/* count on the root sentinel to implicitly take care of this case */
+	if( x == x->parent->left) {
+		x->parent->left=y;
+	} else {
+		x->parent->right=y;
+	}
+	y->left=x;
+	x->parent=y;
+	
+	assert(!tree->sentinel->red && "sentinel not red in LeftRotate");
+}
+
+void RightRotate(rb_red_blk_tree* tree, rb_red_blk_node* y) {
+	rb_red_blk_node* x;
+	rb_red_blk_node* sentinel=tree->sentinel;
+	
+	/*  I originally wrote this function to use the sentinel for */
+	/*  sentinel to avoid checking for sentinel.  However this introduces a */
+	/*  very subtle bug because sometimes this function modifies */
+	/*  the parent pointer of sentinel.  This can be a problem if a */
+	/*  function which calls LeftRotate also uses the sentinel sentinel */
+	/*  and expects the sentinel sentinel's parent pointer to be unchanged */
+	/*  after calling this function.  For example, when RBDeleteFixUP */
+	/*  calls LeftRotate it expects the parent pointer of sentinel to be */
+	/*  unchanged. */
+	
+	x=y->left;
+	y->left=x->right;
+	
+	if (sentinel != x->right)  x->right->parent=y; /*used to use sentinel here */
+	/* and do an unconditional assignment instead of testing for sentinel */
+	
+	/* instead of checking if x->parent is the root as in the book, we */
+	/* count on the root sentinel to implicitly take care of this case */
+	x->parent=y->parent;
+	if( y == y->parent->left) {
+		y->parent->left=x;
+	} else {
+		y->parent->right=x;
+	}
+	x->right=y;
+	y->parent=x;
+	
+	assert(!tree->sentinel->red && "sentinel not red in RightRotate");
+}
+
+void TreeInsertHelp(rb_red_blk_tree* tree, rb_red_blk_node* z) {
+	/*  This function should only be called by InsertRBTree (see above) */
+	rb_red_blk_node* x;
+	rb_red_blk_node* y;
+	rb_red_blk_node* sentinel=tree->sentinel;
+	
+	z->left=z->right=sentinel;
+	y=tree->root;
+	x=tree->root->left;
+	while( x != sentinel) {
+		y=x;
+		x = (tree->Compare(x->key,z->key) > 0) ? x->left : x->right;
+	}
+	z->parent=y;
+	*(rb_red_blk_node**)((uint8_t*)y + (((y == tree->root) ||
+										 (tree->Compare(y->key,z->key) > 0)) ? offsetof(rb_red_blk_node,left) : offsetof(rb_red_blk_node,right))) = z;
+	assert(!tree->sentinel->red && "sentinel not red in TreeInsertHelp");
+}
+
+void TreeDestHelper(rb_red_blk_tree* tree, rb_red_blk_node* x) {
+	rb_red_blk_node* sentinel=tree->sentinel;
+	if (x != sentinel) {
+		TreeDestHelper(tree,x->left);
+		TreeDestHelper(tree,x->right);
+		tree->DestroyNodeContents(tree, x);
+		free(x);
+	}
+}
+
+void RBDeleteFixUp(rb_red_blk_tree* tree, rb_red_blk_node* x) {
+	rb_red_blk_node* root=tree->root->left;
+	rb_red_blk_node* w;
+	
+	while( (!x->red) && (root != x)) {
+		if (x == x->parent->left) {
+			w=x->parent->right;
+			if (w->red) {
+				w->red=0;
+				x->parent->red=1;
+				LeftRotate(tree,x->parent);
+				w=x->parent->right;
+			}
+			if ( (!w->right->red) && (!w->left->red) ) {
+				w->red=1;
+				x=x->parent;
+			} else {
+				if (!w->right->red) {
+					w->left->red=0;
+					w->red=1;
+					RightRotate(tree,w);
+					w=x->parent->right;
+				}
+				w->red=x->parent->red;
+				x->parent->red=0;
+				w->right->red=0;
+				LeftRotate(tree,x->parent);
+				x=root; /* this is to exit while loop */
+			}
+		} else { /* the code below is has left and right switched from above */
+			w=x->parent->left;
+			if (w->red) {
+				w->red=0;
+				x->parent->red=1;
+				RightRotate(tree,x->parent);
+				w=x->parent->left;
+			}
+			if ( (!w->right->red) && (!w->left->red) ) {
+				w->red=1;
+				x=x->parent;
+			} else {
+				if (!w->left->red) {
+					w->right->red=0;
+					w->red=1;
+					LeftRotate(tree,w);
+					w=x->parent->left;
+				}
+				w->red=x->parent->red;
+				x->parent->red=0;
+				w->left->red=0;
+				RightRotate(tree,x->parent);
+				x=root; /* this is to exit while loop */
+			}
+		}
+	}
+	x->red=0;
+	
+	assert(!tree->sentinel->red && "sentinel not black in RBDeleteFixUp");
 }
