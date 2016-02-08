@@ -173,6 +173,20 @@
 /* End PBXGroup section */
 
 /* Begin PBXLegacyTarget section */
+		E91AE3A11C6811CA00CEABAA /* sorttest.8xp */ = {
+			isa = PBXLegacyTarget;
+			buildArgumentsString = "../toolchain/CEdev/bin/make.exe $(ACTION)";
+			buildConfigurationList = E91AE3A21C6811CA00CEABAA /* Build configuration list for PBXLegacyTarget "sorttest.8xp" */;
+			buildPhases = (
+			);
+			buildToolPath = /opt/local/bin/wine;
+			buildWorkingDirectory = "/Users/thomas/Scanline-Rendering/ScanLineRender/SortTest";
+			dependencies = (
+			);
+			name = sorttest.8xp;
+			passBuildSettingsInEnvironment = 0;
+			productName = scanln.8xp;
+		};
 		E93DF98D1C6511E500063228 /* scanln.8xp */ = {
 			isa = PBXLegacyTarget;
 			buildArgumentsString = "../toolchain/CEdev/bin/make.exe $(ACTION)";
@@ -257,8 +271,9 @@
 			projectRoot = "";
 			targets = (
 				E93B36881C56CB1300A88A02 /* ScanLineRender */,
-				E9A994FB1C5D34B70036F212 /* SortTest */,
 				E93DF98D1C6511E500063228 /* scanln.8xp */,
+				E9A994FB1C5D34B70036F212 /* SortTest */,
+				E91AE3A11C6811CA00CEABAA /* sorttest.8xp */,
 			);
 		};
 /* End PBXProject section */
@@ -298,6 +313,29 @@
 /* End PBXSourcesBuildPhase section */
 
 /* Begin XCBuildConfiguration section */
+		E91AE3A31C6811CA00CEABAA /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				DEBUGGING_SYMBOLS = YES;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				OTHER_CFLAGS = "";
+				OTHER_LDFLAGS = "";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Debug;
+		};
+		E91AE3A41C6811CA00CEABAA /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				OTHER_CFLAGS = "";
+				OTHER_LDFLAGS = "";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Release;
+		};
 		E93B368E1C56CB1300A88A02 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -457,6 +495,15 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
+		E91AE3A21C6811CA00CEABAA /* Build configuration list for PBXLegacyTarget "sorttest.8xp" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				E91AE3A31C6811CA00CEABAA /* Debug */,
+				E91AE3A41C6811CA00CEABAA /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
 		E93B36841C56CB1300A88A02 /* Build configuration list for PBXProject "ScanLineRender" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
