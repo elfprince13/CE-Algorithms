@@ -1,7 +1,7 @@
 #ifndef RED_BLACK_TREE_H_
 #define RED_BLACK_TREE_H_
 
-#include "misc.h"
+#include "../util.h"
 #include <stdbool.h>
 
 /*  CONVENTIONS:  All data structures for red-black trees have the prefix */
