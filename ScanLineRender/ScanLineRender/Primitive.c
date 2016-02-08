@@ -109,7 +109,7 @@ float getZForXY(const Primitive *p, float x, float y){
 		-nz * us->z,
 		numer = (-d - nx * x - ny * y);
 		
-		return (nz == 0) ? ((numer > 0) ? HUGE_VALF : -HUGE_VALF) : (numer / nz) ;
+		return (nz == 0) ? ((numer > 0) ? HUGE_VAL : -HUGE_VAL) : (numer / nz) ;
 	}
 	
 }

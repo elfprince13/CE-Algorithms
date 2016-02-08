@@ -7,6 +7,10 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		E91AE39B1C664E2C00CEABAA /* debugConfig.c in Sources */ = {isa = PBXBuildFile; fileRef = E91AE39A1C664E2C00CEABAA /* debugConfig.c */; };
+		E91AE39E1C67F42300CEABAA /* misc.c in Sources */ = {isa = PBXBuildFile; fileRef = E95714E31C581551006FBFB1 /* misc.c */; };
+		E91AE39F1C67F42600CEABAA /* red_black_tree.c in Sources */ = {isa = PBXBuildFile; fileRef = E95714E51C581551006FBFB1 /* red_black_tree.c */; };
+		E91AE3A01C67F55F00CEABAA /* debugConfig.c in Sources */ = {isa = PBXBuildFile; fileRef = E91AE39A1C664E2C00CEABAA /* debugConfig.c */; };
 		E93B36951C56CBFA00A88A02 /* Point.c in Sources */ = {isa = PBXBuildFile; fileRef = E93B36931C56CBFA00A88A02 /* Point.c */; };
 		E93B36981C56CE7600A88A02 /* Edge.c in Sources */ = {isa = PBXBuildFile; fileRef = E93B36961C56CE7600A88A02 /* Edge.c */; };
 		E93B369B1C56D27900A88A02 /* Primitive.c in Sources */ = {isa = PBXBuildFile; fileRef = E93B36991C56D27900A88A02 /* Primitive.c */; };
@@ -44,6 +48,8 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		E91AE39A1C664E2C00CEABAA /* debugConfig.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = debugConfig.c; sourceTree = "<group>"; };
+		E91AE39C1C664F8D00CEABAA /* Makefile */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.make; path = Makefile; sourceTree = "<group>"; };
 		E93B36891C56CB1300A88A02 /* ScanLineRender */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = ScanLineRender; sourceTree = BUILT_PRODUCTS_DIR; };
 		E93B368C1C56CB1300A88A02 /* main.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = main.c; sourceTree = "<group>"; };
 		E93B36931C56CBFA00A88A02 /* Point.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = Point.c; sourceTree = "<group>"; };
@@ -118,6 +124,8 @@
 				E93B369F1C56E8D700A88A02 /* AEL.c */,
 				E93B36A01C56E8D700A88A02 /* AEL.h */,
 				E9A994F71C5BE33C0036F212 /* debugConfig.h */,
+				E91AE39A1C664E2C00CEABAA /* debugConfig.c */,
+				E91AE39C1C664F8D00CEABAA /* Makefile */,
 				E93B36961C56CE7600A88A02 /* Edge.c */,
 				E93B36971C56CE7600A88A02 /* Edge.h */,
 				E93B36931C56CBFA00A88A02 /* Point.c */,
@@ -162,6 +170,37 @@
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
+
+/* Begin PBXLegacyTarget section */
+		E91AE3A11C6811CA00CEABAA /* sorttest.8xp */ = {
+			isa = PBXLegacyTarget;
+			buildArgumentsString = "../toolchain/CEdev/bin/make.exe $(ACTION)";
+			buildConfigurationList = E91AE3A21C6811CA00CEABAA /* Build configuration list for PBXLegacyTarget "sorttest.8xp" */;
+			buildPhases = (
+			);
+			buildToolPath = /opt/local/bin/wine;
+			buildWorkingDirectory = "/Users/thomas/Scanline-Rendering/ScanLineRender/SortTest";
+			dependencies = (
+			);
+			name = sorttest.8xp;
+			passBuildSettingsInEnvironment = 0;
+			productName = scanln.8xp;
+		};
+		E93DF98D1C6511E500063228 /* scanln.8xp */ = {
+			isa = PBXLegacyTarget;
+			buildArgumentsString = "../toolchain/CEdev/bin/make.exe $(ACTION)";
+			buildConfigurationList = E93DF9901C6511E500063228 /* Build configuration list for PBXLegacyTarget "scanln.8xp" */;
+			buildPhases = (
+			);
+			buildToolPath = /opt/local/bin/wine;
+			buildWorkingDirectory = "/Users/thomas/Scanline-Rendering/ScanLineRender/ScanLineRender";
+			dependencies = (
+			);
+			name = scanln.8xp;
+			passBuildSettingsInEnvironment = 0;
+			productName = scanln.8xp;
+		};
+/* End PBXLegacyTarget section */
 
 /* Begin PBXNativeTarget section */
 		E93B36881C56CB1300A88A02 /* ScanLineRender */ = {
@@ -210,6 +249,9 @@
 					E93B36881C56CB1300A88A02 = {
 						CreatedOnToolsVersion = 7.2;
 					};
+					E93DF98D1C6511E500063228 = {
+						CreatedOnToolsVersion = 7.2.1;
+					};
 					E9A994FB1C5D34B70036F212 = {
 						CreatedOnToolsVersion = 7.2;
 					};
@@ -228,7 +270,9 @@
 			projectRoot = "";
 			targets = (
 				E93B36881C56CB1300A88A02 /* ScanLineRender */,
+				E93DF98D1C6511E500063228 /* scanln.8xp */,
 				E9A994FB1C5D34B70036F212 /* SortTest */,
+				E91AE3A11C6811CA00CEABAA /* sorttest.8xp */,
 			);
 		};
 /* End PBXProject section */
@@ -241,6 +285,7 @@
 				E9BF95431C62911D003CDECC /* main.c in Sources */,
 				E93B36A11C56E8D700A88A02 /* AEL.c in Sources */,
 				E93B36951C56CBFA00A88A02 /* Point.c in Sources */,
+				E91AE39B1C664E2C00CEABAA /* debugConfig.c in Sources */,
 				E93B369B1C56D27900A88A02 /* Primitive.c in Sources */,
 				E95714EC1C581551006FBFB1 /* misc.c in Sources */,
 				E95714F31C582399006FBFB1 /* linklist.c in Sources */,
@@ -255,14 +300,40 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				E91AE39E1C67F42300CEABAA /* misc.c in Sources */,
 				E9A994FF1C5D34B70036F212 /* main.c in Sources */,
 				E9A995031C5D34C40036F212 /* linklist.c in Sources */,
+				E91AE39F1C67F42600CEABAA /* red_black_tree.c in Sources */,
+				E91AE3A01C67F55F00CEABAA /* debugConfig.c in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXSourcesBuildPhase section */
 
 /* Begin XCBuildConfiguration section */
+		E91AE3A31C6811CA00CEABAA /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				DEBUGGING_SYMBOLS = YES;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				OTHER_CFLAGS = "";
+				OTHER_LDFLAGS = "";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Debug;
+		};
+		E91AE3A41C6811CA00CEABAA /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				OTHER_CFLAGS = "";
+				OTHER_LDFLAGS = "";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Release;
+		};
 		E93B368E1C56CB1300A88A02 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -382,6 +453,29 @@
 			};
 			name = Release;
 		};
+		E93DF98E1C6511E500063228 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				DEBUGGING_SYMBOLS = YES;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				OTHER_CFLAGS = "";
+				OTHER_LDFLAGS = "";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Debug;
+		};
+		E93DF98F1C6511E500063228 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				OTHER_CFLAGS = "";
+				OTHER_LDFLAGS = "";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Release;
+		};
 		E9A995011C5D34B70036F212 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -399,6 +493,15 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
+		E91AE3A21C6811CA00CEABAA /* Build configuration list for PBXLegacyTarget "sorttest.8xp" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				E91AE3A31C6811CA00CEABAA /* Debug */,
+				E91AE3A41C6811CA00CEABAA /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
 		E93B36841C56CB1300A88A02 /* Build configuration list for PBXProject "ScanLineRender" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
@@ -413,6 +516,15 @@
 			buildConfigurations = (
 				E93B36911C56CB1300A88A02 /* Debug */,
 				E93B36921C56CB1300A88A02 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		E93DF9901C6511E500063228 /* Build configuration list for PBXLegacyTarget "scanln.8xp" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				E93DF98E1C6511E500063228 /* Debug */,
+				E93DF98F1C6511E500063228 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;

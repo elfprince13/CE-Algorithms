@@ -6,8 +6,20 @@
 //  Copyright © 2016 StickFigure Graphic Productions. All rights reserved.
 */
 
-#include "ScanlineRenderer.h"
+#ifdef _EZ80
+#include <stdbool.h>
+#include <stddef.h>
+#include <stdint.h>
+#include <ti84pce.h>
+char printBuffer[64] = {0};
+void print(const char* string, uint8_t xpos, uint8_t ypos);
+void printPause(const char* string, uint8_t xpos, uint8_t ypos);
+void cleanUp();
+#else
 #include <netpbm/ppm.h>
+#endif
+
+#include "ScanlineRenderer.h"
 #include <string.h>
 
 typedef enum {
@@ -98,18 +110,29 @@ int main(int argc, const char * argv[]) {
 	const int numLines = 240;
 	const int lineWidth = 320;
 	const size_t rasterByteCount = numLines * lineWidth * sizeof(Color);
-	Color *const raster = (Color*)SafeMalloc(rasterByteCount);
+	Color *const raster = (Color*)
+#ifdef _EZ80
+	0xD40000
+#else
+	SafeMalloc(rasterByteCount)
+
+#endif
+		;
 	rb_red_blk_tree* buckets = NULL;
+#ifndef _EZ80
 	pm_proginit(&argc, argv);
+#endif
 	
 	transformData(&viewProj, cubePointsSrc, cubePoints, 8);
 	buckets = bucketPrims(buckets, numLines, cube, sizeof(cube) / sizeof(Primitive));
 	
 	memset(raster, 0xff, rasterByteCount);
 	render(raster, lineWidth, numLines, buckets);
-	
 	buckets = teardownBuckets(buckets, numLines);
-	
+#ifdef _EZ80
+	_OS( GetKey() );
+	cleanUp();
+#else
 	{
 		pixel **const ppm_raster = ppm_allocarray(lineWidth, numLines);
 		size_t x,y;
@@ -134,6 +157,38 @@ int main(int argc, const char * argv[]) {
 		ppm_freearray(ppm_raster, numLines);
 	}
 	free(raster);
-	
+#endif
     return 0;
 }
+
+#ifdef _EZ80
+void print(const char* string, uint8_t xpos, uint8_t ypos)
+{
+	_OS( asm("LD HL,(IX+6)");
+		asm("LD A,(IX+9)");
+		asm("LD (curCol),A");
+		asm("LD A,(IX+12)");
+		asm("LD (curRow),A");
+		asm("CALL _PutS");
+		);
+}
+
+void printPause(const char* string, uint8_t xpos, uint8_t ypos)
+{
+	print(string, xpos, ypos);
+	_OS( GetKey() );
+}
+
+void cleanUp()
+{
+	// Clear/invalidate some RAM areas
+	// and restore the home screen nicely
+	_OS( asm("CALL _DelRes");
+		asm("CALL _ClrTxtShd");
+		asm("CALL _ClrScrn");
+		asm("SET  graphDraw,(iy+graphFlags)");
+		asm("CALL _HomeUp");
+		asm("CALL _DrawStatusBar");
+		);
+}
+#endif

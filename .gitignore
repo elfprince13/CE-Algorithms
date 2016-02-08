@@ -2,7 +2,6 @@ bin/
 .settings/
 *.ppm
 *.log
-ScanlineRender/toolchain
 
 # Xcode
 #
@@ -27,3 +26,8 @@ xcuserdata
 *.xccheckout
 *.moved-aside
 *.xcuserstate
+*.obj
+*.src
+*.map
+*.hex
+*.8xp

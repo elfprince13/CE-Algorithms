@@ -9,15 +9,23 @@
 #ifndef debugConfig_h
 #define debugConfig_h
 
-/*#define NDEBUG*/
-
 #include <assert.h>
 
 #ifdef NDEBUG
 #define dPrintf(args) ((void)0)
 #else
+#ifdef _EZ80
+#include <debug.h>
+int dPrintfImpl(const char*, ...);
+#define dPrintf(args) dPrintfImpl args
+#define SZF "%u"
+#define PDF "%d"
+#else
 #include <stdio.h>
 #define dPrintf(args) printf args
+#define SZF "%lu"
+#define PDF "%ld"
+#endif
 #endif
 
 
