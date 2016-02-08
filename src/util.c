@@ -40,7 +40,7 @@ int waitKey(){
 #ifdef _EZ80
 	_OS( ret = GetKey() );
 #else
-	ret = getChar();
+	ret = getchar();
 #endif
 	return ret;
 }
