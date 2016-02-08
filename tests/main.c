@@ -1,30 +1,27 @@
 /*
 //  main.c
-//  SortTest
+//  AlgosTest
 //
 //  Created by Thomas Dickerson on 1/30/16.
 //  Copyright © 2016 StickFigure Graphic Productions. All rights reserved.
 */
 
-#include <stdbool.h>
-#include <stddef.h>
-#include <stdint.h>
-#ifdef _EZ80
-#include <ti84pce.h>
-char printBuffer[64] = {0};
-void print(const char* string, uint8_t xpos, uint8_t ypos);
-void printPause(const char* string, uint8_t xpos, uint8_t ypos);
-void cleanUp();
-#endif
 
 #include <stdio.h>
 #include <stdlib.h>
-#include "../ScanLineRender/link_list/linklist.h"
-#include "../ScanLineRender/rb_tree/misc.h"
-#include "../ScanLineRender/rb_tree/red_black_tree.h"
-#include "../ScanLineRender/debugConfig.h"
+#include "util.h"
+#include "link_list/linklist.h"
+#include "rb_tree/red_black_tree.h"
+#include "debugConfig.h"
 
-int8_t compareSizeT(size_t *i, size_t *j, void*discard){
+static int8_t compareSizeT(const size_t *i, const size_t *j, void*discard);
+static int qsCompare(size_t *i, size_t *j);
+static int pointerDiff(const size_t *p1, const size_t *p2);
+static void dumpList(LinkN **head);
+static void dumpArray(size_t *ary, size_t COUNT);
+static void dumpSet(rb_red_blk_tree* tree);
+
+int8_t compareSizeT(const size_t *i, const size_t *j, void*discard){
 	return (int)*i - (int)*j;
 }
 
