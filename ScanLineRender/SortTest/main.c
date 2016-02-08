@@ -36,14 +36,9 @@ int qsCompare(size_t *i, size_t *j){
 
 int pointerDiff(const size_t *p1, const size_t *p2){
 	const ptrdiff_t delta = p1 - p2;
-	dPrintf(("pd delta: %p - %p = " PDF "\n", p1, p2, delta));
-	if(!delta){
-		return 0;
-	} else if (delta > 0){
-		return 1;
-	} else {
-		return -1;
-	}
+	const int ret = delta ? (delta < 0 ? -1 : 1) : 0;
+	dPrintf(("pd delta: %p - %p = " PDF " ?sign= %d\n", p1, p2, delta, ret));
+	return ret;
 }
 
 void dumpList(LinkN **head){
