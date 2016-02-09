@@ -99,20 +99,3 @@ int main(int argc, const char * argv[]) {
 	
     return 0;
 }
-
-
-#ifdef _EZ80
-
-void cleanUp()
-{
-	// Clear/invalidate some RAM areas
-	// and restore the home screen nicely
-	_OS( asm("CALL _DelRes");
-		asm("CALL _ClrTxtShd");
-		asm("CALL _ClrScrn");
-		asm("SET  graphDraw,(iy+graphFlags)");
-		asm("CALL _HomeUp");
-		asm("CALL _DrawStatusBar");
-		);
-}
-#endif
