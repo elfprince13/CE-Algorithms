@@ -46,7 +46,7 @@ void cleanUp()
 int waitKey(){
 	int ret;
 #ifdef _EZ80
-	_OS( ret = GetKey() );
+	_OS( while(!(ret = GetCSC())); );
 #else
 	ret = getchar();
 #endif
