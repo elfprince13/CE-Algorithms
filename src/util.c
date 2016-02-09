@@ -23,15 +23,23 @@ void * SafeMalloc(size_t size) {
 void cleanUp()
 {
 #ifdef _EZ80
-	// Clear/invalidate some RAM areas
-	// and restore the home screen nicely
-	_OS( asm("CALL _DelRes");
+	/* 
+	 * Clear/invalidate some RAM areas
+	 * and restore the home screen nicely.
+	 * Can't use the OS macro, because it's too much stuff 
+	 * for the compiler to handle
+	 */
+	asm("	LD	(__saveIY),IY"); \
+	asm("	LD	IY, 13631616");
+	asm("LD A,lcdBpp16");
+	asm("LD (mpLcdCtrl),A");
+	asm("CALL _DelRes");
 	asm("CALL _ClrTxtShd");
 	asm("CALL _ClrScrn");
 	asm("SET  graphDraw,(iy+graphFlags)");
 	asm("CALL _HomeUp");
 	asm("CALL _DrawStatusBar");
-	);
+	asm("	LD	IY,(__saveIY)");
 #endif
 }
 
